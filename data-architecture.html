@@ -112,7 +112,7 @@
             font-size: 14px; color: var(--text-3); max-width: 780px; margin-bottom: 32px; line-height: 1.8;
         }
 
-        /* ── Bottom bar (nav + slide counter) ── */
+        /* ── Bottom bar ── */
         .bottom-bar {
             position: fixed; bottom:0; left:0; right:0; z-index:100;
             display: flex; align-items: center; justify-content: space-between;
@@ -130,12 +130,8 @@
             width:22px; height:22px; display:flex; align-items:center; justify-content:center;
             border-radius:3px; font-weight:800; font-size:11px;
         }
-        .bb-nav {
-            display:flex; align-items:center; gap:16px;
-        }
-        .bb-counter {
-            font-family:var(--mono); font-size:11px; color:var(--text-3);
-        }
+        .bb-nav { display:flex; align-items:center; gap:16px; }
+        .bb-counter { font-family:var(--mono); font-size:11px; color:var(--text-3); }
         .bb-counter .cur { color:var(--orange); font-weight:700; }
         .bb-btn {
             width:32px; height:32px; border-radius:6px;
@@ -147,67 +143,48 @@
         .bb-btn:hover { border-color:var(--orange); color:var(--orange); background:var(--orange-dim); }
         .bb-btn:disabled { opacity:.3; cursor:default; }
         .bb-btn:disabled:hover { border-color:var(--border); color:var(--text-3); background:var(--bg-2); }
-
-        .bb-dots {
-            display:flex; gap:4px; align-items:center;
-        }
+        .bb-dots { display:flex; gap:4px; align-items:center; }
         .bb-dot {
             width:6px; height:6px; border-radius:50%;
-            background:var(--bg-4); cursor:pointer;
-            transition: all 0.25s;
+            background:var(--bg-4); cursor:pointer; transition: all 0.25s;
         }
         .bb-dot.active { background:var(--orange); width:20px; border-radius:3px; }
         .bb-dot:hover { background:var(--text-3); }
 
-        /* ═══ CONSTRAINT BOX ═══ */
+        /* ═══ REUSABLE COMPONENTS ═══ */
         .constraint-box {
             background: linear-gradient(135deg, rgba(239,68,68,.04) 0%, rgba(17,24,39,.8) 100%);
             border: 1px solid rgba(239,68,68,.15);
             border-left: 3px solid var(--red);
             border-radius: 10px; padding: 22px 26px;
         }
-        .constraint-box .label {
-            font-size:10px; font-weight:700; color:var(--red); margin-bottom:8px;
-            text-transform:uppercase; letter-spacing:1.2px;
-        }
+        .constraint-box .label { font-size:10px; font-weight:700; color:var(--red); margin-bottom:8px; text-transform:uppercase; letter-spacing:1.2px; }
         .constraint-box .text { font-size:13px; color:var(--text-2); line-height:1.8; }
         .constraint-box strong { color:var(--text); }
 
-        /* ═══ REUSABLE CARDS / GRIDS ═══ */
         .card-grid { display:grid; gap:14px; }
         .card-grid.c2 { grid-template-columns: 1fr 1fr; }
         .card-grid.c3 { grid-template-columns: 1fr 1fr 1fr; }
         .card-grid.c4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
 
-        .info-card {
-            background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:16px 18px;
-        }
+        .info-card { background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:16px 18px; }
         .info-card .ic-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:6px; }
         .info-card .ic-text { font-size:11px; color:var(--text-3); line-height:1.7; }
 
-        .metric-card {
-            background:var(--bg-1); border:1px solid var(--border); border-radius:8px;
-            padding:16px; text-align:center;
-        }
-        .metric-card .mc-num {
-            font-family:var(--mono); font-size:28px; font-weight:800; color:var(--orange);
-        }
+        .metric-card { background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:16px; text-align:center; }
+        .metric-card .mc-num { font-family:var(--mono); font-size:28px; font-weight:800; color:var(--orange); }
         .metric-card .mc-label { font-size:10px; color:var(--text-3); margin-top:4px; }
 
         .tag { display:inline-block; padding:3px 10px; border-radius:4px; font-size:9px; font-weight:600; }
 
-        /* ═══ ARCHITECTURE DIAGRAM (simplified for slides) ═══ */
-        .arch-flow {
-            display:grid; grid-template-columns: 180px 1fr 4px 1fr 180px;
-            gap:0; min-height:380px; margin:16px 0;
-        }
+        /* ═══ ARCHITECTURE DIAGRAM ═══ */
+        .arch-flow { display:grid; grid-template-columns: 180px 1fr 4px 1fr 180px; gap:0; min-height:380px; margin:16px 0; }
         .af-col { padding:14px 10px; display:flex; flex-direction:column; gap:8px; }
         .af-sources { background:rgba(255,255,255,.015); border:1px solid var(--border); border-radius:8px 0 0 8px; }
         .af-etl { background:var(--orange-dim); border-top:1px solid rgba(236,112,0,.12); border-bottom:1px solid rgba(236,112,0,.12); }
         .af-firewall {
             background:linear-gradient(180deg,var(--red) 0%,rgba(239,68,68,.3) 30%,rgba(239,68,68,.3) 70%,var(--red) 100%);
-            position:relative; z-index:2;
-            box-shadow:0 0 20px rgba(239,68,68,.2);
+            position:relative; z-index:2; box-shadow:0 0 20px rgba(239,68,68,.2);
         }
         .af-firewall::before {
             content:'AI BOUNDARY'; position:absolute; top:50%; left:50%;
@@ -218,114 +195,66 @@
         .af-lake { background:var(--blue-dim); border-top:1px solid rgba(59,130,246,.12); border-bottom:1px solid rgba(59,130,246,.12); }
         .af-ai { background:var(--green-dim); border:1px solid rgba(16,185,129,.12); border-radius:0 8px 8px 0; }
 
-        .src-node {
-            display:flex; align-items:center; gap:6px;
-            padding:6px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:5px;
-            font-size:10px; font-weight:600;
-        }
-        .src-icon {
-            width:20px; height:20px; border-radius:3px;
-            display:flex; align-items:center; justify-content:center;
-            font-size:7px; font-weight:800; flex-shrink:0;
-        }
+        .src-node { display:flex; align-items:center; gap:6px; padding:6px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:5px; font-size:10px; font-weight:600; }
+        .src-icon { width:20px; height:20px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:800; flex-shrink:0; }
         .src-label { color:var(--text); font-size:10px; }
 
-        .etl-block {
-            padding:8px 10px; background:rgba(236,112,0,.06); border:1px solid rgba(236,112,0,.12); border-radius:5px;
-        }
+        .etl-block { padding:8px 10px; background:rgba(236,112,0,.06); border:1px solid rgba(236,112,0,.12); border-radius:5px; }
         .etl-block .eb-title { font-size:10px; font-weight:700; color:var(--orange); }
         .etl-block .eb-sub { font-size:9px; color:var(--text-3); }
-        .etl-block .eb-badge {
-            float:right; font-size:7px; font-weight:700; text-transform:uppercase;
-            padding:2px 5px; border-radius:2px; background:rgba(239,68,68,.1); color:var(--red);
-            border:1px solid rgba(239,68,68,.2); letter-spacing:0.5px;
-        }
+        .etl-block .eb-badge { float:right; font-size:7px; font-weight:700; text-transform:uppercase; padding:2px 5px; border-radius:2px; background:rgba(239,68,68,.1); color:var(--red); border:1px solid rgba(239,68,68,.2); letter-spacing:0.5px; }
 
-        .lake-block {
-            padding:8px 10px; background:rgba(59,130,246,.05); border:1px solid rgba(59,130,246,.12); border-radius:5px;
-        }
+        .lake-block { padding:8px 10px; background:rgba(59,130,246,.05); border:1px solid rgba(59,130,246,.12); border-radius:5px; }
         .lake-block .lb-title { font-size:10px; font-weight:700; color:var(--blue); }
         .lake-block .lb-fields { font-size:8px; color:var(--text-3); font-family:var(--mono); }
 
-        .ai-block {
-            padding:8px 10px; background:rgba(16,185,129,.05); border:1px solid rgba(16,185,129,.12); border-radius:5px;
-        }
+        .ai-block { padding:8px 10px; background:rgba(16,185,129,.05); border:1px solid rgba(16,185,129,.12); border-radius:5px; }
         .ai-block .ab-title { font-size:10px; font-weight:700; color:var(--green); }
         .ai-block .ab-sub { font-size:9px; color:var(--text-3); }
 
-        .tier-label {
-            font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 8px; margin-top:2px;
-        }
+        .tier-label { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 8px; margin-top:2px; }
 
         /* ═══ TABLES ═══ */
         .s-table { width:100%; border-collapse:collapse; font-size:11px; }
-        .s-table th {
-            padding:8px 10px; text-align:left; color:var(--text-3); font-size:9px;
-            font-weight:700; text-transform:uppercase; letter-spacing:0.8px;
-            border-bottom:1px solid var(--border);
-        }
+        .s-table th { padding:8px 10px; text-align:left; color:var(--text-3); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; border-bottom:1px solid var(--border); }
         .s-table td { padding:8px 10px; border-bottom:1px solid rgba(30,45,61,.4); color:var(--text-2); }
         .s-table .mono { font-family:var(--mono); }
         .s-table .right { text-align:right; }
         .s-table .bold { color:var(--text); font-weight:600; }
 
         /* ═══ PIPELINE STEPS ═══ */
-        .pipe-row {
-            display:grid; grid-template-columns:repeat(6,1fr); gap:0; margin:16px 0;
-        }
-        .pipe-step {
-            padding:14px 10px; text-align:center; border:1px solid var(--border); border-left:none;
-        }
+        .pipe-row { display:grid; grid-template-columns:repeat(6,1fr); gap:0; margin:16px 0; }
+        .pipe-step { padding:14px 10px; text-align:center; border:1px solid var(--border); border-left:none; }
         .pipe-step:first-child { border-left:1px solid var(--border); border-radius:8px 0 0 8px; }
         .pipe-step:last-child { border-radius:0 8px 8px 0; }
         .pipe-step .ps-num { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
         .pipe-step .ps-title { font-size:11px; font-weight:700; color:var(--text); margin-bottom:2px; }
         .pipe-step .ps-sub { font-size:9px; color:var(--text-3); line-height:1.4; }
 
-        /* ═══ TRACE TIMELINE (compact for slides) ═══ */
+        /* ═══ TRACE TIMELINE ═══ */
         .trace-row { display:flex; gap:12px; margin-bottom:12px; align-items:flex-start; }
-        .trace-num {
-            width:32px; height:32px; border-radius:50%; flex-shrink:0;
-            display:flex; align-items:center; justify-content:center;
-            font-size:12px; font-weight:800;
-        }
+        .trace-num { width:32px; height:32px; border-radius:50%; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:800; }
         .trace-content { flex:1; }
-        .trace-content .tc-head {
-            display:flex; align-items:center; gap:8px; margin-bottom:3px;
-        }
-        .trace-content .tc-phase {
-            font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
-            padding:2px 7px; border-radius:3px;
-        }
+        .trace-content .tc-head { display:flex; align-items:center; gap:8px; margin-bottom:3px; }
+        .trace-content .tc-phase { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:2px 7px; border-radius:3px; }
         .trace-content .tc-title { font-size:12px; font-weight:600; color:var(--text); }
         .trace-content .tc-time { font-family:var(--mono); font-size:9px; color:var(--text-3); margin-left:auto; }
         .trace-content .tc-text { font-size:11px; color:var(--text-3); line-height:1.6; }
 
         /* ═══ CONFIDENCE PILLS ═══ */
-        .conf-pill {
-            display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700;
-        }
+        .conf-pill { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700; }
         .conf-pill .dot { width:5px; height:5px; border-radius:50%; }
 
-        /* ═══ CALL-TO-ACTION GRID ═══ */
+        /* ═══ CTA GRID ═══ */
         .cta-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        .cta-item {
-            padding:14px 16px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px;
-        }
-        .cta-item .ci-num {
-            font-family:var(--mono); font-size:11px; font-weight:700; color:var(--orange); margin-bottom:4px;
-        }
+        .cta-item { padding:14px 16px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; }
+        .cta-item .ci-num { font-family:var(--mono); font-size:11px; font-weight:700; color:var(--orange); margin-bottom:4px; }
         .cta-item .ci-text { font-size:12px; color:var(--text); line-height:1.5; font-weight:500; }
         .cta-item .ci-why { font-size:10px; color:var(--text-3); margin-top:4px; line-height:1.5; }
 
         /* ═══ SCHEMA MINI CARDS ═══ */
-        .schema-mini {
-            background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden;
-        }
-        .schema-mini .sm-head {
-            padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border);
-            display:flex; align-items:center; justify-content:space-between;
-        }
+        .schema-mini { background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+        .schema-mini .sm-head { padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
         .schema-mini .sm-name { font-size:12px; font-weight:700; color:var(--text); }
         .schema-mini .sm-src { font-size:9px; color:var(--orange); font-weight:600; }
         .schema-mini .sm-vol { font-size:9px; color:var(--text-3); font-family:var(--mono); }
@@ -336,19 +265,18 @@
 
         /* ═══ DEPLOY TIER ═══ */
         .deploy-tier { padding:14px; border-radius:8px; }
-        .deploy-tier .dt-title {
-            font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
-        }
-        .deploy-tier .dt-row {
-            font-size:10px; color:var(--text-3); padding:3px 0; border-bottom:1px solid rgba(255,255,255,.03);
-        }
+        .deploy-tier .dt-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; }
+        .deploy-tier .dt-row { font-size:10px; color:var(--text-3); padding:3px 0; border-bottom:1px solid rgba(255,255,255,.03); }
         .deploy-tier .dt-row strong { color:var(--text); font-weight:500; }
 
-        /* ═══ PROGRESS DOTS ON CONTEXT SLIDE ═══ */
-        .journey-arrow {
-            display:flex; align-items:center; justify-content:center;
-            font-size:32px; color:var(--orange); padding:0 24px;
-        }
+        .journey-arrow { display:flex; align-items:center; justify-content:center; font-size:32px; color:var(--orange); padding:0 24px; }
+
+        /* ═══ USE CASE CARD ═══ */
+        .uc-card { padding:22px; border-radius:10px; display:flex; flex-direction:column; gap:10px; }
+        .uc-num { font-family:var(--mono); font-size:32px; font-weight:800; opacity:.3; }
+        .uc-title { font-size:18px; font-weight:700; color:var(--text); }
+        .uc-desc { font-size:12px; color:var(--text-3); line-height:1.7; }
+        .uc-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
     </style>
 </head>
 <body>
@@ -363,31 +291,29 @@
     <div class="s-chip" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.2);">
         <div class="pulse" style="background:var(--orange)"></div> POC Checkpoint · April 2026
     </div>
-    <div style="font-size:11px; color:var(--text-3); margin-bottom:6px; letter-spacing:0.5px;">Conquer AI × Itaú BBA Research — AI-Assisted Equity Research POC</div>
-    <div class="s-title" style="font-size:48px; margin-top:8px;">Data Ingestion &<br><span>Research Architecture</span></div>
+    <div style="font-size:11px; color:var(--text-3); margin-bottom:6px; letter-spacing:0.5px;">Conquer AI × Itaú BBA Research</div>
+    <div class="s-title" style="font-size:48px; margin-top:8px;">AI-Powered Research<br><span>Data Architecture</span></div>
     <div style="font-size:16px; color:var(--text-3); max-width:750px; line-height:1.8; margin-top:16px;">
-        Itaú BBA's equity research analysts produce hundreds of reports per year — coverage initiations, sector updates, earnings reviews. Today that process is manual, with analysts pulling data from multiple terminals and databases by hand. This POC explores whether AI can automate the data assembly and first-draft generation, while keeping analysts in control of the final output.
-    </div>
-    <div style="font-size:14px; color:var(--text-2); max-width:700px; line-height:1.7; margin-top:12px;">
-        We've already demonstrated the output layer (AI-generated PPTX/DOCX). Now we're solving the harder upstream problem: <strong style="color:var(--orange)">getting live data from 9 sources into the AI engine</strong> — compliantly, automatically, and at production scale.
+        Itaú BBA's equity research team produces hundreds of reports annually — quarterly reviews, sector updates, and coverage initiations. Today, analysts manually pull data from multiple terminals and databases for each report. This POC explores whether AI can automate the data assembly and first-draft generation, while keeping analysts in full control of the final output.
     </div>
     <div style="margin-top:32px; display:flex; gap:12px;">
-        <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Block 1: Data Architecture</div>
-        <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">9 Data Sources</div>
+        <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">3 Core Use Cases</div>
+        <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">9 Data Sources</div>
         <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">License Compliant</div>
+        <div class="tag" style="background:var(--purple-dim); color:var(--purple); border:1px solid rgba(139,92,246,.15);">Proof Point Next Week</div>
     </div>
     <div style="margin-top:36px; font-size:11px; color:var(--text-3);">Use <span style="font-family:var(--mono); color:var(--text); padding:2px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px;">←</span> <span style="font-family:var(--mono); color:var(--text); padding:2px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px;">→</span> arrow keys to navigate</div>
 </div>
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 2 — WHERE WE ARE (Block 2 → Block 1)
+     SLIDE 2 — WHERE WE ARE
      ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="1">
 <div class="slide-inner">
     <div class="s-label">Context</div>
-    <div class="s-heading">Where We Are — Block 2 Done, Block 1 Now</div>
-    <div class="s-desc">We've structured this POC into two blocks. <strong style="color:var(--text)">Block 2</strong> (output generation) was tackled first — Tom demonstrated live to the team how AI can take structured data and produce professional-grade PPTX pitchbooks and DOCX research reports. That's proven. <strong style="color:var(--text)">Block 1</strong> (data ingestion) is the upstream challenge we're solving now: how do we get real, current, multi-source financial data into the AI automatically and compliantly?</div>
+    <div class="s-heading">Where We Are — Output Layer Proven, Data Layer Next</div>
+    <div class="s-desc">We've structured this POC into two blocks. <strong style="color:var(--text)">Block 2</strong> (output generation) was tackled first — Tom demonstrated live how AI can take structured data and produce professional-grade PPTX pitchbooks and DOCX research reports, formatted to Itaú BBA standards. That's proven. <strong style="color:var(--text)">Block 1</strong> (data ingestion) is the upstream challenge we're solving now: how do we get real, current, multi-source financial data into the AI — automatically and compliantly?</div>
 
     <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch;">
         <!-- Block 2 -->
@@ -397,7 +323,7 @@
                 <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px;">Block 2 — Demonstrated</div>
             </div>
             <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">AI-Generated Research Output</div>
-            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">Given structured financial data, the AI produces analyst-quality PPTX pitchbooks and DOCX research reports — formatted to Itaú BBA standards. Demonstrated live to the research team.</div>
+            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">Given structured financial data, the AI produces analyst-quality PPTX pitchbooks and DOCX research reports. Demonstrated live to the research team.</div>
             <div style="display:flex; gap:6px; flex-wrap:wrap;">
                 <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">Pitchbook Gen</div>
                 <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">PPTX Formatting</div>
@@ -428,13 +354,112 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 3 — THE CORE CONSTRAINT
+     SLIDE 3 — CAROLINA'S 3 USE CASES
      ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="2">
 <div class="slide-inner">
+    <div class="s-label">Research Use Cases</div>
+    <div class="s-heading">Three Core Workflows This System Must Support</div>
+    <div class="s-desc" style="margin-bottom:20px;">Based on our discussions with the research team, these are the three primary use cases that define what the data architecture needs to deliver. Each one has different data demands, time pressures, and output formats.</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- UC1: Quarterly Financials -->
+        <div class="uc-card" style="background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15);">
+            <div class="uc-num" style="color:var(--blue);">01</div>
+            <div class="uc-title">Quarterly Financials</div>
+            <div class="uc-desc">When a covered company reports earnings, analysts need to rapidly compare actual results against consensus estimates, flag surprises, update models, and publish a review — often within hours of the release.</div>
+            <div class="uc-tags">
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">Time-critical</div>
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">High frequency</div>
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">~200 per year</div>
+            </div>
+            <div style="margin-top:8px; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
+                <strong style="color:var(--blue)">Data needed:</strong> CVM filing (actuals), Bloomberg (consensus), Capital IQ (peer comparison), prior internal notes
+            </div>
+        </div>
+
+        <!-- UC2: Sector Reports -->
+        <div class="uc-card" style="background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15);">
+            <div class="uc-num" style="color:var(--green);">02</div>
+            <div class="uc-title">Sector Reports</div>
+            <div class="uc-desc">Periodic deep-dives into an entire sector — pulling macro indicators, overlaying them on all covered companies, identifying thematic trends, and producing a cross-company comparative view.</div>
+            <div class="uc-tags">
+                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Data-heavy</div>
+                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Cross-company</div>
+                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Monthly/Quarterly</div>
+            </div>
+            <div style="margin-top:8px; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
+                <strong style="color:var(--green)">Data needed:</strong> IBGE (macro), CONAB/ANP/BCB (sector-specific), Bloomberg (market), CVM (all covered companies), Economatica (LatAm comps)
+            </div>
+        </div>
+
+        <!-- UC3: Initial Coverage -->
+        <div class="uc-card" style="background:rgba(236,112,0,.04); border:1px solid rgba(236,112,0,.15);">
+            <div class="uc-num" style="color:var(--orange);">03</div>
+            <div class="uc-title">Initial Coverage (IPO)</div>
+            <div class="uc-desc">When a company is about to list or recently IPO'd, build comprehensive coverage from scratch — full financial model, sum-of-the-parts valuation, peer positioning, sector overlay, and risk assessment.</div>
+            <div class="uc-tags">
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Heaviest lift</div>
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Highest value</div>
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">All 9 sources</div>
+            </div>
+            <div style="margin-top:8px; padding:8px 10px; background:rgba(236,112,0,.03); border:1px solid rgba(236,112,0,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
+                <strong style="color:var(--orange)">Data needed:</strong> Everything — CVM filings, Bloomberg, Capital IQ, Economatica, macro sources, Salesforce (internal prior work), and potentially web sources for context
+            </div>
+        </div>
+    </div>
+
+    <div style="padding:12px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--text-3); line-height:1.7; text-align:center;">
+        <strong style="color:var(--text)">One architecture serves all three.</strong> The data layer is the same — what changes is which queries the AI runs and how much of the context window it fills. Quarterly uses ~200K tokens. Sector reports ~400K. Initial coverage pushes toward the full ~620K.
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 4 — USE CASE → ARCHITECTURE MAPPING
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="3">
+<div class="slide-inner">
+    <div class="s-label">Architecture Mapping</div>
+    <div class="s-heading">How Each Use Case Flows Through the System</div>
+    <div class="s-desc" style="margin-bottom:16px;">Each use case triggers a different data path. The architecture handles all three through the same pipeline — the AI just asks different questions of the lake.</div>
+
+    <div style="overflow-x:auto;">
+        <table class="s-table">
+            <thead><tr>
+                <th style="width:140px"></th>
+                <th style="color:var(--blue)">Quarterly Financials</th>
+                <th style="color:var(--green)">Sector Reports</th>
+                <th style="color:var(--orange)">Initial Coverage (IPO)</th>
+            </tr></thead>
+            <tbody>
+                <tr><td class="bold">Trigger</td><td>Company reports earnings</td><td>Monthly/quarterly cycle or thematic event</td><td>Pre-IPO mandate or new listing</td></tr>
+                <tr><td class="bold">Time pressure</td><td style="color:var(--red); font-weight:600;">Hours — same day publication</td><td>Days — analyst-driven timeline</td><td>Weeks — but highest thoroughness</td></tr>
+                <tr><td class="bold">Primary sources</td><td>CVM (filing), BBG (consensus), CIQ (peers)</td><td>IBGE, CONAB, ANP, BCB + all covered companies</td><td>All 9 sources + web context</td></tr>
+                <tr><td class="bold">Lake queries</td><td class="mono">~8–12 queries</td><td class="mono">~30–50 queries (multi-company)</td><td class="mono">~20–25 queries (deep single)</td></tr>
+                <tr><td class="bold">Context window</td><td class="mono">~200K tokens</td><td class="mono">~400K tokens</td><td class="mono">~620K tokens</td></tr>
+                <tr><td class="bold">Output</td><td>Earnings review (5–8 slides)</td><td>Sector report (15–25 pages)</td><td>Coverage initiation (40+ pages, SOTP model)</td></tr>
+                <tr><td class="bold">Key challenge</td><td>Speed — data must be fresh within minutes</td><td>Breadth — cross-company consistency</td><td>Depth — SOTP requires subsidiary-level data</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">~200K</div><div class="mc-label">tokens · quarterly review</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--green)">~400K</div><div class="mc-label">tokens · sector report</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--orange)">~620K</div><div class="mc-label">tokens · coverage initiation</div></div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 5 — CORE CONSTRAINT
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="4">
+<div class="slide-inner">
     <div class="s-label">The Core Constraint</div>
     <div class="s-heading">Why AI Cannot Touch Data Sources Directly</div>
-    <div class="s-desc">Itaú BBA Research relies on licensed data providers — Bloomberg, S&P Capital IQ, Economatica — for financial data that underpins every research report. These providers have specific contractual terms about how their data can be used. Most of them explicitly prohibit AI agents from connecting to their systems. This single fact shapes every design decision in our architecture.</div>
+    <div class="s-desc">Itaú BBA Research relies on licensed data providers — Bloomberg, S&P Capital IQ, Economatica — for the financial data that underpins every research report. These providers have specific contractual terms about how their data can be used, and most explicitly prohibit AI agents from connecting to their systems. This single fact shapes every design decision in our architecture.</div>
 
     <div class="constraint-box" style="margin-bottom:20px;">
         <div class="label">Licensing Reality</div>
@@ -453,13 +478,13 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 4 — ARCHITECTURE DIAGRAM
+     SLIDE 6 — ARCHITECTURE DIAGRAM
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="3">
+<div class="slide" data-slide="5">
 <div class="slide-inner">
     <div class="s-label">Solution Architecture</div>
     <div class="s-heading">Decoupled Two-Layer Design</div>
-    <div class="s-desc" style="margin-bottom:12px;">The system is split into two completely separate layers. <strong style="color:var(--orange)">Layer 1 (left)</strong> handles all data ingestion — traditional ETL pipelines that pull from Bloomberg, Capital IQ, public regulators, etc. <strong style="color:var(--blue)">A data lake</strong> (center) stores everything in normalized tables. <strong style="color:var(--green)">Layer 2 (right)</strong> is where the AI lives — it can only read from the lake, never from source systems. The red line between them is a network-enforced firewall: the AI literally cannot reach the data sources.</div>
+    <div class="s-desc" style="margin-bottom:12px;">The system is split into two completely separate layers. <strong style="color:var(--orange)">Layer 1 (left)</strong> handles all data ingestion — traditional ETL pipelines that pull from Bloomberg, Capital IQ, public regulators, etc. <strong style="color:var(--blue)">A data lake</strong> (center) stores everything in normalized tables. <strong style="color:var(--green)">Layer 2 (right)</strong> is where the AI lives — it can only read from the lake, never from source systems. The red line between them is a network-enforced firewall.</div>
 
     <div class="arch-flow">
         <!-- Sources -->
@@ -515,21 +540,14 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 5 — DATA FLOW METRICS
+     SLIDE 7 — DATA FLOW METRICS
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="4">
+<div class="slide" data-slide="6">
 <div class="slide-inner">
     <div class="s-label">Data Flow</div>
     <div class="s-heading">What Actually Flows Through This System</div>
-    <div class="s-desc" style="margin-bottom:12px;">The system ingests from 9 distinct sources, split into three tiers. <strong style="color:var(--orange)">Licensed sources</strong> (Bloomberg for market/consensus data, Capital IQ for global financials, Economatica for LatAm-specific metrics) require paid subscriptions with strict usage terms. <strong style="color:var(--green)">Public sources</strong> include Brazilian regulators: CVM (securities filings, like the SEC's EDGAR), IBGE (national statistics bureau), CONAB (agricultural forecasts), ANP (oil/fuel pricing), and BCB (central bank rates and FX). <strong style="color:var(--purple)">Internal data</strong> comes from Itaú's own Salesforce CRM and prior research.</div>
+    <div class="s-desc" style="margin-bottom:12px;">The system ingests from 9 distinct sources, split into three tiers. <strong style="color:var(--orange)">Licensed sources</strong> (Bloomberg for market/consensus data, Capital IQ for global financials, Economatica for LatAm-specific metrics) require paid subscriptions with strict usage terms. <strong style="color:var(--green)">Public sources</strong> include Brazilian regulators: CVM (securities filings — like the SEC's EDGAR), IBGE (national statistics bureau), CONAB (agricultural forecasts), ANP (oil/fuel pricing), and BCB (central bank rates and FX). <strong style="color:var(--purple)">Internal data</strong> comes from Itaú's own Salesforce CRM and prior research.</div>
     <div style="margin-bottom:16px; padding:8px 14px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5;">Estimated volumes below are for a ~200 company Brazilian equities universe. Planning estimates — actual numbers depend on Itaú's access levels and license tiers.</div>
-
-    <div class="card-grid c4" style="margin-bottom:20px;">
-        <div class="metric-card"><div class="mc-num">~2.4M</div><div class="mc-label">records/day across all pipelines</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--green)">5 of 9</div><div class="mc-label">sources fully automated day one</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">6</div><div class="mc-label">unified domain tables</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--orange)">&lt;15m</div><div class="mc-label">target source → lake latency</div></div>
-    </div>
 
     <div style="overflow-x:auto;">
         <table class="s-table">
@@ -553,9 +571,9 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 6 — DATA LAKE SCHEMA
+     SLIDE 8 — SCHEMA & PROVENANCE
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="5">
+<div class="slide" data-slide="7">
 <div class="slide-inner">
     <div class="s-label">Unified Data Lake</div>
     <div class="s-heading">Schema Design & Provenance</div>
@@ -640,9 +658,9 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 7 — AI ENGINE
+     SLIDE 9 — AI ENGINE
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="6">
+<div class="slide" data-slide="8">
 <div class="slide-inner">
     <div class="s-label">AI Research Engine</div>
     <div class="s-heading">What Happens Inside the 1M-Token Window</div>
@@ -659,24 +677,9 @@
         <div class="pipe-step" style="background:rgba(236,112,0,.04);"><div class="ps-num" style="color:var(--orange)">Step 6</div><div class="ps-title">Cited Output</div><div class="ps-sub">JSON → Block 2</div></div>
     </div>
 
-    <!-- Context window breakdown -->
-    <div style="margin-top:16px; margin-bottom:16px;">
-        <div style="font-size:11px; font-weight:600; color:var(--text); margin-bottom:8px;">Context Window Utilization — Cosan Coverage Initiation (~620K / 1M tokens)</div>
-        <div style="display:flex; height:24px; border-radius:5px; overflow:hidden; border:1px solid var(--border);">
-            <div style="flex:22; background:rgba(139,92,246,.2); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--purple);">Financials 22%</div>
-            <div style="flex:18; background:rgba(139,92,246,.12); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--purple);">CVM 18%</div>
-            <div style="flex:15; background:rgba(16,185,129,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--green);">Internal 15%</div>
-            <div style="flex:12; background:rgba(255,165,0,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:#FFA500;">Market 12%</div>
-            <div style="flex:8; background:rgba(6,182,212,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--cyan);">Macro 8%</div>
-            <div style="flex:5; background:rgba(239,68,68,.12); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--red);">Prov</div>
-            <div style="flex:8; background:rgba(107,122,141,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--text-3);">Sys 8%</div>
-            <div style="flex:12; background:rgba(30,45,61,.6); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--text-3);">Free 12%</div>
-        </div>
-    </div>
-
     <!-- Citation example -->
-    <div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
-        <div style="padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border); font-size:10px; color:var(--text-3);">Example output with inline citations — every factual claim attributed</div>
+    <div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-top:12px;">
+        <div style="padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border); font-size:10px; color:var(--text-3);">Example output with inline citations — every factual claim attributed to its source</div>
         <div style="padding:14px 16px; font-size:12px; color:var(--text-2); line-height:2; border-left:3px solid var(--orange); margin:12px; padding-left:16px;">
             Cosan reported consolidated net revenue of R$41.2B in Q3 2025 <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span>, representing 12% YoY growth driven by the Raízen consolidation <span style="font-size:9px;padding:2px 5px;background:rgba(0,120,215,.1);border:1px solid rgba(0,120,215,.2);border-radius:3px;color:#0078D7;font-family:var(--mono);font-weight:600">[CIQ]</span>. EBITDA reached R$7.9B <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span> vs. Bloomberg consensus of R$8.3B <span style="font-size:9px;padding:2px 5px;background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.2);border-radius:3px;color:#FFA500;font-family:var(--mono);font-weight:600">[BBG]</span>, a 4.8% miss. CONAB's sugarcane forecast projects 685M tonnes <span style="font-size:9px;padding:2px 5px;background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.2);border-radius:3px;color:var(--orange);font-family:var(--mono);font-weight:600">[CONAB]</span>, positive for Raízen where ANP ethanol-to-gasoline parity sits at 68% <span style="font-size:9px;padding:2px 5px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);border-radius:3px;color:var(--cyan);font-family:var(--mono);font-weight:600">[ANP]</span>.
         </div>
@@ -685,9 +688,9 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 8 — COSAN WALKTHROUGH (Part 1)
+     SLIDE 10 — COSAN TRACE (Steps 1-4)
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="7">
+<div class="slide" data-slide="9">
 <div class="slide-inner">
     <div class="s-label">End-to-End Trace</div>
     <div class="s-heading">"Coverage Initiation on Cosan" — Steps 1–4</div>
@@ -745,9 +748,9 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 9 — COSAN WALKTHROUGH (Part 2)
+     SLIDE 11 — COSAN TRACE (Steps 5-7)
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="8">
+<div class="slide" data-slide="10">
 <div class="slide-inner">
     <div class="s-label">End-to-End Trace</div>
     <div class="s-heading">"Coverage Initiation on Cosan" — Steps 5–7</div>
@@ -806,49 +809,9 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 10 — PRIVATE COMPANY
+     SLIDE 12 — ENTERPRISE & COMPLIANCE
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="9">
-<div class="slide-inner">
-    <div class="s-label">The Hard Problem</div>
-    <div class="s-heading">Private Company Research — Agentic Mosaic</div>
-    <div class="s-desc" style="margin-bottom:10px;">Public companies (like Cosan above) have rich data in Bloomberg, CVM filings, and Capital IQ. Private companies have none of that — no ticker, no mandatory filings, no analyst consensus. Yet Itaú BBA's investment banking teams regularly need research on private companies for M&A advisory, pre-IPO analysis, and sector studies.</div>
-    <div style="margin-bottom:14px; padding:8px 14px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; font-size:11px; color:var(--text-2); line-height:1.6;">The <strong style="color:var(--text)">"mosaic" approach</strong> mirrors what experienced analysts do manually: piecing together a picture from multiple indirect sources — public peers, sector data, government registries, news, and internal knowledge. The system does this programmatically, and critically, it <strong style="color:var(--orange)">tags every data point with a confidence level</strong> so the analyst knows exactly what's verified vs. estimated.</div>
-
-    <!-- 6-step orchestration -->
-    <div class="pipe-row" style="margin-bottom:20px;">
-        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">1</div><div class="ps-title">Sector ID</div><div class="ps-sub">Identify sector + geography</div></div>
-        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">2</div><div class="ps-title">Public Comps</div><div class="ps-sub">Lake: peer CVM filings</div></div>
-        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">3</div><div class="ps-title">Sector Macro</div><div class="ps-sub">Lake: IBGE/CONAB/ANP</div></div>
-        <div class="pipe-step" style="background:rgba(236,112,0,.04);"><div class="ps-num" style="color:var(--orange)">4</div><div class="ps-title">Web Search</div><div class="ps-sub">AI = ingestion layer</div></div>
-        <div class="pipe-step" style="background:rgba(6,182,212,.04);"><div class="ps-num" style="color:var(--cyan)">5</div><div class="ps-title">Internal KB</div><div class="ps-sub">Salesforce + prior work</div></div>
-        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">6</div><div class="ps-title">Assembly</div><div class="ps-sub">Mosaic + confidence tags</div></div>
-    </div>
-
-    <!-- Confidence scoring -->
-    <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">Confidence Scoring — Every Data Point Classified</div>
-    <div style="overflow-x:auto;">
-        <table class="s-table" style="font-size:10px;">
-            <thead><tr><th>Data Point</th><th>Source</th><th style="text-align:center">Confidence</th><th>How It's Shown</th></tr></thead>
-            <tbody>
-                <tr><td class="bold">Crushing capacity: 4.2M tonnes</td><td>CONAB registered mills</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.2)"><span class="dot" style="background:var(--green)"></span>HIGH</span></td><td>"4.2M tonnes [CONAB]"</td></tr>
-                <tr><td class="bold">Revenue: est. R$800M–1.2B</td><td>Public peer benchmarks</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(236,112,0,.08);color:var(--orange);border:1px solid rgba(236,112,0,.2)"><span class="dot" style="background:var(--orange)"></span>MEDIUM</span></td><td>"est. R$800M–1.2B [peer analysis]"</td></tr>
-                <tr><td class="bold">CNPJ: 12.345.678/0001-90</td><td>Receita Federal</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.2)"><span class="dot" style="background:var(--green)"></span>HIGH</span></td><td>Exact CNPJ cited with source</td></tr>
-                <tr><td class="bold">Recent expansion investment</td><td>Local news (Valor)</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(239,68,68,.08);color:var(--red);border:1px solid rgba(239,68,68,.2)"><span class="dot" style="background:var(--red)"></span>LOW</span></td><td>"reportedly investing [Valor, unverified]"</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div style="margin-top:14px; padding:10px 14px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5;">
-        <strong style="color:var(--red)">Key:</strong> Steps 2–3 use the <strong style="color:var(--text)">same pre-staged lake</strong>. Step 4 is the only place AI acts as ingestion — and only for <strong style="color:var(--text)">publicly available web sources</strong>. Licensed data is never accessed directly.
-    </div>
-</div>
-</div>
-
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 11 — ENTERPRISE & COMPLIANCE
-     ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="10">
+<div class="slide" data-slide="11">
 <div class="slide-inner">
     <div class="s-label">Enterprise & Compliance</div>
     <div class="s-heading">Governance, Security & Regulatory Alignment</div>
@@ -856,7 +819,7 @@
 
     <div class="card-grid c2" style="margin-bottom:16px;">
         <div class="info-card"><div class="ic-title">Data Provenance & Audit Trail</div><div class="ic-text">Every record: source, timestamp, license, SHA256 hash. AI outputs cite sources inline. Any claim traceable in 3 hops. "Did AI access Bloomberg directly?" → No, with full lineage proof.</div></div>
-        <div class="info-card"><div class="ic-title">Data Residency & Perimeter</div><div class="ic-text">Lake + ETL + AI all deploy within Itaú's AWS VPC (sa-east-1). No data leaves the perimeter. Licensed data stays within existing contract terms. Bedrock invocations stay in-region.</div></div>
+        <div class="info-card"><div class="ic-title">Data Residency & Perimeter</div><div class="ic-text">Lake + ETL + AI all deploy within Itaú's AWS VPC (sa-east-1, São Paulo). No data leaves the perimeter. Licensed data stays within existing contract terms. Bedrock invocations stay in-region.</div></div>
         <div class="info-card"><div class="ic-title">LGPD Compliance</div><div class="ic-text">System processes financial/market data, not personal data — minimal LGPD exposure. Internal docs processed within VPC. No personal data used for model training. Audit logs on every access.</div></div>
         <div class="info-card"><div class="ic-title">BACEN / CVM Regulatory</div><div class="ic-text">AI outputs marked as AI-assisted, not autonomous. Analyst remains author. Aligns with CVM Instruction 20 (research independence). All outputs include source attribution for regulatory review.</div></div>
     </div>
@@ -889,26 +852,98 @@
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════
-     SLIDE 12 — PROPOSED DECISIONS
+     SLIDE 13 — PROOF POINT: NEXT WEEK
      ══════════════════════════════════════════════════════════════ -->
-<div class="slide" data-slide="11">
+<div class="slide" data-slide="12">
 <div class="slide-inner">
-    <div class="s-label">Next Step</div>
-    <div class="s-heading">Proposed Decisions — Confirm or Redirect</div>
-    <div class="s-desc" style="margin-bottom:12px;">To move from architecture design to a working MVP, we need to lock down 6 decisions. These aren't open-ended questions — we've proposed an answer for each based on what we know so far. We're asking the team to either <strong style="color:var(--green)">confirm</strong> our assumption or <strong style="color:var(--orange)">redirect</strong> us. The faster these are resolved, the faster we build.</div>
+    <div class="s-label">Proving It</div>
+    <div class="s-heading">Next Week — End-to-End with Publicly Available Data</div>
+    <div class="s-desc" style="margin-bottom:16px;">We've shown the architecture. Now we need to prove it works. Our recommendation: take a use case where the data sources are publicly accessible — no Bloomberg credentials or Capital IQ access needed from Itaú — and run the full pipeline end-to-end. Build the data lake, ingest real data, run the AI, produce real output.</div>
 
-    <div class="cta-grid">
-        <div class="cta-item"><div class="ci-num">01</div><div class="ci-text">Bloomberg — We assume terminal-only today with DL negotiation as Phase 2. AI/ML amendment status?</div><div class="ci-why">If DL is in place, we automate from day one. If not, we start with analyst export.</div></div>
-        <div class="cta-item"><div class="ci-num">02</div><div class="ci-text">Capital IQ — We propose starting with Xpressfeed (if available) or Excel export. Pro API as upgrade.</div><div class="ci-why">Xpressfeed gives bulk automation without API rate limits.</div></div>
-        <div class="cta-item"><div class="ci-num">03</div><div class="ci-text">Economatica — We assume API access given the institutional license. Confirm?</div><div class="ci-why">If API, fully automated from week 1.</div></div>
-        <div class="cta-item"><div class="ci-num">04</div><div class="ci-text">Internal data — We propose Salesforce first. Where do pitchbooks and prior research live?</div><div class="ci-why">Fastest path to value. Semantic search within sprint 1.</div></div>
-        <div class="cta-item"><div class="ci-num">05</div><div class="ci-text">First output — We recommend coverage initiation (Cosan) as MVP deliverable. Agree?</div><div class="ci-why">Exercises every pipeline, tests SOTP, cross-source reconciliation, full citation chain.</div></div>
-        <div class="cta-item"><div class="ci-num">06</div><div class="ci-text">Deployment — AWS Bedrock in Itaú's VPC, consistent with Pitchbook POC infra. Confirm?</div><div class="ci-why">Data residency in-perimeter, reuses existing approvals, Bedrock = no model hosting overhead.</div></div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- What we'll do -->
+        <div style="padding:20px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:10px;">
+            <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">What We'll Deliver</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">1. Working data pipeline</strong> — CVM filings, IBGE macro data, CONAB/ANP sector data, and BCB rates flowing into a real data lake
+                </div>
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">2. AI research output</strong> — A real coverage report generated from the ingested data, with full source citations and provenance chain
+                </div>
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">3. Audit trail demo</strong> — Click any claim in the output → trace it back through the lake to the original government source document
+                </div>
+            </div>
+        </div>
+
+        <!-- Why this proves it -->
+        <div style="padding:20px; background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15); border-radius:10px;">
+            <div style="font-size:10px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Why This Proves the Architecture</div>
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">Same architecture</strong> — The ETL → Lake → AI pipeline is identical whether the source is CVM (public) or Bloomberg (licensed). Adding licensed sources later is configuration, not redesign.
+                </div>
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">No blockers</strong> — Public data is freely available. We don't need to wait for Itaú's Bloomberg DL amendment or Capital IQ SFTP credentials.
+                </div>
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">Real validation</strong> — Using actual CVM filings and IBGE data for a real company means the output quality is directly assessable by the research team.
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div style="text-align:center; margin-top:24px; padding:20px 24px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--orange); border-radius:10px;">
-        <div style="font-size:18px; font-weight:700; color:var(--orange); line-height:1.5;">
-            Confirm these today → Lock MVP scope this week → First pipeline live in 4–6 weeks
+    <div style="text-align:center; padding:16px 20px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--green); border-radius:10px;">
+        <div style="font-size:16px; font-weight:700; color:var(--green); line-height:1.5;">
+            Next week: live demo of the full pipeline — real data in, real research out.
+        </div>
+        <div style="font-size:12px; color:var(--text-3); margin-top:6px;">Once validated, adding Bloomberg and Capital IQ is a connector exercise — the architecture doesn't change.</div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 14 — COMMERCIALS & NEXT STEPS
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="13">
+<div class="slide-inner">
+    <div class="s-label">Next Steps</div>
+    <div class="s-heading">From Proof Point to Production</div>
+    <div class="s-desc" style="margin-bottom:20px;">We've already submitted a proposal for the pitchbook generation POC (Block 2). The data architecture (Block 1) is a separate but closely related workstream. After next week's proof point, we'll have the clarity to scope this precisely — and potentially position both blocks together.</div>
+
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:20px;">
+        <!-- This week -->
+        <div style="padding:18px; background:rgba(236,112,0,.04); border:2px solid rgba(236,112,0,.25); border-radius:10px;">
+            <div style="font-size:9px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">This Week</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Confirm & Build</div>
+            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">Confirm the public-data use case target. We start building the pipeline immediately — CVM, IBGE, CONAB, ANP, BCB ingestion into a working lake.</div>
+        </div>
+        <!-- Next week -->
+        <div style="padding:18px; background:rgba(16,185,129,.04); border:2px solid rgba(16,185,129,.25); border-radius:10px;">
+            <div style="font-size:9px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Next Week</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Live Proof Point</div>
+            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">Demo the end-to-end pipeline: real publicly-available data → data lake → AI → research output with full citation and provenance chain. Research team evaluates output quality.</div>
+        </div>
+        <!-- After -->
+        <div style="padding:18px; background:rgba(139,92,246,.04); border:2px solid rgba(139,92,246,.25); border-radius:10px;">
+            <div style="font-size:9px; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">After Proof Point</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Scope & Propose</div>
+            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">With the architecture validated, we'll know the exact effort to add licensed sources and scale to all 3 use cases. Proposal follows — potentially bundled with Block 2 for a combined engagement.</div>
+        </div>
+    </div>
+
+    <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">Decisions to Confirm Today</div>
+    <div class="cta-grid">
+        <div class="cta-item"><div class="ci-num">01</div><div class="ci-text">Which company or sector should the proof point target?</div><div class="ci-why">Needs to be assessable by the research team using publicly available data.</div></div>
+        <div class="cta-item"><div class="ci-num">02</div><div class="ci-text">Which use case: quarterly review, sector report, or coverage initiation?</div><div class="ci-why">We recommend coverage initiation — exercises the most data paths and produces the most impressive output.</div></div>
+        <div class="cta-item"><div class="ci-num">03</div><div class="ci-text">Bloomberg / Capital IQ access status — any AI/ML amendments in progress?</div><div class="ci-why">If DL or Xpressfeed is already approved, we can include licensed data in the proof point.</div></div>
+        <div class="cta-item"><div class="ci-num">04</div><div class="ci-text">Deployment: AWS Bedrock in Itaú's VPC, consistent with Block 2 infra?</div><div class="ci-why">Reuses existing security approvals. Data residency in sa-east-1. No model hosting overhead.</div></div>
+    </div>
+
+    <div style="text-align:center; margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--orange); border-radius:10px;">
+        <div style="font-size:16px; font-weight:700; color:var(--orange); line-height:1.5;">
+            Confirm the target today → Proof point next week → Proposal to follow
         </div>
     </div>
 </div>
@@ -918,10 +953,10 @@
 
 <!-- ═══ BOTTOM BAR ═══ -->
 <div class="bottom-bar">
-    <div class="bb-logo"><div class="i-box">í</div><span>Itaú BBA Research · Technical Architecture</span></div>
+    <div class="bb-logo"><div class="i-box">í</div><span>Itaú BBA Research · Data Architecture</span></div>
     <div class="bb-dots" id="dots"></div>
     <div class="bb-nav">
-        <div class="bb-counter"><span class="cur" id="curSlide">1</span> / <span id="totalSlides">12</span></div>
+        <div class="bb-counter"><span class="cur" id="curSlide">1</span> / <span id="totalSlides">14</span></div>
         <button class="bb-btn" id="prevBtn" onclick="go(-1)">←</button>
         <button class="bb-btn" id="nextBtn" onclick="go(1)">→</button>
     </div>
