@@ -277,9 +277,27 @@
         .uc-title { font-size:18px; font-weight:700; color:var(--text); }
         .uc-desc { font-size:12px; color:var(--text-3); line-height:1.7; }
         .uc-tags { display:flex; gap:6px; flex-wrap:wrap; margin-top:4px; }
-    </style>
+    
+        /* ═══ LANGUAGE TOGGLE ═══ */
+        body.lang-pt .lang-en { display: none !important; }
+        body.lang-en .lang-pt { display: none !important; }
+
+        .lang-toggle {
+            display: flex; align-items: center; gap: 4px;
+            padding: 2px; background: var(--bg-2); border: 1px solid var(--border); border-radius: 6px;
+        }
+        .lang-toggle button {
+            padding: 3px 10px; border: none; border-radius: 4px;
+            font-size: 10px; font-weight: 700; cursor: pointer;
+            font-family: var(--mono); transition: all 0.2s;
+            background: transparent; color: var(--text-3);
+        }
+        .lang-toggle button.active {
+            background: var(--orange); color: var(--bg);
+        }
+</style>
 </head>
-<body>
+<body class="lang-en">
 
 <div class="deck" id="deck">
 
@@ -306,11 +324,8 @@
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 2 — WHERE WE ARE
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="1">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Context</div>
     <div class="s-heading">Where We Are — Output Layer Proven, Data Layer Next</div>
     <div class="s-desc">We've structured this POC into two blocks. <strong style="color:var(--text)">Block 2</strong> (output generation) was tackled first — Tom demonstrated live how AI can take structured data and produce professional-grade PPTX pitchbooks and DOCX research reports, formatted to Itaú BBA standards. That's proven. <strong style="color:var(--text)">Block 1</strong> (data ingestion) is the upstream challenge we're solving now: how do we get real, current, multi-source financial data into the AI — automatically and compliantly?</div>
@@ -322,42 +337,28 @@
                 <div style="width:22px;height:22px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:800;">✓</div>
                 <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px;">Block 2 — Demonstrated</div>
             </div>
-            <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">AI-Generated Research Output</div>
-            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">Given structured financial data, the AI produces analyst-quality PPTX pitchbooks and DOCX research reports. Demonstrated live to the research team.</div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">Pitchbook Gen</div>
-                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">PPTX Formatting</div>
-                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">Citation System</div>
-            </div>
-        </div>
-        <div class="journey-arrow">→</div>
-        <!-- Block 1 -->
-        <div style="padding:22px; background:rgba(236,112,0,.04); border:2px solid rgba(236,112,0,.25); border-radius:10px; position:relative;">
-            <div style="position:absolute;top:-9px;right:14px;padding:3px 10px;background:var(--orange);color:var(--bg);font-size:8px;font-weight:800;letter-spacing:1px;border-radius:3px;text-transform:uppercase;">This Presentation</div>
-            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
-                <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:800;">→</div>
-                <div style="font-size:10px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:1px;">Block 1 — Solving Now</div>
-            </div>
-            <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">Data Ingestion & Research Architecture</div>
-            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">How do we automatically pull live data from Bloomberg, Capital IQ, CVM, and 6 other sources — normalize it, reconcile conflicts, and feed it to the AI without violating any data licenses?</div>
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">9 Sources</div>
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Compliance</div>
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Provenance</div>
-            </div>
         </div>
     </div>
-    <div style="margin-top:24px; padding:14px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--text-3); line-height:1.7; text-align:center;">
-        <strong style="color:var(--text)">Why this order matters:</strong> Block 2 proved the AI can write research-grade output. Block 1 feeds it real data — so the output is <strong style="color:var(--orange)">grounded in current, cited, reconciled financial data</strong> instead of static samples. Solve Block 1 and the full pipeline is production-ready: analyst asks a question, system pulls live data, AI writes the report.
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Contexto</div>
+    <div class="s-heading">Onde Estamos — Camada de Output Comprovada, Camada de Dados Próxima</div>
+    <div class="s-desc">Estruturamos este POC em dois blocos. <strong style="color:var(--text)">Bloco 2</strong> (geração de output) foi abordado primeiro — Tom demonstrou ao vivo como a IA pode pegar dados estruturados e produzir pitchbooks em PPTX e relatórios de pesquisa em DOCX de nível profissional, formatados conforme os padrões Itaú BBA. Isso está comprovado. <strong style="color:var(--text)">Bloco 1</strong> (ingestão de dados) é o desafio upstream que estamos resolvendo agora: como inserir dados financeiros reais, atuais e de múltiplas fontes na IA — automaticamente e em conformidade?</div>
+
+    <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch;">
+        <!-- Bloco 2 -->
+        <div style="padding:22px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:10px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:800;">✓</div>
+                <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px;">Bloco 2 — Demonstrado</div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 3 — CAROLINA'S 3 USE CASES
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="2">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Research Use Cases</div>
     <div class="s-heading">Three Core Workflows This System Must Support</div>
     <div class="s-desc" style="margin-bottom:20px;">Based on our discussions with the research team, these are the three primary use cases that define what the data architecture needs to deliver. Each one has different data demands, time pressures, and output formats.</div>
@@ -373,53 +374,32 @@
                 <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">High frequency</div>
                 <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">~200 per year</div>
             </div>
-            <div style="margin-top:8px; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
-                <strong style="color:var(--blue)">Data needed:</strong> CVM filing (actuals), Bloomberg (consensus), Capital IQ (peer comparison), prior internal notes
-            </div>
-        </div>
-
-        <!-- UC2: Sector Reports -->
-        <div class="uc-card" style="background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15);">
-            <div class="uc-num" style="color:var(--green);">02</div>
-            <div class="uc-title">Sector Reports</div>
-            <div class="uc-desc">Periodic deep-dives into an entire sector — pulling macro indicators, overlaying them on all covered companies, identifying thematic trends, and producing a cross-company comparative view.</div>
-            <div class="uc-tags">
-                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Data-heavy</div>
-                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Cross-company</div>
-                <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">Monthly/Quarterly</div>
-            </div>
-            <div style="margin-top:8px; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
-                <strong style="color:var(--green)">Data needed:</strong> IBGE (macro), CONAB/ANP/BCB (sector-specific), Bloomberg (market), CVM (all covered companies), Economatica (LatAm comps)
-            </div>
-        </div>
-
-        <!-- UC3: Initial Coverage -->
-        <div class="uc-card" style="background:rgba(236,112,0,.04); border:1px solid rgba(236,112,0,.15);">
-            <div class="uc-num" style="color:var(--orange);">03</div>
-            <div class="uc-title">Initial Coverage (IPO)</div>
-            <div class="uc-desc">When a company is about to list or recently IPO'd, build comprehensive coverage from scratch — full financial model, sum-of-the-parts valuation, peer positioning, sector overlay, and risk assessment.</div>
-            <div class="uc-tags">
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Heaviest lift</div>
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Highest value</div>
-                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">All 9 sources</div>
-            </div>
-            <div style="margin-top:8px; padding:8px 10px; background:rgba(236,112,0,.03); border:1px solid rgba(236,112,0,.08); border-radius:5px; font-size:10px; color:var(--text-3); line-height:1.5;">
-                <strong style="color:var(--orange)">Data needed:</strong> Everything — CVM filings, Bloomberg, Capital IQ, Economatica, macro sources, Salesforce (internal prior work), and potentially web sources for context
-            </div>
         </div>
     </div>
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Casos de Uso de Pesquisa</div>
+    <div class="s-heading">Três Fluxos de Trabalho Centrais que Este Sistema Deve Suportar</div>
+    <div class="s-desc" style="margin-bottom:20px;">Com base em nossas discussões com o time de pesquisa, estes são os três casos de uso primários que definem o que a arquitetura de dados precisa entregar. Cada um tem diferentes demandas de dados, pressões de tempo e formatos de output.</div>
 
-    <div style="padding:12px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--text-3); line-height:1.7; text-align:center;">
-        <strong style="color:var(--text)">One architecture serves all three.</strong> The data layer is the same — what changes is which queries the AI runs and how much of the context window it fills. Quarterly uses ~200K tokens. Sector reports ~400K. Initial coverage pushes toward the full ~620K.
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- UC1: Resultados Trimestrais -->
+        <div class="uc-card" style="background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15);">
+            <div class="uc-num" style="color:var(--blue);">01</div>
+            <div class="uc-title">Resultados Trimestrais</div>
+            <div class="uc-desc">Quando uma empresa coberta divulga ganhos, analistas precisam rapidamente comparar resultados reais contra estimativas de consenso, sinalizar surpresas, atualizar modelos e publicar uma revisão — frequentemente dentro de horas do lançamento.</div>
+            <div class="uc-tags">
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">Crítico em Tempo</div>
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">Alta Frequência</div>
+                <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">~200 por ano</div>
+            </div>
+        </div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 4 — USE CASE → ARCHITECTURE MAPPING
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="3">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Architecture Mapping</div>
     <div class="s-heading">How Each Use Case Flows Through the System</div>
     <div class="s-desc" style="margin-bottom:16px;">Each use case triggers a different data path. The architecture handles all three through the same pipeline — the AI just asks different questions of the lake.</div>
@@ -446,17 +426,41 @@
 
     <div style="margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
         <div class="metric-card"><div class="mc-num" style="color:var(--blue)">~200K</div><div class="mc-label">tokens · quarterly review</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--green)">~400K</div><div class="mc-label">tokens · sector report</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--orange)">~620K</div><div class="mc-label">tokens · coverage initiation</div></div>
+    </div>
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Mapeamento de Arquitetura</div>
+    <div class="s-heading">Como Cada Caso de Uso Flui Através do Sistema</div>
+    <div class="s-desc" style="margin-bottom:16px;">Cada caso de uso aciona um caminho de dados diferente. A arquitetura lida com todos os três através do mesmo pipeline — a IA apenas faz perguntas diferentes do lago.</div>
+
+    <div style="overflow-x:auto;">
+        <table class="s-table">
+            <thead><tr>
+                <th style="width:140px"></th>
+                <th style="color:var(--blue)">Resultados Trimestrais</th>
+                <th style="color:var(--green)">Relatórios Setoriais</th>
+                <th style="color:var(--orange)">Cobertura Inicial (IPO)</th>
+            </tr></thead>
+            <tbody>
+                <tr><td class="bold">Trigger</td><td>Company reports earnings</td><td>Monthly/quarterly cycle or thematic event</td><td>Pre-IPO mandate or new listing</td></tr>
+                <tr><td class="bold">Time pressure</td><td style="color:var(--red); font-weight:600;">Hours — same day publication</td><td>Days — analyst-driven timeline</td><td>Weeks — but highest thoroughness</td></tr>
+                <tr><td class="bold">Primary sources</td><td>CVM (filing), BBG (consensus), CIQ (peers)</td><td>IBGE, CONAB, ANP, BCB + all covered companies</td><td>Todas as 9 fontes + web context</td></tr>
+                <tr><td class="bold">Lake queries</td><td class="mono">~8–12 queries</td><td class="mono">~30–50 queries (multi-company)</td><td class="mono">~20–25 queries (deep single)</td></tr>
+                <tr><td class="bold">Contexto window</td><td class="mono">~200K tokens</td><td class="mono">~400K tokens</td><td class="mono">~620K tokens</td></tr>
+                <tr><td class="bold">Output</td><td>Earnings review (5–8 slides)</td><td>Sector report (15–25 pages)</td><td>Coverage initiation (40+ pages, SOTP model)</td></tr>
+                <tr><td class="bold">Key challenge</td><td>Speed — data must be fresh within minutes</td><td>Breadth — cross-company consistency</td><td>Depth — SOTP requires subsidiary-level data</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:16px; display:grid; grid-template-columns:repeat(3,1fr); gap:12px;">
+        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">~200K</div><div class="mc-label">tokens · quarterly review</div></div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 5 — CORE CONSTRAINT
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="4">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">The Core Constraint</div>
     <div class="s-heading">Why AI Cannot Touch Data Sources Directly</div>
     <div class="s-desc">Itaú BBA Research relies on licensed data providers — Bloomberg, S&P Capital IQ, Economatica — for the financial data that underpins every research report. These providers have specific contractual terms about how their data can be used, and most explicitly prohibit AI agents from connecting to their systems. This single fact shapes every design decision in our architecture.</div>
@@ -469,19 +473,25 @@
             <strong>Economatica:</strong> Commercial license with distribution restrictions. Terms must be reviewed for AI-derived-output use cases.<br><br>
             <strong style="color:var(--red);">The implication:</strong> Any architecture where an LLM connects directly to these systems is <strong>non-compliant</strong> and puts Itaú at licensing risk.
         </div>
-    </div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">The Core Constraint</div>
+    <div class="s-heading">Why AI Cannot Touch Fontes de Dados Directly</div>
+    <div class="s-desc">Itaú BBA Research relies on licensed data providers — Bloomberg, S&P Capital IQ, Economatica — for the financial data that underpins every research report. These providers have specific contractual terms about how their data can be used, and most explicitly prohibit AI agents from connecting to their systems. This single fact shapes every design decision in our architecture.</div>
 
-    <div style="padding:14px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; font-size:13px; color:var(--text-2); line-height:1.7;">
-        <strong style="color:var(--red)">What's at stake:</strong> If an AI system connects directly to Bloomberg or Capital IQ, Itaú risks license revocation, financial penalties, and loss of access to data the research team depends on daily. The architecture must enforce a <strong style="color:var(--red)">hard boundary</strong> between data ingestion and AI consumption — not as a policy document that people follow, but as <strong style="color:var(--text)">network-level infrastructure</strong> where the AI physically cannot reach the source systems.
+    <div class="constraint-box" style="margin-bottom:20px;">
+        <div class="label">Licensing Reality</div>
+        <div class="text">
+            <strong>Capital IQ (S&P):</strong> Explicitly prohibits AI agents, MCP servers, and automated AI-driven systems from connecting to their APIs. Bearer tokens expire every 60 minutes and cannot be issued to AI processes.<br><br>
+            <strong>Bloomberg:</strong> AI/ML use requires a specific license amendment. Standard terminal or BLPAPI licences do <em>not</em> permit feeding data into AI systems.<br><br>
+            <strong>Economatica:</strong> Commercial license with distribution restrictions. Terms must be reviewed for AI-derived-output use cases.<br><br>
+            <strong style="color:var(--red);">The implication:</strong> Any architecture where an LLM connects directly to these systems is <strong>non-compliant</strong> and puts Itaú at licensing risk.
+        </div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 6 — ARCHITECTURE DIAGRAM
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="5">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Solution Architecture</div>
     <div class="s-heading">Decoupled Two-Layer Design</div>
     <div class="s-desc" style="margin-bottom:12px;">The system is split into two completely separate layers. <strong style="color:var(--orange)">Layer 1 (left)</strong> handles all data ingestion — traditional ETL pipelines that pull from Bloomberg, Capital IQ, public regulators, etc. <strong style="color:var(--blue)">A data lake</strong> (center) stores everything in normalized tables. <strong style="color:var(--green)">Layer 2 (right)</strong> is where the AI lives — it can only read from the lake, never from source systems. The red line between them is a network-enforced firewall.</div>
@@ -491,59 +501,50 @@
         <div class="af-col af-sources">
             <div class="tier-label" style="color:var(--orange); font-size:7px;">LICENSED</div>
             <div class="src-node"><div class="src-icon" style="background:rgba(255,165,0,.1);color:#FFA500;border:1px solid rgba(255,165,0,.25)">BBG</div><div class="src-label">Bloomberg</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(0,120,215,.1);color:#0078D7;border:1px solid rgba(0,120,215,.25)">CIQ</div><div class="src-label">Capital IQ</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25)">ECO</div><div class="src-label">Economatica</div></div>
-            <div class="tier-label" style="color:var(--green); font-size:7px;">PUBLIC</div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.25)">CVM</div><div class="src-label">CVM / B3</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)">IBGE</div><div class="src-label">IBGE SIDRA</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(236,112,0,.1);color:var(--orange);border:1px solid rgba(236,112,0,.25)">CON</div><div class="src-label">CONAB</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.25)">ANP</div><div class="src-label">ANP</div></div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)">BCB</div><div class="src-label">Banco Central</div></div>
-            <div class="tier-label" style="color:var(--purple); font-size:7px;">INTERNAL</div>
-            <div class="src-node"><div class="src-icon" style="background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.25)">SF</div><div class="src-label">Salesforce</div></div>
-        </div>
-        <!-- ETL -->
-        <div class="af-col af-etl">
-            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Middleware API Client</div><div class="eb-sub">REST with OAuth token refresh</div></div>
-            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">SFTP Listener</div><div class="eb-sub">Xpressfeed / Bloomberg DL</div></div>
-            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Analyst Export Ingest</div><div class="eb-sub">Excel/CSV upload portal</div></div>
-            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Public Source Scrapers</div><div class="eb-sub">CVM, IBGE, ANP, CONAB, BCB</div></div>
-            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Internal Sync</div><div class="eb-sub">Salesforce REST + doc indexer</div></div>
-        </div>
-        <!-- Firewall -->
-        <div class="af-col af-firewall"></div>
-        <!-- Lake -->
-        <div class="af-col af-lake">
-            <div class="lake-block"><div class="lb-title">Company Financials</div><div class="lb-fields">company_id · source · metric · value</div></div>
-            <div class="lake-block"><div class="lb-title">Market Data</div><div class="lb-fields">company_id · date · close · volume</div></div>
-            <div class="lake-block"><div class="lb-title">Regulatory Filings</div><div class="lb-fields">company_id · filing_type · content</div></div>
-            <div class="lake-block"><div class="lb-title">Macro / Sector</div><div class="lb-fields">series_id · source · metric · value</div></div>
-            <div class="lake-block"><div class="lb-title">Internal Documents</div><div class="lb-fields">doc_id · content · embedding</div></div>
-            <div class="lake-block" style="border-color:rgba(239,68,68,.15)"><div class="lb-title" style="color:var(--red)">Data Provenance</div><div class="lb-fields">source · pull_date · license · hash</div></div>
-        </div>
-        <!-- AI -->
-        <div class="af-col af-ai">
-            <div class="ai-block"><div class="ab-title">Query Planner</div><div class="ab-sub">Determines lake queries</div></div>
-            <div class="ai-block"><div class="ab-title">Lake Query API</div><div class="ab-sub">Read-only. Never touches sources.</div></div>
-            <div class="ai-block"><div class="ab-title">1M Token Context</div><div class="ab-sub">Full financial universe in memory</div></div>
-            <div class="ai-block"><div class="ab-title">Research Synthesis</div><div class="ab-sub">Multi-source reasoning + citations</div></div>
-            <div class="ai-block"><div class="ab-title">Output Engine</div><div class="ab-sub">JSON → PPTX + DOCX (Block 2)</div></div>
         </div>
     </div>
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Solution Architecture</div>
+    <div class="s-heading">Decoupled Two-Layer Design</div>
+    <div class="s-desc" style="margin-bottom:12px;">The system is split into two completely separate layers. <strong style="color:var(--orange)">Layer 1 (left)</strong> handles all data ingestion — traditional ETL pipelines that pull from Bloomberg, Capital IQ, public regulators, etc. <strong style="color:var(--blue)">A data lake</strong> (center) stores everything in normalized tables. <strong style="color:var(--green)">Layer 2 (right)</strong> is where the AI lives — it can only read from the lake, never from source systems. The red line between them is a network-enforced firewall.</div>
 
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:8px;">
-        <div class="metric-card"><div class="mc-num">9</div><div class="mc-label">Data sources · 3 licensed · 5 public · 1 internal</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">6</div><div class="mc-label">Normalized domain tables · provenance-tagged</div></div>
-        <div class="metric-card"><div class="mc-num" style="color:var(--red)">0</div><div class="mc-label">Direct AI → Source connections</div></div>
+    <div class="arch-flow">
+        <!-- Sources -->
+        <div class="af-col af-sources">
+            <div class="tier-label" style="color:var(--orange); font-size:7px;">LICENSED</div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(255,165,0,.1);color:#FFA500;border:1px solid rgba(255,165,0,.25)">BBG</div><div class="src-label">Bloomberg</div></div>
+        </div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 7 — DATA FLOW METRICS
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="6">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
+    <div class="s-label">Data Flow</div>
+    <div class="s-heading">What Actually Flows Through This System</div>
+    <div class="s-desc" style="margin-bottom:12px;">The system ingests from 9 distinct sources, split into three tiers. <strong style="color:var(--orange)">Licensed sources</strong> (Bloomberg for market/consensus data, Capital IQ for global financials, Economatica for LatAm-specific metrics) require paid subscriptions with strict usage terms. <strong style="color:var(--green)">Public sources</strong> include Brazilian regulators: CVM (securities filings — like the SEC's EDGAR), IBGE (national statistics bureau), CONAB (agricultural forecasts), ANP (oil/fuel pricing), and BCB (central bank rates and FX). <strong style="color:var(--purple)">Internal data</strong> comes from Itaú's own Salesforce CRM and prior research.</div>
+    <div style="margin-bottom:16px; padding:8px 14px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5;">Estimated volumes below are for a ~200 company Brazilian equities universe. Planning estimates — actual numbers depend on Itaú's access levels and license tiers.</div>
+
+    <div style="overflow-x:auto;">
+        <table class="s-table">
+            <thead><tr>
+                <th style="width:160px">Source</th><th>Tier</th><th>Refresh</th><th>Est. Volume</th><th>Latency</th><th>Automation</th>
+            </tr></thead>
+            <tbody>
+                <tr><td class="bold">Bloomberg</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily (DL) / Real-time</td><td class="mono">~800K</td><td>&lt;30 min</td><td>Full (DL) · Semi (Terminal)</td></tr>
+                <tr><td class="bold">Capital IQ</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily bulk / On-demand</td><td class="mono">~500K</td><td>&lt;45 min</td><td>Full (API/SFTP) · Manual (Excel)</td></tr>
+                <tr><td class="bold">Economatica</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily</td><td class="mono">~200K</td><td>&lt;15 min</td><td>Full (API) · Manual (Plugin)</td></tr>
+                <tr><td class="bold">CVM / B3</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>On filing</td><td class="mono">~50K/qtr</td><td>&lt;20 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">IBGE SIDRA</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly / Quarterly</td><td class="mono">~15K</td><td>&lt;5 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">CONAB</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly</td><td class="mono">~3K</td><td>~10 min (OCR)</td><td>Full — 5-stage pipeline</td></tr>
+                <tr><td class="bold">ANP</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly / Weekly</td><td class="mono">~25K</td><td>&lt;3 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">BCB</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Daily / COPOM</td><td class="mono">~20K</td><td>&lt;5 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">Salesforce</td><td><span class="tag" style="background:var(--purple-dim);color:var(--purple)">Internal</span></td><td>Daily sync</td><td class="mono">~10K + docs</td><td>&lt;10 min</td><td>Full — API sync</td></tr>
+            </tbody>
+        </table>
+    </div>
+<div class="slide-inner lang-pt">
     <div class="s-label">Data Flow</div>
     <div class="s-heading">What Actually Flows Through This System</div>
     <div class="s-desc" style="margin-bottom:12px;">The system ingests from 9 distinct sources, split into three tiers. <strong style="color:var(--orange)">Licensed sources</strong> (Bloomberg for market/consensus data, Capital IQ for global financials, Economatica for LatAm-specific metrics) require paid subscriptions with strict usage terms. <strong style="color:var(--green)">Public sources</strong> include Brazilian regulators: CVM (securities filings — like the SEC's EDGAR), IBGE (national statistics bureau), CONAB (agricultural forecasts), ANP (oil/fuel pricing), and BCB (central bank rates and FX). <strong style="color:var(--purple)">Internal data</strong> comes from Itaú's own Salesforce CRM and prior research.</div>
@@ -570,11 +571,8 @@
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 8 — SCHEMA & PROVENANCE
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="7">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Unified Data Lake</div>
     <div class="s-heading">Schema Design & Provenance</div>
     <div class="s-desc" style="margin-bottom:12px;">Today, each data source uses its own format, field names, and identifiers. Bloomberg calls it "Sales", Capital IQ calls it "Total Revenue", CVM uses Portuguese labels. An analyst mentally reconciles these every time they build a model. Our data lake normalizes everything into 6 common tables — so Bloomberg's revenue figure and CIQ's revenue figure for the same company sit side by side, tagged by source. The AI reads one clean schema instead of navigating nine different formats.</div>
@@ -582,86 +580,26 @@
 
     <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
         <div class="schema-mini">
-            <div class="sm-head"><div><div class="sm-name">company_financials</div><div class="sm-src">BBG · CIQ · Economatica · CVM</div></div><div class="sm-vol">~1.2M rows/yr</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="pk">company_id</span> · source · period</div>
-                <div class="sm-field">statement · metric · value · currency</div>
-                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
-            </div>
-        </div>
-        <div class="schema-mini">
-            <div class="sm-head"><div><div class="sm-name">market_data</div><div class="sm-src">BBG · Economatica</div></div><div class="sm-vol">~800K rows/yr</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="pk">company_id</span> · date · metric</div>
-                <div class="sm-field">value · source · adj_factor</div>
-                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
-            </div>
-        </div>
-        <div class="schema-mini">
-            <div class="sm-head"><div><div class="sm-name">regulatory_filings</div><div class="sm-src">CVM</div></div><div class="sm-vol">~50K rows/qtr</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="pk">company_id</span> · filing_type · period</div>
-                <div class="sm-field">raw_doc_uri · extracted_json</div>
-                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
-            </div>
-        </div>
-        <div class="schema-mini">
-            <div class="sm-head"><div><div class="sm-name">macro_sector</div><div class="sm-src">IBGE · CONAB · ANP · BCB</div></div><div class="sm-vol">~40K rows/yr</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="pk">series_id</span> · source · date</div>
-                <div class="sm-field">metric · value · geography</div>
-                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
-            </div>
-        </div>
-        <div class="schema-mini">
-            <div class="sm-head"><div><div class="sm-name">internal_documents</div><div class="sm-src">Salesforce · SharePoint</div></div><div class="sm-vol">~10K docs</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="pk">doc_id</span> · doc_type · content_text</div>
-                <div class="sm-field">companies[] · sectors[] · <span style="color:var(--purple)">embedding</span></div>
-                <div class="sm-field">source_uri</div>
-            </div>
-        </div>
-        <div class="schema-mini" style="border-color:rgba(239,68,68,.15);">
-            <div class="sm-head" style="background:rgba(239,68,68,.04); border-color:rgba(239,68,68,.12);"><div><div class="sm-name" style="color:var(--red)">data_provenance</div><div class="sm-src" style="color:var(--red); opacity:.7;">Every Record · Every Table</div></div><div class="sm-vol" style="color:var(--red)">AUDIT</div></div>
-            <div class="sm-body">
-                <div class="sm-field"><span class="fk">provenance_id</span> · source_system</div>
-                <div class="sm-field">pull_timestamp · license_type</div>
-                <div class="sm-field">freshness_hours · <span class="fk">raw_payload_hash</span></div>
-            </div>
+            <div class="sm-head"><div><div class="sm-name">company_financials</div><div class="sm-src">BBG · CIQ · Economatica · CVM</div></div></div>
         </div>
     </div>
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Unified Data Lake</div>
+    <div class="s-heading">Schema Design & Rastreabilidade</div>
+    <div class="s-desc" style="margin-bottom:12px;">Today, each data source uses its own format, field names, and identifiers. Bloomberg calls it "Sales", Capital IQ calls it "Total Revenue", CVM uses Portuguese labels. An analyst mentally reconciles these every time they build a model. Our data lake normalizes everything into 6 common tables — so Bloomberg's revenue figure and CIQ's revenue figure for the same company sit side by side, tagged by source. The AI reads one clean schema instead of navigating nine different formats.</div>
+    <div style="margin-bottom:14px; padding:8px 14px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5;"><strong style="color:var(--red)">Rastreabilidade</strong> means every single record in the lake carries a tag showing exactly which source it came from, when it was pulled, what license covers it, and a hash of the original data. This isn't just for audit — it's how the AI cites its sources in every output.</div>
 
-    <!-- Provenance chain -->
-    <div style="display:flex; align-items:center; gap:0; font-size:11px; padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px;">
-        <div style="flex:1; padding:8px 12px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:6px 0 0 6px; text-align:center;">
-            <div style="font-size:8px; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:1px;">AI Output</div>
-            <div style="font-size:10px; color:var(--text-3); margin-top:2px;">"Net revenue R$41.2B"</div>
-        </div>
-        <div style="padding:0 6px; color:var(--orange);">→</div>
-        <div style="flex:1; padding:8px 12px; background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15); text-align:center;">
-            <div style="font-size:8px; color:var(--blue); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Lake Record</div>
-            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">CSAN · cvm · 41,215.9M</div>
-        </div>
-        <div style="padding:0 6px; color:var(--orange);">→</div>
-        <div style="flex:1; padding:8px 12px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.15); text-align:center;">
-            <div style="font-size:8px; color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Provenance</div>
-            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">cvm_scraper · public_free</div>
-        </div>
-        <div style="padding:0 6px; color:var(--orange);">→</div>
-        <div style="flex:1; padding:8px 12px; background:rgba(139,92,246,.04); border:1px solid rgba(139,92,246,.15); border-radius:0 6px 6px 0; text-align:center;">
-            <div style="font-size:8px; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Raw Source</div>
-            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">dados.cvm.gov.br · sha256:a8f2…</div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">company_financials</div><div class="sm-src">BBG · CIQ · Economatica · CVM</div></div></div>
         </div>
     </div>
-    <div style="text-align:center; margin-top:8px; font-size:11px; color:var(--text-3);">Every claim the AI makes can be traced in <strong style="color:var(--text)">3 hops</strong> back to the original source document.</div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 9 — AI ENGINE
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="8">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">AI Research Engine</div>
     <div class="s-heading">What Happens Inside the 1M-Token Window</div>
     <div class="s-desc" style="margin-bottom:10px;">Most AI systems use "RAG" (retrieval-augmented generation) — they search for small snippets of relevant data and feed those to the model. The problem with RAG for equity research is that analysts need to reason across many data points simultaneously: comparing a company's financials with peer benchmarks, overlaying macro trends, checking internal prior work. RAG loses that cross-referencing ability.</div>
@@ -670,28 +608,21 @@
     <!-- Pipeline -->
     <div class="pipe-row">
         <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">Step 1</div><div class="ps-title">Research Brief</div><div class="ps-sub">Analyst defines scope</div></div>
-        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">Step 2</div><div class="ps-title">Query Planning</div><div class="ps-sub">AI determines data needs</div></div>
-        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">Step 3</div><div class="ps-title">Lake Queries</div><div class="ps-sub">Parallel reads from lake</div></div>
-        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">Step 4</div><div class="ps-title">Context Assembly</div><div class="ps-sub">620K tokens packed</div></div>
-        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">Step 5</div><div class="ps-title">Multi-Source Reasoning</div><div class="ps-sub">Cross-validate + synthesize</div></div>
-        <div class="pipe-step" style="background:rgba(236,112,0,.04);"><div class="ps-num" style="color:var(--orange)">Step 6</div><div class="ps-title">Cited Output</div><div class="ps-sub">JSON → Block 2</div></div>
-    </div>
-
-    <!-- Citation example -->
-    <div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden; margin-top:12px;">
-        <div style="padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border); font-size:10px; color:var(--text-3);">Example output with inline citations — every factual claim attributed to its source</div>
-        <div style="padding:14px 16px; font-size:12px; color:var(--text-2); line-height:2; border-left:3px solid var(--orange); margin:12px; padding-left:16px;">
-            Cosan reported consolidated net revenue of R$41.2B in Q3 2025 <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span>, representing 12% YoY growth driven by the Raízen consolidation <span style="font-size:9px;padding:2px 5px;background:rgba(0,120,215,.1);border:1px solid rgba(0,120,215,.2);border-radius:3px;color:#0078D7;font-family:var(--mono);font-weight:600">[CIQ]</span>. EBITDA reached R$7.9B <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span> vs. Bloomberg consensus of R$8.3B <span style="font-size:9px;padding:2px 5px;background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.2);border-radius:3px;color:#FFA500;font-family:var(--mono);font-weight:600">[BBG]</span>, a 4.8% miss. CONAB's sugarcane forecast projects 685M tonnes <span style="font-size:9px;padding:2px 5px;background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.2);border-radius:3px;color:var(--orange);font-family:var(--mono);font-weight:600">[CONAB]</span>, positive for Raízen where ANP ethanol-to-gasoline parity sits at 68% <span style="font-size:9px;padding:2px 5px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);border-radius:3px;color:var(--cyan);font-family:var(--mono);font-weight:600">[ANP]</span>.
-        </div>
     </div>
 </div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">AI Research Engine</div>
+    <div class="s-heading">What Happens Inside the 1M-Token Window</div>
+    <div class="s-desc" style="margin-bottom:10px;">Most AI systems use "RAG" (retrieval-augmented generation) — they search for small snippets of relevant data and feed those to the model. The problem with RAG for equity research is that analysts need to reason across many data points simultaneously: comparing a company's financials with peer benchmarks, overlaying macro trends, checking internal prior work. RAG loses that cross-referencing ability.</div>
+    <div style="margin-bottom:14px; padding:8px 14px; background:var(--green-dim); border:1px solid rgba(16,185,129,.12); border-radius:6px; font-size:11px; color:var(--text-2); line-height:1.6;">Our approach is different: we load the <strong style="color:var(--green)">entire financial universe for a company</strong> — financials, filings, market data, sector macro, internal docs — into a single 1M-token context window. The AI sees everything at once, just like an analyst with every terminal and document open on their desk. No chunking, no information loss.</div>
+
+    <!-- Pipeline -->
+    <div class="pipe-row">
+        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">Step 1</div><div class="ps-title">Research Brief</div><div class="ps-sub">Analyst defines scope</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 10 — COSAN TRACE (Steps 1-4)
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="9">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">End-to-End Trace</div>
     <div class="s-heading">"Coverage Initiation on Cosan" — Steps 1–4</div>
     <div class="s-desc" style="margin-bottom:6px;">To make this concrete, we walk through how the system would handle a real task: initiating coverage on <strong style="color:var(--text)">Cosan (CSAN3)</strong> — one of Brazil's largest conglomerates spanning sugar/ethanol (Raízen), fuel distribution (Compass/Comgás), rail logistics (Rumo), and lubricants (Moove). It's an ideal test case because it requires <strong style="color:var(--text)">sum-of-the-parts (SOTP) analysis</strong> across multiple subsidiaries, touching nearly every data source in the system.</div>
@@ -702,56 +633,25 @@
             <div class="trace-num" style="background:var(--orange-dim); color:var(--orange); border:2px solid rgba(236,112,0,.3);">1</div>
             <div class="trace-content">
                 <div class="tc-head"><div class="tc-phase" style="background:var(--orange-dim); color:var(--orange);">Entity Resolution</div><div class="tc-title">"Cosan" → resolves all identifiers</div><div class="tc-time">~instant</div></div>
-                <div class="tc-text">Analyst says "Cosan" → system resolves to <span style="font-family:var(--mono);color:var(--text)">CSAN</span> (internal), <span style="color:#FFA500">CSAN3 BZ</span> (BBG), <span style="color:#0078D7">IQ24819237</span> (CIQ), <span style="color:var(--purple)">CVM 20010</span>, CNPJ, plus 5 subsidiary entities for SOTP.</div>
-            </div>
-        </div>
-        <div class="trace-row">
-            <div class="trace-num" style="background:var(--blue-dim); color:var(--blue); border:2px solid rgba(59,130,246,.3);">2</div>
-            <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Query Planning</div><div class="tc-title">AI generates 23 structured queries against the lake</div><div class="tc-time">~1–2s</div></div>
-                <div class="tc-text">"Coverage initiation with full SOTP" triggers queries for: parent financials (12Q), 5 subsidiary financials, CVM filings, sector macro (sugarcane, ethanol, fuel, rail, gas), market data, peer comparisons, and internal documents.</div>
-            </div>
-        </div>
-        <div class="trace-row">
-            <div class="trace-num" style="background:var(--green-dim); color:var(--green); border:2px solid rgba(16,185,129,.3);">3</div>
-            <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--green-dim); color:var(--green);">Lake Execution</div><div class="tc-title">23 queries execute in parallel — 3,799 records returned</div><div class="tc-time">~3–5s</div></div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
-                    <div class="tag" style="background:rgba(139,92,246,.08);color:var(--purple);border:1px solid rgba(139,92,246,.15)">CVM: 14 filings</div>
-                    <div class="tag" style="background:rgba(255,165,0,.08);color:#FFA500;border:1px solid rgba(255,165,0,.15)">BBG: 847 records</div>
-                    <div class="tag" style="background:rgba(0,120,215,.08);color:#0078D7;border:1px solid rgba(0,120,215,.15)">CIQ: 392 records</div>
-                    <div class="tag" style="background:rgba(236,112,0,.08);color:var(--orange);border:1px solid rgba(236,112,0,.15)">CONAB/ANP: 156</div>
-                    <div class="tag" style="background:rgba(6,182,212,.08);color:var(--cyan);border:1px solid rgba(6,182,212,.15)">IBGE: 43 series</div>
-                    <div class="tag" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.15)">Internal: 7 docs</div>
-                    <div class="tag" style="background:rgba(107,122,141,.08);color:var(--text-3);border:1px solid rgba(107,122,141,.15)">Peers: 2,340</div>
-                </div>
-            </div>
-        </div>
-        <div class="trace-row">
-            <div class="trace-num" style="background:var(--red-dim); color:var(--red); border:2px solid rgba(239,68,68,.3);">4</div>
-            <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--red-dim); color:var(--red);">Reconciliation</div><div class="tc-title">Overlapping data from 3+ sources compared</div><div class="tc-time">~5–8s</div></div>
-                <div style="overflow-x:auto; margin-top:6px;">
-                    <table class="s-table" style="font-size:10px;">
-                        <thead><tr><th>Metric</th><th class="right" style="color:var(--purple)">CVM</th><th class="right" style="color:#FFA500">BBG</th><th class="right" style="color:#0078D7">CIQ</th><th style="text-align:center">Δ</th><th style="color:var(--green)">Ground Truth</th></tr></thead>
-                        <tbody>
-                            <tr><td class="bold">Net Revenue Q3-25</td><td class="mono right">R$41,215.9M</td><td class="mono right">R$41,216.0M</td><td class="mono right">R$41,200.0M</td><td style="text-align:center;color:var(--green)">0.04%</td><td style="color:var(--purple);font-weight:600">CVM ✓</td></tr>
-                            <tr><td class="bold">EBITDA Q3-25</td><td class="mono right">R$7,892.1M</td><td class="mono right">R$7,900.0M</td><td class="mono right">R$7,880.0M</td><td style="text-align:center;color:var(--green)">0.25%</td><td style="color:var(--purple);font-weight:600">CVM ✓</td></tr>
-                            <tr><td class="bold">Net Debt Q3-25</td><td class="mono right">R$22,847.3M</td><td class="mono right">R$23,100.0M</td><td class="mono right">R$22,900.0M</td><td style="text-align:center;color:var(--orange)">1.1%</td><td style="color:var(--purple);font-weight:600">CVM ✓ <span style="color:var(--orange);font-size:8px">⚠</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
             </div>
         </div>
     </div>
 </div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">End-to-End Trace</div>
+    <div class="s-heading">"Coverage Initiation on Cosan" — Steps 1–4</div>
+    <div class="s-desc" style="margin-bottom:6px;">To make this concrete, we walk through how the system would handle a real task: initiating coverage on <strong style="color:var(--text)">Cosan (CSAN3)</strong> — one of Brazil's largest conglomerates spanning sugar/ethanol (Raízen), fuel distribution (Compass/Comgás), rail logistics (Rumo), and lubricants (Moove). It's an ideal test case because it requires <strong style="color:var(--text)">sum-of-the-parts (SOTP) analysis</strong> across multiple subsidiaries, touching nearly every data source in the system.</div>
+    <div style="margin-bottom:6px; font-size:10px; color:var(--text-3); line-height:1.5;"><strong style="color:var(--orange)">Illustrative example.</strong> Financial figures are representative. Architecture, queries, and data paths are exact. Timings are target estimates.</div>
+
+    <div style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--orange-dim); color:var(--orange); border:2px solid rgba(236,112,0,.3);">1</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--orange-dim); color:var(--orange);">Entity Resolution</div><div class="tc-title">"Cosan" → resolves all identifiers</div><div class="tc-time">~instant</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 11 — COSAN TRACE (Steps 5-7)
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="10">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">End-to-End Trace</div>
     <div class="s-heading">"Coverage Initiation on Cosan" — Steps 5–7</div>
     <div class="s-desc" style="margin-bottom:10px;">Steps 1–4 gathered and reconciled the raw data. Now the system assembles it into a single context, reasons across all of it simultaneously, and produces the final deliverable — a coverage initiation report with every claim cited back to its source.</div>
@@ -760,102 +660,46 @@
         <div class="trace-row">
             <div class="trace-num" style="background:var(--blue-dim); color:var(--blue); border:2px solid rgba(59,130,246,.3);">5</div>
             <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Context Assembly</div><div class="tc-title">~620K tokens packed into the 1M-token context window</div><div class="tc-time">~8–12s</div></div>
-                <div class="tc-text">All reconciled data serialized into a structured prompt. Each data package prefixed with source metadata and provenance tags. No chunking, no RAG, no information loss.</div>
-                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;">
-                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;">620K</div><div class="mc-label">tokens used</div></div>
-                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--blue)">3,799</div><div class="mc-label">records included</div></div>
-                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--green)">6</div><div class="mc-label">source systems</div></div>
-                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--red)">0</div><div class="mc-label">direct source calls</div></div>
-                </div>
-            </div>
-        </div>
-        <div class="trace-row">
-            <div class="trace-num" style="background:var(--purple-dim); color:var(--purple); border:2px solid rgba(139,92,246,.3);">6</div>
-            <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--purple-dim); color:var(--purple);">AI Reasoning</div><div class="tc-title">Multi-source synthesis into 13-section coverage initiation</div><div class="tc-time">~10–45s</div></div>
-                <div class="tc-text">Model reasons across all 620K tokens simultaneously — cross-references CVM segments with BBG estimates, overlays CONAB/ANP macro on Raízen projections, pulls Compass margin trends. Builds SOTP no single source could support alone.</div>
-            </div>
-        </div>
-        <div class="trace-row">
-            <div class="trace-num" style="background:var(--green-dim); color:var(--green); border:2px solid rgba(16,185,129,.3);">7</div>
-            <div class="trace-content">
-                <div class="tc-head"><div class="tc-phase" style="background:var(--green-dim); color:var(--green);">Delivery</div><div class="tc-title">Structured JSON → PPTX + DOCX with full citation chain</div><div class="tc-time">~45–60s</div></div>
-                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px;">
-                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
-                        <div style="font-size:20px;">📊</div><div style="font-size:11px; font-weight:600; color:var(--text);">PPTX · 13 slides</div>
-                    </div>
-                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
-                        <div style="font-size:20px;">📄</div><div style="font-size:11px; font-weight:600; color:var(--text);">DOCX · 40 pages</div>
-                    </div>
-                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
-                        <div style="font-size:20px;">🔗</div><div style="font-size:11px; font-weight:600; color:var(--text);">3,799 provenance links</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Context Assembly</div><div class="tc-title">~620K tokens packed into the 1M-token context window</div><div class="tc-time">~8–12s</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">End-to-End Trace</div>
+    <div class="s-heading">"Coverage Initiation on Cosan" — Steps 5–7</div>
+    <div class="s-desc" style="margin-bottom:10px;">Steps 1–4 gathered and reconciled the raw data. Now the system assembles it into a single context, reasons across all of it simultaneously, and produces the final deliverable — a coverage initiation report with every claim cited back to its source.</div>
 
-    <!-- Summary -->
-    <div style="margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,rgba(236,112,0,.04),rgba(16,185,129,.04)); border:1px solid var(--border); border-radius:8px;">
-        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:center;">
-            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--orange)">&lt;60s</div><div style="font-size:9px;color:var(--text-3)">Target end-to-end</div></div>
-            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--blue)">23</div><div style="font-size:9px;color:var(--text-3)">Parallel lake queries</div></div>
-            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--green)">620K</div><div style="font-size:9px;color:var(--text-3)">Tokens assembled</div></div>
-            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--red)">0</div><div style="font-size:9px;color:var(--text-3)">Direct source calls</div></div>
+    <div style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--blue-dim); color:var(--blue); border:2px solid rgba(59,130,246,.3);">5</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Contexto Assembly</div><div class="tc-title">~620K tokens packed into the 1M-token context window</div><div class="tc-time">~8–12s</div></div>
+            </div>
         </div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 12 — ENTERPRISE & COMPLIANCE
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="11">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Enterprise & Compliance</div>
     <div class="s-heading">Governance, Security & Regulatory Alignment</div>
     <div class="s-desc" style="margin-bottom:12px;">As Brazil's largest private bank, Itaú operates under three key regulatory frameworks: <strong style="color:var(--text)">BACEN</strong> (Banco Central do Brasil — the central bank regulator, equivalent to the Fed), <strong style="color:var(--text)">CVM</strong> (Comissão de Valores Mobiliários — Brazil's securities regulator, equivalent to the SEC), and <strong style="color:var(--text)">LGPD</strong> (Lei Geral de Proteção de Dados — Brazil's data protection law, equivalent to GDPR). Any AI system processing financial data within Itaú must satisfy all three.</div>
 
     <div class="card-grid c2" style="margin-bottom:16px;">
         <div class="info-card"><div class="ic-title">Data Provenance & Audit Trail</div><div class="ic-text">Every record: source, timestamp, license, SHA256 hash. AI outputs cite sources inline. Any claim traceable in 3 hops. "Did AI access Bloomberg directly?" → No, with full lineage proof.</div></div>
-        <div class="info-card"><div class="ic-title">Data Residency & Perimeter</div><div class="ic-text">Lake + ETL + AI all deploy within Itaú's AWS VPC (sa-east-1, São Paulo). No data leaves the perimeter. Licensed data stays within existing contract terms. Bedrock invocations stay in-region.</div></div>
-        <div class="info-card"><div class="ic-title">LGPD Compliance</div><div class="ic-text">System processes financial/market data, not personal data — minimal LGPD exposure. Internal docs processed within VPC. No personal data used for model training. Audit logs on every access.</div></div>
-        <div class="info-card"><div class="ic-title">BACEN / CVM Regulatory</div><div class="ic-text">AI outputs marked as AI-assisted, not autonomous. Analyst remains author. Aligns with CVM Instruction 20 (research independence). All outputs include source attribution for regulatory review.</div></div>
     </div>
+</div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Enterprise & Conformidade</div>
+    <div class="s-heading">Governance, Security & Regulatory Alignment</div>
+    <div class="s-desc" style="margin-bottom:12px;">As Brazil's largest private bank, Itaú operates under three key regulatory frameworks: <strong style="color:var(--text)">BACEN</strong> (Banco Central do Brasil — the central bank regulator, equivalent to the Fed), <strong style="color:var(--text)">CVM</strong> (Comissão de Valores Mobiliários — Brazil's securities regulator, equivalent to the SEC), and <strong style="color:var(--text)">LGPD</strong> (Lei Geral de Proteção de Dados — Brazil's data protection law, equivalent to GDPR). Any AI system processing financial data within Itaú must satisfy all three.</div>
 
-    <!-- Deployment topology -->
-    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;">
-        <div class="deploy-tier" style="background:var(--orange-dim); border:1px solid rgba(236,112,0,.15);">
-            <div class="dt-title" style="color:var(--orange);">ETL Tier (Layer 1)</div>
-            <div class="dt-row"><strong>Compute:</strong> ECS Fargate / Lambda</div>
-            <div class="dt-row"><strong>SFTP:</strong> AWS Transfer Family</div>
-            <div class="dt-row"><strong>Network:</strong> Private subnet, no AI access</div>
-        </div>
-        <div class="deploy-tier" style="background:var(--blue-dim); border:1px solid rgba(59,130,246,.15);">
-            <div class="dt-title" style="color:var(--blue);">Data Lake</div>
-            <div class="dt-row"><strong>Storage:</strong> S3 (raw) + RDS Postgres</div>
-            <div class="dt-row"><strong>Vectors:</strong> pgvector (embeddings)</div>
-            <div class="dt-row"><strong>Region:</strong> sa-east-1 (São Paulo)</div>
-        </div>
-        <div class="deploy-tier" style="background:var(--green-dim); border:1px solid rgba(16,185,129,.15);">
-            <div class="dt-title" style="color:var(--green);">AI Tier (Layer 2)</div>
-            <div class="dt-row"><strong>Model:</strong> Claude via AWS Bedrock</div>
-            <div class="dt-row"><strong>Context:</strong> 1M tokens (streaming)</div>
-            <div class="dt-row"><strong>Network:</strong> Lake access only</div>
-        </div>
-    </div>
-    <div style="padding:10px 14px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5; text-align:center;">
-        🔒 <strong style="color:var(--red)">Network isolation enforces the AI boundary.</strong> ETL can reach sources but not Bedrock. AI can reach the lake and Bedrock but not sources. License compliance is a <strong style="color:var(--text)">network property</strong>, not a trust-the-code property.
+    <div class="card-grid c2" style="margin-bottom:16px;">
+        <div class="info-card"><div class="ic-title">Data Rastreabilidade & Audit Trail</div><div class="ic-text">Every record: source, timestamp, license, SHA256 hash. AI outputs cite sources inline. Any claim traceable in 3 hops. "Did AI access Bloomberg directly?" → No, with full lineage proof.</div></div>
     </div>
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 13 — PROOF POINT: NEXT WEEK
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="12">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Proving It</div>
     <div class="s-heading">Next Week — End-to-End with Publicly Available Data</div>
     <div class="s-desc" style="margin-bottom:16px;">We've shown the architecture. Now we need to prove it works. Our recommendation: take a use case where the data sources are publicly accessible — no Bloomberg credentials or Capital IQ access needed from Itaú — and run the full pipeline end-to-end. Build the data lake, ingest real data, run the AI, produce real output.</div>
@@ -874,40 +718,29 @@
                 <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
                     <strong style="color:var(--text)">3. Audit trail demo</strong> — Click any claim in the output → trace it back through the lake to the original government source document
                 </div>
-            </div>
-        </div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Proving It</div>
+    <div class="s-heading">Next Week — End-to-End with Publicly Available Data</div>
+    <div class="s-desc" style="margin-bottom:16px;">We've shown the architecture. Now we need to prove it works. Our recommendation: take a use case where the data sources are publicly accessible — no Bloomberg credentials or Capital IQ access needed from Itaú — and run the full pipeline end-to-end. Build the data lake, ingest real data, run the AI, produce real output.</div>
 
-        <!-- Why this proves it -->
-        <div style="padding:20px; background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15); border-radius:10px;">
-            <div style="font-size:10px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">Why This Proves the Architecture</div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;">
+        <!-- What we'll do -->
+        <div style="padding:20px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:10px;">
+            <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px;">O Que Entregaremos</div>
             <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
-                    <strong style="color:var(--text)">Same architecture</strong> — The ETL → Lake → AI pipeline is identical whether the source is CVM (public) or Bloomberg (licensed). Adding licensed sources later is configuration, not redesign.
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">1. Working data pipeline</strong> — CVM filings, IBGE macro data, CONAB/ANP sector data, and BCB rates flowing into a real data lake
                 </div>
-                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
-                    <strong style="color:var(--text)">No blockers</strong> — Public data is freely available. We don't need to wait for Itaú's Bloomberg DL amendment or Capital IQ SFTP credentials.
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">2. AI research output</strong> — A real coverage report generated from the ingested data, with full source citations and provenance chain
                 </div>
-                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(59,130,246,.03); border:1px solid rgba(59,130,246,.08); border-radius:5px;">
-                    <strong style="color:var(--text)">Real validation</strong> — Using actual CVM filings and IBGE data for a real company means the output quality is directly assessable by the research team.
+                <div style="font-size:12px; color:var(--text-2); line-height:1.6; padding:8px 10px; background:rgba(16,185,129,.03); border:1px solid rgba(16,185,129,.08); border-radius:5px;">
+                    <strong style="color:var(--text)">3. Audit trail demo</strong> — Click any claim in the output → trace it back through the lake to the original government source document
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <div style="text-align:center; padding:16px 20px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--green); border-radius:10px;">
-        <div style="font-size:16px; font-weight:700; color:var(--green); line-height:1.5;">
-            Next week: live demo of the full pipeline — real data in, real research out.
-        </div>
-        <div style="font-size:12px; color:var(--text-3); margin-top:6px;">Once validated, adding Bloomberg and Capital IQ is a connector exercise — the architecture doesn't change.</div>
-    </div>
-</div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════════
-     SLIDE 14 — COMMERCIALS & NEXT STEPS
-     ══════════════════════════════════════════════════════════════ -->
 <div class="slide" data-slide="13">
-<div class="slide-inner">
+<div class="slide-inner lang-en">
     <div class="s-label">Next Steps</div>
     <div class="s-heading">From Proof Point to Production</div>
     <div class="s-desc" style="margin-bottom:20px;">We've already submitted a proposal for the pitchbook generation POC (Block 2). The data architecture (Block 1) is a separate but closely related workstream. After next week's proof point, we'll have the clarity to scope this precisely — and potentially position both blocks together.</div>
@@ -918,42 +751,31 @@
             <div style="font-size:9px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">This Week</div>
             <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Confirm & Build</div>
             <div style="font-size:11px; color:var(--text-3); line-height:1.6;">Confirm the public-data use case target. We start building the pipeline immediately — CVM, IBGE, CONAB, ANP, BCB ingestion into a working lake.</div>
-        </div>
-        <!-- Next week -->
-        <div style="padding:18px; background:rgba(16,185,129,.04); border:2px solid rgba(16,185,129,.25); border-radius:10px;">
-            <div style="font-size:9px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">Next Week</div>
-            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Live Proof Point</div>
-            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">Demo the end-to-end pipeline: real publicly-available data → data lake → AI → research output with full citation and provenance chain. Research team evaluates output quality.</div>
-        </div>
-        <!-- After -->
-        <div style="padding:18px; background:rgba(139,92,246,.04); border:2px solid rgba(139,92,246,.25); border-radius:10px;">
-            <div style="font-size:9px; font-weight:700; color:var(--purple); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">After Proof Point</div>
-            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Scope & Propose</div>
-            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">With the architecture validated, we'll know the exact effort to add licensed sources and scale to all 3 use cases. Proposal follows — potentially bundled with Block 2 for a combined engagement.</div>
-        </div>
-    </div>
+<div class="slide-inner lang-pt">
+    <div class="s-label">Next Steps</div>
+    <div class="s-heading">From Prova de Conceito to Production</div>
+    <div class="s-desc" style="margin-bottom:20px;">We've already submitted a proposal for the pitchbook generation POC (Bloco 2). The data architecture (Bloco 1) is a separate but closely related workstream. After next week's proof point, we'll have the clarity to scope this precisely — and potentially position both blocks together.</div>
 
-    <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">Decisions to Confirm Today</div>
-    <div class="cta-grid">
-        <div class="cta-item"><div class="ci-num">01</div><div class="ci-text">Which company or sector should the proof point target?</div><div class="ci-why">Needs to be assessable by the research team using publicly available data.</div></div>
-        <div class="cta-item"><div class="ci-num">02</div><div class="ci-text">Which use case: quarterly review, sector report, or coverage initiation?</div><div class="ci-why">We recommend coverage initiation — exercises the most data paths and produces the most impressive output.</div></div>
-        <div class="cta-item"><div class="ci-num">03</div><div class="ci-text">Bloomberg / Capital IQ access status — any AI/ML amendments in progress?</div><div class="ci-why">If DL or Xpressfeed is already approved, we can include licensed data in the proof point.</div></div>
-        <div class="cta-item"><div class="ci-num">04</div><div class="ci-text">Deployment: AWS Bedrock in Itaú's VPC, consistent with Block 2 infra?</div><div class="ci-why">Reuses existing security approvals. Data residency in sa-east-1. No model hosting overhead.</div></div>
-    </div>
-
-    <div style="text-align:center; margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--orange); border-radius:10px;">
-        <div style="font-size:16px; font-weight:700; color:var(--orange); line-height:1.5;">
-            Confirm the target today → Proof point next week → Proposal to follow
+    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px; margin-bottom:20px;">
+        <!-- This week -->
+        <div style="padding:18px; background:rgba(236,112,0,.04); border:2px solid rgba(236,112,0,.25); border-radius:10px;">
+            <div style="font-size:9px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;">This Week</div>
+            <div style="font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px;">Confirm & Build</div>
+            <div style="font-size:11px; color:var(--text-3); line-height:1.6;">Confirm the public-data use case target. We start building the pipeline immediately — CVM, IBGE, CONAB, ANP, BCB ingestion into a working lake.</div>
         </div>
     </div>
 </div>
 </div>
-
+</div>
 </div><!-- end deck -->
 
 <!-- ═══ BOTTOM BAR ═══ -->
 <div class="bottom-bar">
-    <div class="bb-logo"><div class="i-box">í</div><span>Itaú BBA Research · Data Architecture</span></div>
+    <div class="bb-logo"><div class="i-box">í</div><span class="lang-en">Itaú BBA Research · Data Architecture</span><span class="lang-pt">Itaú BBA Research · Arquitetura de Dados</span></div>
+    <div class="lang-toggle">
+        <button id="btnEn" class="active" onclick="setLang('en')">EN</button>
+        <button id="btnPt" onclick="setLang('pt')">PT</button>
+    </div>
     <div class="bb-dots" id="dots"></div>
     <div class="bb-nav">
         <div class="bb-counter"><span class="cur" id="curSlide">1</span> / <span id="totalSlides">14</span></div>
@@ -963,6 +785,13 @@
 </div>
 
 <script>
+    function setLang(lang) {
+        document.body.className = 'lang-' + lang;
+        document.getElementById('btnEn').classList.toggle('active', lang === 'en');
+        document.getElementById('btnPt').classList.toggle('active', lang === 'pt');
+    }
+
+
     const slides = document.querySelectorAll('.slide');
     const total = slides.length;
     let current = 0;
@@ -1046,6 +875,33 @@
     });
 
     updateUI();
+
 </script>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </body>
 </html>
