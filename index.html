@@ -1,0 +1,2495 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Itaú BBA · Research Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── RESET & BASE ─── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body, input, button, select, textarea, table, td, th {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+}
+html { font-size: 14px; -webkit-font-smoothing: antialiased; }
+
+:root {
+  --orange:       #EC7000;
+  --orange-lt:    #FF8C1A;
+  --orange-dim:   rgba(236,112,0,0.10);
+  --orange-bdr:   rgba(236,112,0,0.28);
+  --blue-dk:      #002D62;
+  --bg:           #080D1A;
+  --bg-2:         #0E1525;
+  --bg-3:         #141D30;
+  --bg-4:         #1A2438;
+  --bdr:          rgba(255,255,255,0.07);
+  --bdr-lt:       rgba(255,255,255,0.04);
+  --text:         #E8EDF8;
+  --text-2:       #9AAAC4;
+  --text-3:       #5D6E8A;
+  --green:        #1DD1A1;
+  --red:          #FF4757;
+  --blue:         #3B7BF6;
+  --purple:       #7C5CFC;
+  --r:            10px;
+  --r-sm:         7px;
+  --t:            0.2s cubic-bezier(0.4,0,0.2,1);
+  --sidebar-w:    220px;
+}
+
+body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
+
+/* ─── SCREEN SYSTEM ─── */
+.screen { display: none; min-height: 100vh; }
+.screen.active { display: flex; }
+
+/* ══════════════════════════════════════════════════
+   LOGIN
+══════════════════════════════════════════════════ */
+#login {
+  align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% -5%, rgba(0,62,138,0.40) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 35% at 85% 85%, rgba(236,112,0,0.08) 0%, transparent 60%),
+    var(--bg);
+  position: relative; overflow: hidden;
+}
+.login-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px);
+  background-size: 52px 52px;
+  mask-image: radial-gradient(ellipse 75% 75% at 50% 50%, black, transparent);
+}
+.login-card {
+  position: relative; width: 400px; padding: 44px;
+  background: rgba(14,21,37,0.85);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 18px; backdrop-filter: blur(20px);
+  box-shadow: 0 40px 80px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  animation: cardIn 0.55s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(28px) scale(0.96)} to{opacity:1;transform:none} }
+@keyframes shake  { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-7px)} 40%{transform:translateX(7px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
+
+.login-brand { display:flex; align-items:center; gap:10px; margin-bottom:32px; }
+.brand-mark {
+  width:38px; height:38px; background:var(--orange); border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px; font-weight:700; color:white; letter-spacing:-1px;
+}
+.brand-text { line-height:1; }
+.brand-text b { display:block; font-size:15px; font-weight:700; letter-spacing:-.3px; }
+.brand-text span { font-size:10px; color:var(--orange); letter-spacing:2.5px; text-transform:uppercase; margin-top:2px; display:block; }
+
+.login-h { font-size:22px; font-weight:700; letter-spacing:-.4px; margin-bottom:5px; }
+.login-sub { font-size:13px; color:var(--text-2); margin-bottom:28px; }
+
+.lbl { display:block; font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:5px; }
+.inp {
+  width:100%; background:rgba(255,255,255,0.04); border:1px solid var(--bdr);
+  border-radius:var(--r-sm); padding:11px 14px; font-size:14px; color:var(--text);
+  outline:none; transition:border-color var(--t), background var(--t); margin-bottom:14px;
+}
+.inp:focus { border-color:var(--orange); background:rgba(236,112,0,0.04); }
+.inp::placeholder { color:var(--text-3); }
+
+.login-err {
+  display:none; margin-bottom:14px; padding:10px 13px;
+  background:rgba(255,71,87,0.08); border:1px solid rgba(255,71,87,0.22);
+  border-radius:var(--r-sm); font-size:12px; color:var(--red);
+}
+.btn-login {
+  width:100%; padding:12px; background:var(--orange); border:none;
+  border-radius:var(--r-sm); font-size:14px; font-weight:600; color:white;
+  cursor:pointer; transition:all var(--t);
+}
+.btn-login:hover { background:var(--orange-lt); box-shadow:0 8px 22px rgba(236,112,0,0.32); transform:translateY(-1px); }
+.btn-login:disabled { opacity:.6; transform:none; cursor:not-allowed; }
+.login-hint { text-align:center; font-size:11px; color:var(--text-3); margin-top:18px; }
+
+/* ══════════════════════════════════════════════════
+   APP SHELL
+══════════════════════════════════════════════════ */
+#app { flex-direction:row; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: var(--sidebar-w); min-height:100vh; flex-shrink:0;
+  background:var(--bg-2);
+  border-right:1px solid var(--bdr);
+  display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh;
+  overflow:hidden;
+}
+.sb-brand { display:flex; align-items:center; gap:9px; padding:22px 18px 18px; border-bottom:1px solid var(--bdr); }
+.sb-mark { width:32px; height:32px; background:var(--orange); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:white; }
+.sb-name { font-size:13px; font-weight:700; letter-spacing:-.2px; }
+.sb-name span { color:var(--orange); }
+
+.sb-section { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1.2px; color:var(--text-3); padding:18px 18px 6px; }
+
+.sb-btn {
+  display:flex; align-items:center; gap:10px;
+  padding:9px 14px; margin:1px 8px; border-radius:var(--r-sm);
+  background:transparent; border:none; cursor:pointer;
+  color:var(--text-2); font-size:13px; font-weight:500; text-align:left;
+  transition:all var(--t); width:calc(100% - 16px);
+}
+.sb-btn svg { width:16px; height:16px; flex-shrink:0; opacity:.7; }
+.sb-btn:hover { background:var(--bg-3); color:var(--text); }
+.sb-btn:hover svg { opacity:1; }
+.sb-btn.active { background:var(--orange-dim); color:var(--orange); border:1px solid var(--orange-bdr); }
+.sb-btn.active svg { opacity:1; }
+
+.sb-badge { margin-left:auto; font-size:10px; font-weight:700; background:var(--orange); color:white; border-radius:99px; padding:1px 7px; }
+
+.sb-spacer { flex:1; }
+.sb-footer { padding:14px 18px; border-top:1px solid var(--bdr); }
+.sb-user { display:flex; align-items:center; gap:10px; }
+.sb-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,var(--orange),#a04800); display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:white; flex-shrink:0; }
+.sb-user-info b { display:block; font-size:12px; font-weight:600; }
+.sb-user-info span { font-size:11px; color:var(--text-3); }
+.sb-logout { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); transition:color var(--t); padding:4px; }
+.sb-logout:hover { color:var(--red); }
+.sb-logout svg { width:15px; height:15px; }
+
+/* ─── MAIN CONTENT ─── */
+.main { flex:1; min-width:0; display:flex; flex-direction:column; }
+.topbar-slim {
+  height:52px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 28px; background:var(--bg-2); border-bottom:1px solid var(--bdr);
+  position:sticky; top:0; z-index:50;
+}
+.topbar-slim h2 { font-size:14px; font-weight:600; color:var(--text-2); }
+.topbar-slim .top-right { display:flex; align-items:center; gap:10px; }
+.top-dot { width:7px; height:7px; background:var(--green); border-radius:50%; box-shadow:0 0 6px rgba(29,209,161,.5); }
+.top-status { font-size:11px; color:var(--text-3); }
+
+.page-wrap { flex:1; padding:28px 32px; overflow-y:auto; }
+.page { display:none; animation:fadeUp .3s ease both; }
+.page.active { display:block; }
+#page-docanalysis.active { display:flex !important; flex-direction:column; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+
+/* ══════════════════════════════════════════════════
+   DASHBOARD
+══════════════════════════════════════════════════ */
+.dash-header { margin-bottom:24px; }
+.dash-header h1 { font-size:22px; font-weight:700; letter-spacing:-.4px; }
+.dash-header p  { font-size:13px; color:var(--text-2); margin-top:3px; }
+
+/* KPI row */
+.kpi-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:24px; }
+.kpi {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:18px 20px; position:relative; overflow:hidden;
+}
+.kpi::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--orange),transparent); opacity:.6;
+}
+.kpi-label { font-size:11px; font-weight:500; color:var(--text-3); text-transform:uppercase; letter-spacing:.7px; margin-bottom:8px; }
+.kpi-value { font-size:26px; font-weight:700; letter-spacing:-.8px; line-height:1; margin-bottom:4px; }
+.kpi-sub   { font-size:11px; color:var(--text-3); }
+.kpi-sub.up   { color:var(--green); }
+.kpi-sub.down { color:var(--red); }
+
+/* Charts row */
+.charts-row { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:24px; }
+.card {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:20px;
+}
+.card-title { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.8px; color:var(--text-3); margin-bottom:16px; }
+
+/* Bar chart */
+/* bar chart replaced with SVG */
+
+/* Donut */
+.donut-wrap { display:flex; flex-direction:column; align-items:center; }
+.donut-legend { width:100%; margin-top:14px; }
+.dl-item { display:flex; align-items:center; gap:8px; margin-bottom:7px; font-size:12px; }
+.dl-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dl-name { flex:1; color:var(--text-2); }
+.dl-val { font-weight:600; }
+
+/* Projects in progress */
+.section-title { font-size:13px; font-weight:600; color:var(--text-2); margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+.section-title .count { background:var(--bg-3); border:1px solid var(--bdr); border-radius:99px; padding:1px 9px; font-size:11px; color:var(--text-3); }
+
+.projects-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-bottom:24px; }
+.proj-card {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:16px; transition:all var(--t); cursor:pointer;
+}
+.proj-card:hover { border-color:var(--orange-bdr); background:var(--bg-3); }
+.proj-top { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; }
+.proj-ticker { font-size:11px; font-weight:700; background:var(--bg-3); border:1px solid var(--bdr); border-radius:5px; padding:2px 8px; color:var(--text-2); letter-spacing:.5px; }
+.proj-status { font-size:10px; padding:2px 9px; border-radius:99px; font-weight:600; }
+.status-active { background:rgba(29,209,161,.12); color:var(--green); }
+.status-pending { background:rgba(236,112,0,.12); color:var(--orange); }
+.status-done   { background:rgba(59,123,246,.12); color:var(--blue); }
+.proj-name { font-size:14px; font-weight:600; margin-bottom:3px; }
+.proj-meta { font-size:11px; color:var(--text-3); margin-bottom:12px; }
+.prog-bar-wrap { background:rgba(255,255,255,0.06); border-radius:99px; height:3px; margin-bottom:5px; }
+.prog-bar { height:3px; border-radius:99px; transition:width .6s ease; }
+.prog-pct { font-size:10px; color:var(--text-3); text-align:right; }
+
+/* Recent table */
+.recent-table { width:100%; border-collapse:collapse; }
+.recent-table th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:.7px; color:var(--text-3); font-weight:500; padding:7px 12px; border-bottom:1px solid var(--bdr); }
+.recent-table td { padding:10px 12px; border-bottom:1px solid var(--bdr-lt); font-size:12px; color:var(--text-2); }
+.recent-table tr:last-child td { border-bottom:none; }
+.recent-table tr:hover td { background:var(--bg-3); }
+.rt-ticker { font-weight:700; color:var(--text); }
+.rt-rec-buy  { color:var(--green); font-weight:600; }
+.rt-rec-sell { color:var(--red); font-weight:600; }
+.rt-rec-hold { color:var(--orange); font-weight:600; }
+
+/* ══════════════════════════════════════════════════
+   RESEARCH — CHAT
+══════════════════════════════════════════════════ */
+.research-wrap {
+  display:flex; flex-direction:column;
+  height:calc(100vh - 52px);
+  overflow:hidden;
+}
+
+.chat-header {
+  padding:22px 28px 0;
+}
+.chat-header h1 { font-size:20px; font-weight:700; letter-spacing:-.3px; }
+.chat-header p  { font-size:13px; color:var(--text-2); margin-top:3px; }
+
+.chat-body {
+  flex:1; overflow-y:auto; padding:20px 28px; display:flex; flex-direction:column; gap:14px;
+}
+
+/* Welcome state */
+.chat-welcome {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  flex:1; text-align:center; padding:40px;
+}
+.chat-welcome .icon-circle {
+  width:56px; height:56px; background:var(--orange-dim); border:1px solid var(--orange-bdr);
+  border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:16px;
+}
+.chat-welcome .icon-circle svg { width:24px; height:24px; color:var(--orange); }
+.chat-welcome h3 { font-size:17px; font-weight:700; margin-bottom:8px; }
+.chat-welcome p  { font-size:13px; color:var(--text-2); max-width:340px; line-height:1.6; margin-bottom:20px; }
+.chat-suggestions { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; }
+.chat-sug {
+  padding:7px 14px; background:var(--bg-3); border:1px solid var(--bdr);
+  border-radius:99px; font-size:12px; color:var(--text-2); cursor:pointer;
+  transition:all var(--t);
+}
+.chat-sug:hover { border-color:var(--orange-bdr); color:var(--orange); }
+
+/* Messages */
+.msg { display:flex; gap:12px; animation:msgIn .35s ease both; }
+@keyframes msgIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+.msg-icon {
+  width:32px; height:32px; border-radius:50%; flex-shrink:0; margin-top:2px;
+  display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700;
+}
+.msg-icon.system { background:var(--orange-dim); border:1px solid var(--orange-bdr); color:var(--orange); font-size:14px; }
+.msg-icon.user   { background:var(--bg-4); border:1px solid var(--bdr); color:var(--text-2); font-size:11px; }
+.msg-body { flex:1; }
+.msg-sender { font-size:11px; font-weight:600; color:var(--text-3); margin-bottom:5px; text-transform:uppercase; letter-spacing:.5px; }
+
+/* Log bubble */
+.log-bubble {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:0 var(--r) var(--r) var(--r);
+  padding:12px 16px; font-size:13px; line-height:1.7;
+}
+.log-line { display:flex; align-items:flex-start; gap:10px; margin-bottom:7px; line-height:1.5; }
+.log-line:last-child { margin-bottom:0; }
+.log-tag {
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px;
+  text-transform:uppercase; letter-spacing:.4px; white-space:nowrap; margin-top:1px;
+  font-family:'Inter',sans-serif !important;
+}
+.t-search  { background:rgba(59,123,246,.18); color:#6FA3FF; }
+.t-found   { background:rgba(29,209,161,.15); color:var(--green); }
+.t-parse   { background:rgba(236,112,0,.15); color:var(--orange); }
+.t-think   { background:rgba(124,92,252,.18); color:#A78BFA; }
+.t-done    { background:rgba(29,209,161,.15); color:var(--green); }
+.log-text  { color:var(--text-2); font-size:13px; }
+
+/* Typing indicator */
+.typing { display:flex; align-items:center; gap:4px; padding:12px 16px; background:var(--bg-2); border:1px solid var(--bdr); border-radius:0 var(--r) var(--r) var(--r); width:fit-content; }
+.typing span { width:6px; height:6px; background:var(--orange); border-radius:50%; animation:typingDot 1.2s infinite; }
+.typing span:nth-child(2) { animation-delay:.2s; }
+.typing span:nth-child(3) { animation-delay:.4s; }
+@keyframes typingDot { 0%,80%,100%{transform:scale(.7);opacity:.4} 40%{transform:scale(1);opacity:1} }
+
+/* Result card (inside chat) */
+.result-card {
+  background:var(--bg-3); border:1px solid var(--bdr); border-radius:var(--r);
+  overflow:hidden; margin-top:6px;
+}
+.rc-header { padding:12px 16px; border-bottom:1px solid var(--bdr); display:flex; align-items:center; justify-content:space-between; }
+.rc-ticker-block { display:flex; align-items:center; gap:10px; }
+.rc-ticker { font-size:12px; font-weight:700; background:var(--bg-4); border:1px solid var(--bdr); border-radius:5px; padding:3px 9px; color:var(--text); letter-spacing:.5px; }
+.rc-name { font-size:13px; font-weight:600; }
+.rc-price { font-size:20px; font-weight:700; color:var(--green); }
+.rc-change { font-size:11px; color:var(--green); text-align:right; }
+.rc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--bdr); }
+.rc-cell { background:var(--bg-3); padding:11px 14px; }
+.rc-cell-lbl { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:3px; }
+.rc-cell-val { font-size:15px; font-weight:600; }
+.rc-footer { padding:12px 16px; background:var(--bg-4); border-top:1px solid var(--bdr); font-size:12px; color:var(--text-2); line-height:1.6; }
+
+/* Analyst row in chat */
+.analyst-mini { display:flex; gap:8px; margin-top:6px; flex-wrap:wrap; }
+.am-card { background:var(--bg-3); border:1px solid var(--bdr); border-radius:var(--r-sm); padding:10px 13px; min-width:130px; }
+.am-bank { font-size:10px; color:var(--text-3); margin-bottom:2px; text-transform:uppercase; letter-spacing:.4px; }
+.am-rec  { font-size:11px; font-weight:700; margin-bottom:2px; }
+.am-tgt  { font-size:16px; font-weight:700; }
+
+/* Generate button (chat) */
+.btn-gen {
+  display:inline-flex; align-items:center; gap:8px; margin-top:6px;
+  padding:11px 22px; background:var(--orange); border:none; border-radius:var(--r-sm);
+  font-size:13px; font-weight:600; color:white; cursor:pointer;
+  transition:all var(--t); animation:pulseOrange 2s ease-in-out infinite;
+}
+.btn-gen:hover { background:var(--orange-lt); transform:translateY(-1px); }
+@keyframes pulseOrange { 0%,100%{box-shadow:0 4px 16px rgba(236,112,0,.25)} 50%{box-shadow:0 4px 24px rgba(236,112,0,.5)} }
+
+/* User message bubble */
+.user-bubble {
+  background:var(--bg-4); border:1px solid var(--bdr);
+  border-radius:var(--r) 0 var(--r) var(--r);
+  padding:10px 14px; font-size:13px; width:fit-content; max-width:80%;
+}
+
+/* Chat input area */
+.chat-input-wrap {
+  padding:16px 28px 20px;
+  border-top:1px solid var(--bdr);
+  background:var(--bg);
+}
+.chat-input-inner {
+  display:flex; gap:10px; align-items:flex-end;
+  background:var(--bg-2); border:1px solid var(--bdr);
+  border-radius:12px; padding:10px 14px;
+  transition:border-color var(--t);
+}
+.chat-input-inner:focus-within { border-color:var(--orange-bdr); }
+.chat-inp {
+  flex:1; background:none; border:none; outline:none;
+  font-size:14px; color:var(--text); resize:none;
+  line-height:1.5; max-height:120px; overflow-y:auto;
+}
+.chat-inp::placeholder { color:var(--text-3); }
+.chat-send {
+  width:34px; height:34px; background:var(--orange); border:none; border-radius:8px;
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  transition:all var(--t); flex-shrink:0;
+}
+.chat-send:hover { background:var(--orange-lt); }
+.chat-send svg { width:16px; height:16px; color:white; }
+
+/* ══════════════════════════════════════════════════
+   HISTORIC
+══════════════════════════════════════════════════ */
+.hist-header { margin-bottom:20px; display:flex; align-items:center; justify-content:space-between; }
+.hist-header h1 { font-size:20px; font-weight:700; letter-spacing:-.3px; }
+.hist-filter { display:flex; gap:6px; }
+.filter-btn {
+  padding:5px 13px; background:var(--bg-2); border:1px solid var(--bdr);
+  border-radius:99px; font-size:11px; color:var(--text-3); cursor:pointer; transition:all var(--t);
+}
+.filter-btn:hover, .filter-btn.active { background:var(--orange-dim); border-color:var(--orange-bdr); color:var(--orange); }
+
+.hist-list { display:flex; flex-direction:column; gap:10px; }
+
+.hist-card {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r);
+  overflow:hidden; transition:all var(--t); cursor:pointer;
+}
+.hist-card:hover { border-color:var(--orange-bdr); background:var(--bg-3); transform:translateX(3px); }
+
+.hist-card-main { display:flex; align-items:stretch; }
+
+/* Left color bar */
+.hist-bar { width:3px; flex-shrink:0; }
+
+.hist-content { flex:1; padding:16px 18px; }
+.hist-top { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:8px; gap:12px; }
+.hist-left { display:flex; align-items:center; gap:12px; }
+.hist-tick {
+  width:44px; height:44px; border-radius:9px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; letter-spacing:.5px;
+  flex-shrink:0;
+}
+.hist-info-name { font-size:14px; font-weight:700; margin-bottom:2px; }
+.hist-info-meta { font-size:11px; color:var(--text-3); display:flex; align-items:center; gap:6px; }
+.hist-dot { width:3px; height:3px; background:var(--text-3); border-radius:50%; }
+
+.hist-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; }
+.hist-badges { display:flex; gap:5px; }
+.badge { font-size:10px; padding:2px 9px; border-radius:99px; font-weight:600; white-space:nowrap; }
+.badge-done   { background:rgba(29,209,161,.12); color:var(--green); }
+.badge-prog   { background:rgba(236,112,0,.12); color:var(--orange); }
+.badge-init   { background:rgba(59,123,246,.12); color:var(--blue); }
+.badge-update { background:rgba(124,92,252,.12); color:var(--purple); }
+
+/* Metrics inline */
+.hist-metrics { display:flex; gap:20px; margin-bottom:8px; }
+.hm { }
+.hm-lbl { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.5px; }
+.hm-val { font-size:14px; font-weight:700; }
+.hm-val.up   { color:var(--green); }
+.hm-val.down { color:var(--red); }
+.hm-val.neutral { color:var(--orange); }
+
+/* Thesis preview */
+.hist-thesis { font-size:12px; color:var(--text-3); line-height:1.5; border-top:1px solid var(--bdr-lt); padding-top:8px; margin-top:4px; }
+
+/* Sparkline right */
+.hist-spark { width:100px; padding:0 14px; display:flex; align-items:center; border-left:1px solid var(--bdr-lt); }
+
+/* ══════════════════════════════════════════════════
+   DOC ANALYSIS (preserved from before)
+══════════════════════════════════════════════════ */
+.upload-zone {
+  border:2px dashed rgba(236,112,0,.2); border-radius:14px; padding:40px 28px;
+  text-align:center; cursor:pointer; transition:all var(--t);
+  width:100%; max-height:calc(100vh - 200px); display:flex; flex-direction:column; align-items:center; justify-content:center;
+}
+.upload-zone:hover, .upload-zone.drag-over { border-color:var(--orange); background:rgba(236,112,0,.04); }
+.upload-zone h3 { font-size:16px; font-weight:600; margin-bottom:7px; }
+.upload-zone p  { font-size:13px; color:var(--text-2); }
+
+/* Full-screen drag overlay */
+.drag-overlay {
+  position:fixed; top:0; left:0; width:100vw; height:100vh; z-index:9999;
+  background:rgba(8,13,26,0.94); backdrop-filter:blur(12px);
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  pointer-events:none;
+}
+.drag-overlay.active { display:flex; }
+.drag-overlay::before {
+  content:'';
+  position:absolute; top:16px; left:16px; right:16px; bottom:16px;
+  border:2px dashed var(--orange); border-radius:16px;
+  opacity:.7;
+}
+.do-ring { width:88px; height:88px; border-radius:50%; background:var(--orange-dim); border:2px solid var(--orange-bdr); display:flex; align-items:center; justify-content:center; margin-bottom:22px; }
+.do-ring svg { width:38px; height:38px; color:var(--orange); }
+.drag-overlay h2 { font-size:22px; font-weight:700; margin-bottom:8px; }
+.drag-overlay p  { font-size:14px; color:var(--text-2); }
+
+.doc-loading { display:none; padding:28px; background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r); max-width:520px; margin-top:20px; }
+.doc-loading.visible { display:block; }
+.doc-step { display:flex; align-items:center; gap:11px; padding:9px 0; font-size:13px; color:var(--text-3); opacity:.35; transition:all .35s; }
+.step-icon { font-size:10px; font-weight:700; color:var(--text-3); min-width:20px; text-align:center; }
+.doc-step.done   { opacity:1; color:var(--text); }
+.doc-step.active { opacity:1; color:var(--orange); }
+.step-spinner { width:15px; height:15px; border:2px solid rgba(236,112,0,.2); border-top-color:var(--orange); border-radius:50%; animation:spin .7s linear infinite; flex-shrink:0; }
+@keyframes spin { to{transform:rotate(360deg)} }
+
+/* Full-screen results */
+.doc-result { display:none; }
+.doc-result.visible { display:block; animation:fadeUp .4s ease both; }
+.doc-res-header {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding-bottom:16px; border-bottom:1px solid var(--bdr); margin-bottom:20px;
+}
+.doc-res-header h2 { font-size:18px; font-weight:700; letter-spacing:-.3px; }
+.doc-res-header p  { font-size:12px; color:var(--text-3); margin-top:3px; }
+.doc-res-cols { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.doc-panel { background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r); overflow:hidden; }
+.doc-panel-h {
+  display:flex; align-items:center; gap:8px;
+  padding:12px 18px; border-bottom:1px solid var(--bdr);
+  font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; background:var(--bg-3);
+}
+.dp-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+
+/* Strength item */
+.doc-strength { border-bottom:1px solid var(--bdr-lt); transition:background var(--t); }
+.doc-strength:last-child { border-bottom:none; }
+.doc-strength:hover { background:rgba(29,209,161,.03); }
+.ds-head { display:flex; align-items:center; gap:8px; padding:12px 18px 6px; }
+.ds-head::before { content:""; width:3px; height:14px; background:var(--green); border-radius:2px; flex-shrink:0; }
+.ds-title { font-size:13px; font-weight:600; }
+.ds-excerpt {
+  margin:0 18px 12px; padding:8px 12px;
+  font-size:11px; color:var(--text-3); line-height:1.65; font-style:italic;
+  background:rgba(29,209,161,.05); border-left:2px solid rgba(29,209,161,.25);
+  border-radius:0 4px 4px 0;
+}
+
+/* Improvement item */
+.doc-improve { border-bottom:1px solid var(--bdr-lt); transition:background var(--t); }
+.doc-improve:last-child { border-bottom:none; }
+.doc-improve:hover { background:rgba(236,112,0,.03); }
+.di-head { display:flex; align-items:center; gap:8px; padding:12px 18px 6px; }
+.di-head::before { content:""; width:3px; height:14px; background:var(--orange); border-radius:2px; flex-shrink:0; }
+.di-title { font-size:13px; font-weight:600; }
+.di-original {
+  margin:0 18px 4px; padding:7px 12px;
+  font-size:11px; color:var(--red); line-height:1.6;
+  background:rgba(255,71,87,.06); border-left:2px solid rgba(255,71,87,.3);
+  border-radius:0 4px 4px 0; font-family:'Courier New',monospace;
+}
+.di-original-lbl { font-family:'Inter',sans-serif !important; font-size:10px; font-weight:700; color:var(--red); text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:2px; }
+.di-suggested {
+  margin:0 18px 12px; padding:7px 12px;
+  font-size:11px; color:var(--green); line-height:1.6;
+  background:rgba(29,209,161,.06); border-left:2px solid rgba(29,209,161,.3);
+  border-radius:0 4px 4px 0; font-family:'Courier New',monospace;
+}
+.di-suggested-lbl { font-family:'Inter',sans-serif !important; font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:.5px; display:block; margin-bottom:2px; }
+
+.doc-actions { display:flex; gap:10px; flex-wrap:wrap; padding-top:20px; border-top:1px solid var(--bdr); margin-top:20px; }
+
+.btn-impl {
+  display:inline-flex; align-items:center; gap:7px; padding:11px 22px;
+  background:var(--orange); border:none; border-radius:var(--r-sm);
+  font-size:13px; font-weight:600; color:white; cursor:pointer; transition:all var(--t);
+}
+.btn-impl:hover { background:var(--orange-lt); transform:translateY(-1px); }
+.btn-dl {
+  display:inline-flex; align-items:center; gap:7px; padding:11px 22px;
+  background:transparent; border:1px solid var(--orange-bdr); border-radius:var(--r-sm);
+  font-size:13px; font-weight:500; color:var(--orange); cursor:pointer; transition:all var(--t);
+}
+.btn-dl:hover { background:var(--orange-dim); }
+
+/* ══════════════════════════════════════════════════
+   BUILD PPT (preserved from before)
+══════════════════════════════════════════════════ */
+.ppt-controls { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.btn-nav {
+  width:34px; height:34px; background:var(--bg-2); border:1px solid var(--bdr);
+  border-radius:7px; cursor:pointer; color:var(--text); display:flex;
+  align-items:center; justify-content:center; font-size:15px; transition:all var(--t);
+}
+.btn-nav:hover { border-color:var(--orange-bdr); color:var(--orange); }
+.slide-counter { font-size:12px; color:var(--text-3); min-width:75px; }
+
+.slide-viewport {
+  width:100%; max-width:1075px; aspect-ratio:16/9; border-radius:12px;
+  overflow:hidden; box-shadow:0 20px 50px rgba(0,0,0,.7); position:relative;
+}
+.slide { display:none; width:100%; height:100%; position:absolute; inset:0; }
+.slide.active { display:flex; animation:slideShow .35s ease both; }
+@keyframes slideShow { from{opacity:0;transform:scale(.97)} to{opacity:1;transform:none} }
+
+/* Cover slide */
+.s-cover {
+  background:linear-gradient(135deg,#001A3E 0%,#002D62 60%,#003E8A 100%);
+  flex-direction:column; justify-content:flex-end; padding:40px 48px; position:relative; overflow:hidden;
+}
+.s-cover::before { content:''; position:absolute; top:-30%; right:-10%; width:460px; height:460px; background:radial-gradient(circle,rgba(236,112,0,.16) 0%,transparent 65%); }
+.cover-tag { font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--orange); margin-bottom:12px; position:relative; z-index:1; }
+.cover-h { font-size:40px; font-weight:800; line-height:1.05; color:white; margin-bottom:10px; position:relative; z-index:1; letter-spacing:-.5px; }
+.cover-h em { color:var(--orange); font-style:normal; }
+.cover-sub { font-size:13px; color:rgba(255,255,255,.5); position:relative; z-index:1; margin-bottom:24px; }
+.cover-meta { display:flex; gap:22px; position:relative; z-index:1; }
+.cm-item { font-size:10px; color:rgba(255,255,255,.35); text-transform:uppercase; letter-spacing:.6px; }
+.cm-item span { display:block; color:rgba(255,255,255,.75); font-weight:600; margin-top:2px; font-size:12px; letter-spacing:0; text-transform:none; }
+.cover-logo-slide { position:absolute; top:28px; right:40px; z-index:1; display:flex; align-items:center; gap:7px; }
+.cls-mark { width:30px; height:30px; background:var(--orange); border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:700; color:white; }
+.cls-text { font-size:12px; font-weight:600; color:rgba(255,255,255,.8); }
+.cls-text span { color:var(--orange); }
+
+/* Generic slide body */
+.s-body { background:#0D1426; flex-direction:column; padding:26px 36px; overflow:hidden; }
+.s-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; padding-bottom:13px; border-bottom:1px solid rgba(255,255,255,.08); }
+.s-tag { font-size:9px; text-transform:uppercase; letter-spacing:2.5px; color:var(--orange); font-weight:700; }
+.s-title { font-size:19px; font-weight:700; letter-spacing:-.3px; }
+.s-logo { width:22px; height:22px; background:var(--orange); border-radius:5px; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:white; }
+.s-footer { position:absolute; bottom:10px; left:40px; right:40px; display:flex; justify-content:space-between; font-size:8px; color:rgba(255,255,255,.18); text-transform:uppercase; letter-spacing:.6px; }
+
+/* SOTP table */
+.sotp { width:100%; border-collapse:collapse; font-size:11px; flex:1; }
+.sotp th { text-align:left; padding:7px 9px; font-size:9px; text-transform:uppercase; letter-spacing:.7px; color:rgba(255,255,255,.3); font-weight:500; border-bottom:1px solid rgba(255,255,255,.08); }
+.sotp td { padding:8px 9px; border-bottom:1px solid rgba(255,255,255,.04); color:rgba(255,255,255,.7); }
+.sotp .total td { border-top:1px solid rgba(255,255,255,.14); border-bottom:none; color:white; font-weight:700; padding-top:10px; }
+.sotp .seg { font-weight:600; color:white; }
+.vnum { text-align:right; font-family:'Courier New',monospace; font-size:10px; }
+.v-or { color:var(--orange); font-weight:700; }
+.v-gr { color:var(--green); }
+
+/* Bull/Bear */
+.bb-cols { display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1; }
+.bb-title { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; font-weight:700; margin-bottom:11px; display:flex; align-items:center; gap:6px; }
+.bb-item { font-size:11px; line-height:1.55; color:rgba(255,255,255,.6); padding:8px 11px; border-left:2px solid; margin-bottom:7px; background:rgba(255,255,255,.02); border-radius:0 5px 5px 0; }
+.bull { border-color:var(--green); }
+.bear { border-color:var(--red); }
+
+/* Summary grid */
+.sum-grid { display:grid; grid-template-columns:1fr 1fr; gap:13px; flex:1; }
+.sum-box { background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.06); border-radius:9px; padding:13px; }
+.sum-box-lbl { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.35); margin-bottom:8px; }
+.sum-val { font-size:22px; font-weight:800; letter-spacing:-.5px; margin-bottom:2px; }
+.sum-sub { font-size:10px; color:rgba(255,255,255,.3); }
+.sum-ul { font-size:11px; line-height:1.7; color:rgba(255,255,255,.6); list-style:none; }
+.sum-ul li::before { content:'— '; color:var(--orange); }
+
+/* Slide thumbs */
+.slide-thumbs { display:flex; gap:5px; margin-top:12px; max-width:1075px; }
+.s-thumb {
+  flex:1; height:42px; background:var(--bg-2); border:1px solid var(--bdr);
+  border-radius:6px; cursor:pointer; transition:all var(--t);
+  display:flex; align-items:center; justify-content:center;
+  font-size:10px; color:var(--text-3);
+}
+.s-thumb.active { border-color:var(--orange); color:var(--orange); background:var(--orange-dim); }
+.s-thumb:hover { border-color:var(--orange-bdr); }
+
+/* ─── DETAIL OVERLAY ─── */
+#detail-view {
+  display:none; position:fixed; inset:0; background:var(--bg);
+  z-index:300; overflow-y:auto; padding:28px 32px;
+  animation:slideIn .3s ease;
+}
+@keyframes slideIn { from{opacity:0;transform:translateX(30px)} to{opacity:1;transform:none} }
+.dv-back { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-3); cursor:pointer; margin-bottom:22px; transition:color var(--t); width:fit-content; }
+.dv-back:hover { color:var(--orange); }
+.dv-header { display:flex; align-items:flex-start; justify-content:space-between; margin-bottom:22px; }
+.dv-company { font-size:28px; font-weight:800; letter-spacing:-.5px; margin-bottom:4px; }
+.dv-sector  { font-size:12px; color:var(--text-3); }
+.dv-price   { font-size:28px; font-weight:800; color:var(--green); text-align:right; }
+.dv-change  { font-size:12px; color:var(--green); text-align:right; }
+.metrics-row { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:20px; }
+.mbox { background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r); padding:15px; }
+.mbox-lbl { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:5px; }
+.mbox-val { font-size:18px; font-weight:700; }
+.charts-row-dv { display:grid; grid-template-columns:2fr 1fr; gap:16px; margin-bottom:20px; }
+.analyst-row-dv { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+.ac { background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r); padding:14px 16px; flex:1; min-width:140px; }
+.ac-bank { font-size:10px; color:var(--text-3); text-transform:uppercase; letter-spacing:.4px; margin-bottom:3px; }
+.ac-rec  { font-size:11px; font-weight:700; margin-bottom:3px; }
+.ac-tgt  { font-size:18px; font-weight:700; }
+.ac-up   { font-size:10px; color:var(--green); }
+.tl { margin-bottom:20px; }
+.tl-title { font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:.7px; color:var(--text-3); margin-bottom:13px; }
+.tl-item { display:flex; gap:12px; padding:11px 0; border-bottom:1px solid var(--bdr-lt); }
+.tl-item:last-child { border-bottom:none; }
+.tl-dot { width:7px; height:7px; border-radius:50%; background:var(--orange); flex-shrink:0; margin-top:4px; }
+.tl-date { font-size:11px; color:var(--text-3); min-width:55px; }
+.tl-text { font-size:12px; line-height:1.5; }
+.rec-buy  { color:var(--green); }
+.rec-hold { color:var(--orange); }
+.rec-sell { color:var(--red); }
+
+/* ─── UTIL ─── */
+::-webkit-scrollbar { width:4px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:99px; }
+svg { display:block; }
+</style>
+</head>
+<body>
+
+<!-- ════════════════════ LOGIN ════════════════════ -->
+<div class="screen active" id="login">
+  <div class="login-grid"></div>
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="brand-mark">í</div>
+      <div class="brand-text">
+        <b>Itaú BBA</b>
+        <span>Research Intelligence</span>
+      </div>
+    </div>
+    <div class="login-h">Welcome back.</div>
+    <div class="login-sub">Faça login para acessar a plataforma</div>
+    <label class="lbl">Email</label>
+    <input class="inp" type="email" id="lemail" placeholder="analyst@itaubba.com.br" autocomplete="username">
+    <label class="lbl">Password</label>
+    <input class="inp" type="password" id="lpass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-err" id="lerr">Email ou senha incorretos. Tente novamente.</div>
+    <button class="btn-login" id="lbtn" onclick="doLogin()">Acessar plataforma</button>
+    <div class="login-hint">Secured · Itaú BBA Confidential</div>
+  </div>
+</div>
+
+<!-- ════════════════════ APP ════════════════════ -->
+<div class="screen" id="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-mark">í</div>
+      <div class="sb-name">Itaú <span>BBA</span></div>
+    </div>
+
+    <div class="sb-section">Plataforma</div>
+
+    <button class="sb-btn active" id="nav-home" onclick="showPage('home',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Dashboard
+    </button>
+
+    <button class="sb-btn" id="nav-research" onclick="showPage('research',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Research
+    </button>
+
+    <button class="sb-btn" id="nav-historic" onclick="showPage('historic',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      Historic
+      <span class="sb-badge">3</span>
+    </button>
+
+    <div class="sb-section">Documentos</div>
+
+    <button class="sb-btn" id="nav-docanalysis" onclick="showPage('docanalysis',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Análise Documental
+    </button>
+
+    <button class="sb-btn" id="nav-buildppt" onclick="showPage('buildppt',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+      Build PPT
+    </button>
+
+    <div class="sb-spacer"></div>
+
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-avatar" id="sbAvatar">RA</div>
+        <div class="sb-user-info">
+          <b id="sbName">R. Analyst</b>
+          <span>Research Team</span>
+        </div>
+        <button class="sb-logout" onclick="doLogout()" title="Sair">
+          <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar-slim">
+      <h2 id="topbarTitle">Dashboard</h2>
+      <div class="top-right">
+        <div class="top-dot"></div>
+        <span class="top-status">Sistema operacional · abr/2026</span>
+      </div>
+    </div>
+
+    <!-- PAGES -->
+    <div class="page-wrap">
+
+      <!-- ──── DASHBOARD ──── -->
+      <div class="page active" id="page-home">
+        <div class="dash-header">
+          <h1>Visão Geral</h1>
+          <p>Research Intelligence Platform · Itaú BBA · Abril 2026</p>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi">
+            <div class="kpi-label">Relatórios Gerados</div>
+            <div class="kpi-value">47</div>
+            <div class="kpi-sub up">↑ +12 este mês</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">Empresas Analisadas</div>
+            <div class="kpi-value">23</div>
+            <div class="kpi-sub">Últimos 30 dias</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">CSAN3 · Preço atual</div>
+            <div class="kpi-value" style="color:var(--green)">R$ 5,48</div>
+            <div class="kpi-sub up">↑ +4,58% hoje</div>
+          </div>
+          <div class="kpi">
+            <div class="kpi-label">PPTs Exportados</div>
+            <div class="kpi-value">18</div>
+            <div class="kpi-sub up">↑ +5 este mês</div>
+          </div>
+        </div>
+
+        <div class="charts-row">
+          <div class="card">
+            <div class="card-title">Análises por Mês · 2026</div>
+            <svg id="monthChart" viewBox="0 0 340 130" style="width:100%;display:block;margin-top:4px"></svg>
+          </div>
+          <div class="card">
+            <div class="card-title">Distribuição por Setor</div>
+            <div class="donut-wrap">
+              <svg viewBox="0 0 120 120" style="width:110px">
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#EC7000" stroke-width="16" stroke-dasharray="110 276" stroke-dashoffset="0"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#1DD1A1" stroke-width="16" stroke-dasharray="72 276" stroke-dashoffset="-110"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#3B7BF6" stroke-width="16" stroke-dasharray="56 276" stroke-dashoffset="-182"/>
+                <circle cx="60" cy="60" r="44" fill="none" stroke="#7C5CFC" stroke-width="16" stroke-dasharray="38 276" stroke-dashoffset="-238"/>
+                <text x="60" y="56" text-anchor="middle" font-size="11" fill="white" font-family="Inter,sans-serif" font-weight="700">23</text>
+                <text x="60" y="69" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">empresas</text>
+              </svg>
+              <div class="donut-legend">
+                <div class="dl-item"><div class="dl-dot" style="background:var(--orange)"></div><span class="dl-name">Holdings</span><span class="dl-val">40%</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--green)"></div><span class="dl-name">Logística</span><span class="dl-val">26%</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--blue)"></div><span class="dl-name">Energia</span><span class="dl-val">20%</span></div>
+                <div class="dl-item"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-name">Outros</span><span class="dl-val">14%</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title">Projetos em andamento <span class="count">4</span></div>
+        <div class="projects-grid">
+          <div class="proj-card">
+            <div class="proj-top">
+              <span class="proj-ticker">CSAN3</span>
+              <span class="proj-status status-active">Ativo</span>
+            </div>
+            <div class="proj-name">Cosan S.A. — Initiation</div>
+            <div class="proj-meta">Holdings · Research Completo · atualizado hoje</div>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="width:85%;background:var(--green)"></div></div>
+            <div class="prog-pct">85% concluído</div>
+          </div>
+          <div class="proj-card">
+            <div class="proj-top">
+              <span class="proj-ticker">RAIL3</span>
+              <span class="proj-status status-active">Ativo</span>
+            </div>
+            <div class="proj-name">Rumo S.A. — Update</div>
+            <div class="proj-meta">Logística · Earnings Review · atualizado ontem</div>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="width:60%;background:var(--blue)"></div></div>
+            <div class="prog-pct">60% concluído</div>
+          </div>
+          <div class="proj-card">
+            <div class="proj-top">
+              <span class="proj-ticker">RAIZ4</span>
+              <span class="proj-status status-pending">Pendente</span>
+            </div>
+            <div class="proj-name">Raízen S.A. — Sector</div>
+            <div class="proj-meta">Energia/Agro · Aguardando dados · 08 abr</div>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="width:30%;background:var(--orange)"></div></div>
+            <div class="prog-pct">30% concluído</div>
+          </div>
+          <div class="proj-card">
+            <div class="proj-top">
+              <span class="proj-ticker">VALE3</span>
+              <span class="proj-status status-done">Revisão</span>
+            </div>
+            <div class="proj-name">Vale S.A. — Coverage</div>
+            <div class="proj-meta">Mineração · PPT em revisão · 05 abr</div>
+            <div class="prog-bar-wrap"><div class="prog-bar" style="width:95%;background:var(--purple)"></div></div>
+            <div class="prog-pct">95% concluído</div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top:8px">Análises recentes <span class="count">8</span></div>
+        <div class="card">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>Ticker</th><th>Empresa</th><th>Setor</th>
+                <th>Recomendação</th><th>Preço Alvo</th><th>Upside</th><th>Data</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td class="rt-ticker">CSAN3</td><td>Cosan S.A.</td><td>Holdings</td><td class="rt-rec-buy">BUY</td><td>R$ 12,00</td><td style="color:var(--green)">+119%</td><td>14/04/26</td></tr>
+              <tr><td class="rt-ticker">RAIL3</td><td>Rumo S.A.</td><td>Logística</td><td class="rt-rec-buy">BUY</td><td>R$ 23,00</td><td style="color:var(--green)">+32%</td><td>10/04/26</td></tr>
+              <tr><td class="rt-ticker">RAIZ4</td><td>Raízen S.A.</td><td>Energia</td><td class="rt-rec-hold">HOLD</td><td>R$ 1,40</td><td style="color:var(--orange)">+24%</td><td>08/04/26</td></tr>
+              <tr><td class="rt-ticker">VALE3</td><td>Vale S.A.</td><td>Mineração</td><td class="rt-rec-buy">BUY</td><td>R$ 68,00</td><td style="color:var(--green)">+18%</td><td>05/04/26</td></tr>
+              <tr><td class="rt-ticker">PETR4</td><td>Petrobras</td><td>Petróleo</td><td class="rt-rec-buy">BUY</td><td>R$ 42,00</td><td style="color:var(--green)">+15%</td><td>02/04/26</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ──── RESEARCH ──── -->
+      <div class="page" id="page-research" style="padding:0;margin:0">
+        <div class="research-wrap">
+          <div class="chat-header">
+            <h1>Research</h1>
+            <p>Pesquise qualquer empresa listada · dados em tempo real</p>
+          </div>
+
+          <div class="chat-body" id="chatBody">
+            <div class="chat-welcome" id="chatWelcome">
+              <div class="icon-circle">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+              </div>
+              <h3>O que deseja analisar?</h3>
+              <p>Digite o nome ou ticker de uma empresa e o sistema irá buscar dados de mercado, financeiros e análises de analistas automaticamente.</p>
+              <div class="chat-suggestions">
+                <div class="chat-sug" onclick="setQuery('Cosan S.A. · CSAN3')">Cosan S.A.</div>
+                <div class="chat-sug" onclick="setQuery('Rumo · RAIL3')">Rumo</div>
+                <div class="chat-sug" onclick="setQuery('Vale · VALE3')">Vale</div>
+                <div class="chat-sug" onclick="setQuery('Petrobras · PETR4')">Petrobras</div>
+                <div class="chat-sug" onclick="setQuery('Raízen · RAIZ4')">Raízen</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-wrap">
+            <div class="chat-input-inner">
+              <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Digite o nome da empresa ou ticker..." onkeydown="handleChatKey(event)"></textarea>
+              <button class="chat-send" onclick="sendQuery()">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── HISTORIC ──── -->
+      <div class="page" id="page-historic">
+        <div class="hist-header">
+          <h1>Historic</h1>
+          <div class="hist-filter">
+            <div class="filter-btn active" onclick="filterHist('all',this)">Todos</div>
+            <div class="filter-btn" onclick="filterHist('done',this)">Concluídos</div>
+            <div class="filter-btn" onclick="filterHist('prog',this)">Em andamento</div>
+          </div>
+        </div>
+
+        <div class="hist-list" id="histList">
+
+          <!-- Card 1 — Cosan -->
+          <div class="hist-card" data-status="done" onclick="openDetail()">
+            <div class="hist-card-main">
+              <div class="hist-bar" style="background:var(--green)"></div>
+              <div class="hist-content">
+                <div class="hist-top">
+                  <div class="hist-left">
+                    <div class="hist-tick" style="background:rgba(29,209,161,.1);color:var(--green);border:1px solid rgba(29,209,161,.2)">CSAN</div>
+                    <div>
+                      <div class="hist-info-name">Cosan S.A.</div>
+                      <div class="hist-info-meta">
+                        Holdings
+                        <div class="hist-dot"></div>
+                        B3: CSAN3 · NYSE: CSAN
+                        <div class="hist-dot"></div>
+                        14 Abr 2026
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hist-right">
+                    <div class="hist-badges">
+                      <span class="badge badge-done">Concluído</span>
+                      <span class="badge badge-init">Initiation</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-metrics">
+                  <div class="hm"><div class="hm-lbl">Preço</div><div class="hm-val">R$ 5,48</div></div>
+                  <div class="hm"><div class="hm-lbl">Preço Alvo</div><div class="hm-val up">R$ 12,00</div></div>
+                  <div class="hm"><div class="hm-lbl">Upside</div><div class="hm-val up">+119%</div></div>
+                  <div class="hm"><div class="hm-lbl">Recomendação</div><div class="hm-val neutral">BUY</div></div>
+                  <div class="hm"><div class="hm-lbl">EV/EBITDA 26E</div><div class="hm-val">5,2x</div></div>
+                </div>
+                <div class="hist-thesis">
+                  Portfólio único com desconto de 61% ao NAV. Capitalização de R$10,5bi em 2025 marca inflexão: de desalavancagem para geração de valor. Catalisadores: IPO Moove, venda Radar, Rumo com volumes recordes e queda da Selic.
+                </div>
+              </div>
+              <div class="hist-spark">
+                <svg viewBox="0 0 100 40" style="width:100px">
+                  <polyline points="0,35 15,28 25,32 38,18 50,22 62,14 75,18 88,8 100,12" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="0,35 15,28 25,32 38,18 50,22 62,14 75,18 88,8 100,12 100,40 0,40" fill="rgba(29,209,161,.08)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 2 — Rumo -->
+          <div class="hist-card" data-status="done" onclick="openDetail()">
+            <div class="hist-card-main">
+              <div class="hist-bar" style="background:var(--blue)"></div>
+              <div class="hist-content">
+                <div class="hist-top">
+                  <div class="hist-left">
+                    <div class="hist-tick" style="background:rgba(59,123,246,.1);color:var(--blue);border:1px solid rgba(59,123,246,.2)">RAIL</div>
+                    <div>
+                      <div class="hist-info-name">Rumo S.A.</div>
+                      <div class="hist-info-meta">
+                        Logística Ferroviária
+                        <div class="hist-dot"></div>
+                        B3: RAIL3
+                        <div class="hist-dot"></div>
+                        10 Abr 2026
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hist-right">
+                    <div class="hist-badges">
+                      <span class="badge badge-done">Concluído</span>
+                      <span class="badge badge-update">Update</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-metrics">
+                  <div class="hm"><div class="hm-lbl">Preço</div><div class="hm-val">R$ 17,50</div></div>
+                  <div class="hm"><div class="hm-lbl">Preço Alvo</div><div class="hm-val up">R$ 23,00</div></div>
+                  <div class="hm"><div class="hm-lbl">Upside</div><div class="hm-val up">+31%</div></div>
+                  <div class="hm"><div class="hm-lbl">Recomendação</div><div class="hm-val neutral">BUY</div></div>
+                  <div class="hm"><div class="hm-lbl">EV/EBITDA 26E</div><div class="hm-val">5,9x</div></div>
+                </div>
+                <div class="hist-thesis">
+                  Volumes recordes em 2025 (84bi RTK). Fev/26 com +17% a/a, impulsionado por soja acelerada. EBITDA 2026E de R$8,4bi. TIR real 15%. Expansão LDRV como catalisador de longo prazo. Maior alavancagem operacional ao agro.
+                </div>
+              </div>
+              <div class="hist-spark">
+                <svg viewBox="0 0 100 40" style="width:100px">
+                  <polyline points="0,30 12,26 25,20 38,22 50,16 60,18 72,10 85,13 100,7" fill="none" stroke="var(--blue)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="0,30 12,26 25,20 38,22 50,16 60,18 72,10 85,13 100,7 100,40 0,40" fill="rgba(59,123,246,.08)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Card 3 — Raízen -->
+          <div class="hist-card" data-status="prog">
+            <div class="hist-card-main">
+              <div class="hist-bar" style="background:var(--orange)"></div>
+              <div class="hist-content">
+                <div class="hist-top">
+                  <div class="hist-left">
+                    <div class="hist-tick" style="background:rgba(236,112,0,.1);color:var(--orange);border:1px solid rgba(236,112,0,.2)">RAIZ</div>
+                    <div>
+                      <div class="hist-info-name">Raízen S.A.</div>
+                      <div class="hist-info-meta">
+                        Energia · Agronegócio
+                        <div class="hist-dot"></div>
+                        B3: RAIZ4
+                        <div class="hist-dot"></div>
+                        08 Abr 2026
+                      </div>
+                    </div>
+                  </div>
+                  <div class="hist-right">
+                    <div class="hist-badges">
+                      <span class="badge badge-prog">Em andamento</span>
+                      <span class="badge badge-init">Sector</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="hist-metrics">
+                  <div class="hm"><div class="hm-lbl">Preço</div><div class="hm-val">R$ 0,58</div></div>
+                  <div class="hm"><div class="hm-lbl">Preço Alvo</div><div class="hm-val up">R$ 1,40</div></div>
+                  <div class="hm"><div class="hm-lbl">Upside</div><div class="hm-val up">+141%</div></div>
+                  <div class="hm"><div class="hm-lbl">Recomendação</div><div class="hm-val" style="color:var(--text-2)">HOLD</div></div>
+                  <div class="hm"><div class="hm-lbl">ND/EBITDA</div><div class="hm-val down">5,1x</div></div>
+                </div>
+                <div class="hist-thesis">
+                  JV Cosan + Shell. Alta alavancagem (5,1x) é o principal risco. Reestruturação em andamento: corte de custos -26% G&A, capex -21%. Mandato E30 (ago/25) impulsiona etanol. Distribuição Brasil forte com +50% EBITDA a/a no 3T.
+                </div>
+              </div>
+              <div class="hist-spark">
+                <svg viewBox="0 0 100 40" style="width:100px">
+                  <polyline points="0,8 12,12 22,18 35,14 48,20 60,25 72,30 85,28 100,34" fill="none" stroke="var(--red)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  <polyline points="0,8 12,12 22,18 35,14 48,20 60,25 72,30 85,28 100,34 100,40 0,40" fill="rgba(255,71,87,.08)"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ──── DOC ANALYSIS ──── -->
+      <!-- drag overlay (global, outside page div) rendered below app -->
+
+      <div class="page" id="page-docanalysis" style="display:none;flex-direction:column;height:calc(100vh - 52px)">
+        <div class="dash-header">
+          <h1>Análise Documental</h1>
+          <p>Faça upload de um relatório .docx — arraste para qualquer lugar da tela</p>
+        </div>
+
+        <div class="upload-zone" id="uploadZone" onclick="startDocAnalysis()">
+          <svg style="width:36px;height:36px;color:var(--orange);margin-bottom:12px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <h3>Arraste seu arquivo aqui</h3>
+          <p style="margin-bottom:18px">Formatos aceitos: .docx · .doc · .pdf &nbsp;·&nbsp; Tamanho máximo: 20MB</p>
+          <button class="btn-impl" style="margin:0;padding:9px 20px;font-size:13px">Selecionar Arquivo</button>
+        </div>
+
+        <div class="doc-loading" id="docLoading">
+          <div style="font-size:13px;font-weight:600;margin-bottom:14px">Analisando documento...</div>
+          <div class="doc-step" id="ds1"><div class="step-icon">01</div> Lendo estrutura do documento</div>
+          <div class="doc-step" id="ds2"><div class="step-icon">02</div> Identificando seções e hierarquia</div>
+          <div class="doc-step" id="ds3"><div class="step-icon">03</div> Analisando dados financeiros citados</div>
+          <div class="doc-step" id="ds4"><div class="step-icon">04</div> Avaliando qualidade da tese de investimento</div>
+          <div class="doc-step" id="ds5"><div class="step-icon">05</div> Gerando sugestões de melhoria</div>
+          <div class="doc-step" id="ds6"><div class="step-icon">06</div> Análise concluída</div>
+        </div>
+
+        <div class="doc-result" id="docResult">
+          <div class="doc-res-header">
+            <div>
+              <h2>Relatório analisado: Cosan_Research_Initiation.docx</h2>
+              <p>47 páginas · 12.340 palavras · 5 seções · análise concluída em 8,3s</p>
+            </div>
+            <div style="display:flex;gap:10px">
+              <button class="btn-impl" onclick="showPage('buildppt',document.getElementById('nav-buildppt'))">
+                <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+                Aplicar todas as sugestões
+              </button>
+              <button class="btn-dl">
+                <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                Download revisado
+              </button>
+            </div>
+          </div>
+
+          <div class="doc-res-cols">
+
+            <!-- LEFT: Improvements -->
+            <div class="doc-panel">
+              <div class="doc-panel-h"><div class="dp-dot" style="background:var(--orange)"></div>Sugestões de Melhoria · 5 encontradas</div>
+
+              <div class="doc-improve">
+                <div class="di-head"><div class="di-title">Dados de EBITDA desatualizados</div></div>
+                <div class="di-original"><span class="di-original-lbl">Texto atual</span>"O EBITDA da Cosan em 2024 foi de aproximadamente R$7 bilhões, com pressão de alavancagem relevante."</div>
+                <div class="di-suggested"><span class="di-suggested-lbl">Sugestão</span>"O EBITDA sob gestão da Cosan em 2024A totalizou R$27,5 bilhões (+8% vs 2023A), com destaque para o 4T24 de R$7,6bi. A alavancagem corporativa encerrou em 2,9x ND/EBITDA."</div>
+              </div>
+
+              <div class="doc-improve">
+                <div class="di-head"><div class="di-title">Target price do BTG incorreto</div></div>
+                <div class="di-original"><span class="di-original-lbl">Texto atual</span>"BTG Pactual mantém recomendação de compra com preço-alvo de R$15,00 para CSAN3."</div>
+                <div class="di-suggested"><span class="di-suggested-lbl">Sugestão</span>"BTG Pactual revisou o preço-alvo para R$10,50 (dez/2025), com recomendação BUY e upside de 91,6% sobre o preço atual de R$5,48."</div>
+              </div>
+
+              <div class="doc-improve">
+                <div class="di-head"><div class="di-title">Mandato E30 não mencionado</div></div>
+                <div class="di-original"><span class="di-original-lbl">Texto atual</span>"A Raízen enfrenta pressões de margem no segmento de etanol em função do ambiente competitivo."</div>
+                <div class="di-suggested"><span class="di-suggested-lbl">Sugestão</span>"A Raízen é beneficiária direta do mandato E30 (vigente desde ago/2025), que aumenta o teor de etanol na gasolina de 27% para 30%, elevando a demanda estrutural do segmento em ~800mm litros/ano."</div>
+              </div>
+
+              <div class="doc-improve">
+                <div class="di-head"><div class="di-title">Seção de valuation sem sensibilidade</div></div>
+                <div class="di-original"><span class="di-original-lbl">Texto atual</span>"O preço-alvo de R$12,00 é calculado pelo método SOTP com múltiplo médio de 6x EBITDA."</div>
+                <div class="di-suggested"><span class="di-suggested-lbl">Sugestão</span>"O NAV SOTP de R$14,19/ação (implica target R$12,00 com 15% holdco discount) é sensível ao múltiplo EV/EBITDA da Rumo: a cada -0,5x, o NAV cai ~R$0,80/ação. Incluir tabela de sensibilidade desconto × múltiplo."</div>
+              </div>
+
+              <div class="doc-improve">
+                <div class="di-head"><div class="di-title">Capitalização 2025 sem detalhe</div></div>
+                <div class="di-original"><span class="di-original-lbl">Texto atual</span>"A Cosan realizou um aumento de capital em 2025 que trouxe novos investidores institucionais."</div>
+                <div class="di-suggested"><span class="di-suggested-lbl">Sugestão</span>"Em set/2025, a Cosan concluiu capitalização de R$10,5bi: BTG Pactual (R$4,5bi), Perfin (R$2,0bi), Aguassanta/Ometto (R$750mm) e follow-on minoritário. BTG e Perfin assumiram assentos no conselho."</div>
+              </div>
+            </div>
+
+            <!-- RIGHT: Strengths -->
+            <div class="doc-panel">
+              <div class="doc-panel-h"><div class="dp-dot" style="background:var(--green)"></div>Pontos Fortes a Manter · 5 identificados</div>
+
+              <div class="doc-strength">
+                <div class="ds-head"><div class="ds-title">Tese de investimento clara e objetiva</div></div>
+                <div class="ds-excerpt">"Portfólio único e diversificado sem comparable direto listado no Brasil. O desconto ao NAV de 61% está acima do holdco discount estrutural de 20–35%, criando assimetria positiva de risco/retorno para investidores de longo prazo."</div>
+              </div>
+
+              <div class="doc-strength">
+                <div class="ds-head"><div class="ds-title">Análise de risco da Raízen bem estruturada</div></div>
+                <div class="ds-excerpt">"A alavancagem de 5,1x ND/EBITDA na Raízen representa o principal risco do portfólio. Despesas financeiras de R$3,2bi/ano limitam o fluxo de dividendos para a Cosan e aumentam a probabilidade de novo aumento de capital."</div>
+              </div>
+
+              <div class="doc-strength">
+                <div class="ds-head"><div class="ds-title">Timeline de eventos corporativos detalhado</div></div>
+                <div class="ds-excerpt">"Jan/2025: venda Vale R$9,1bi · Set/2025: capitalização R$10,5bi · Nov/2025: follow-on concluído · Dez/2025: BTG+Bradesco adquirem participação na Cosan Dez por R$4bi com put option no 5° ano."</div>
+              </div>
+
+              <div class="doc-strength">
+                <div class="ds-head"><div class="ds-title">Comparativo de múltiplos com pares relevantes</div></div>
+                <div class="ds-excerpt">"CSAN3 a 5,2x EV/EBITDA 26E vs. mediana de pares brasileiros de infraestrutura em 7,8x e holdings latino-americanas em 6,5x. Desconto de 33% à mediana do setor justificado parcialmente pela complexidade estrutural."</div>
+              </div>
+
+              <div class="doc-strength">
+                <div class="ds-head"><div class="ds-title">Catalisadores com horizonte temporal definido</div></div>
+                <div class="ds-excerpt">"IPO Moove (Nasdaq, 2H26E), venda de ativos Raízen (R$5bi alvo, 2026E), desinvestimento Radar (R$16,8bi portfólio, primeiro ativo a ser vendido conforme guidance), Rumo volumes recordes 2026E (84–87bi RTK)."</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ──── BUILD PPT ──── -->
+      <div class="page" id="page-buildppt">
+        <div class="dash-header" style="margin-bottom:12px">
+          <h1>Build PPT</h1>
+          <p>Cosan S.A. · Itaú BBA Research · Initiation of Coverage · Abril 2026</p>
+        </div>
+        <div class="ppt-controls">
+          <button class="btn-nav" onclick="prevSlide()">&#8592;</button>
+          <button class="btn-nav" onclick="nextSlide()">&#8594;</button>
+          <div class="slide-counter" id="slideCounter">Slide 1 / 13</div>
+          <div style="flex:1"></div>
+          <button class="btn-impl" style="margin:0;padding:9px 18px;font-size:12px">
+            <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+            Export
+          </button>
+        </div>
+
+        <div class="slide-viewport">
+
+          <!-- ═══ SLIDE 1 — COVER ═══ -->
+          <div class="slide s-cover active" id="sl1">
+            <div class="cover-logo-slide"><div class="cls-mark">í</div><div class="cls-text">Itaú <span>BBA</span></div></div>
+            <div class="cover-tag">Research · Initiation of Coverage</div>
+            <div class="cover-h">Cosan S.A.<br><em>Unlocking the Conglomerate</em></div>
+            <div class="cover-sub">Holdings · B3: CSAN3 · NYSE: CSAN · Abril 2026</div>
+            <div class="cover-meta">
+              <div class="cm-item">Recomendação <span>BUY</span></div>
+              <div class="cm-item">Preço Alvo <span>R$ 12,00</span></div>
+              <div class="cm-item">Upside <span>+119%</span></div>
+              <div class="cm-item">Preço Atual <span>R$ 5,48</span></div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Internal Use Only · Itaú BBA Research</span><span>1</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 2 — INVESTMENT THESIS ═══ -->
+          <div class="slide s-body" id="sl2">
+            <div class="s-head"><div><div class="s-tag">Investment Thesis</div><div class="s-title">Por que comprar CSAN3 agora?</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:1">
+              <div style="display:flex;flex-direction:column;gap:8px">
+                <div style="background:rgba(236,112,0,.08);border:1px solid rgba(236,112,0,.2);border-radius:7px;padding:10px">
+                  <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--orange);margin-bottom:4px">01 · Desconto extremo ao NAV</div>
+                  <div style="font-size:11px;line-height:1.5;color:rgba(255,255,255,.75)">Ações a <b style="color:white">61% de desconto</b> ao NAV SOTP de R$14,19. Holdco discount estrutural típico: 20–35%. Excesso é temporário e reversível.</div>
+                </div>
+                <div style="background:rgba(29,209,161,.06);border:1px solid rgba(29,209,161,.18);border-radius:7px;padding:10px">
+                  <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--green);margin-bottom:4px">02 · Inflexão estratégica em 2025</div>
+                  <div style="font-size:11px;line-height:1.5;color:rgba(255,255,255,.75)">Capitalização de <b style="color:white">R$10,5bi</b> (BTG, Perfin, Ometto) marca transição para geradora de valor sob nova governança.</div>
+                </div>
+                <div style="background:rgba(59,123,246,.06);border:1px solid rgba(59,123,246,.18);border-radius:7px;padding:10px">
+                  <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#6FA3FF;margin-bottom:4px">03 · Portfólio sem comparable</div>
+                  <div style="font-size:11px;line-height:1.5;color:rgba(255,255,255,.75)">Acesso único a Rumo, Raízen (Shell JV), Compass (gás), Moove (Mobil) e Radar em um único veículo listado.</div>
+                </div>
+                <div style="background:rgba(124,92,252,.06);border:1px solid rgba(124,92,252,.18);border-radius:7px;padding:10px">
+                  <div style="font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:#A78BFA;margin-bottom:4px">04 · Catalisadores de curto prazo</div>
+                  <div style="font-size:11px;line-height:1.5;color:rgba(255,255,255,.75)">IPO Moove (Nasdaq), venda Radar (R$16,8bi), queda Selic, Rumo volumes recordes. Horizonte 12–24 meses.</div>
+                </div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start">
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Preço Atual</div>
+                  <div style="font-size:19px;font-weight:700;color:white">R$ 5,48</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:2px">B3 · abr/2026</div>
+                </div>
+                <div style="background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.25);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(236,112,0,.8);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Preço Alvo</div>
+                  <div style="font-size:19px;font-weight:700;color:var(--orange)">R$ 12,00</div>
+                  <div style="font-size:9px;color:var(--green);margin-top:2px">+119% upside</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">NAV SOTP</div>
+                  <div style="font-size:19px;font-weight:700;color:white">R$ 14,19</div>
+                  <div style="font-size:9px;color:rgba(255,71,87,.8);margin-top:2px">desc. 61%</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">Market Cap</div>
+                  <div style="font-size:19px;font-weight:700;color:white">R$21,4bi</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:2px">1.900mm ações</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">EBITDA 2026E</div>
+                  <div style="font-size:19px;font-weight:700;color:var(--green)">R$21,5bi</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:2px">sob gestão</div>
+                </div>
+                <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;padding:10px;text-align:center">
+                  <div style="font-size:8px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px">EV/EBITDA 26E</div>
+                  <div style="font-size:19px;font-weight:700;color:white">5,2x</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:2px">vs setor 7,8x</div>
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>2</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 3 — PORTFOLIO STRUCTURE ═══ -->
+          <div class="slide s-body" id="sl3">
+            <div class="s-head"><div><div class="s-tag">Company Overview</div><div class="s-title">Estrutura do Portfólio · Cosan S.A.</div></div><div class="s-logo">í</div></div>
+            <div style="display:flex;flex-direction:column;align-items:center;flex:1;justify-content:center;gap:10px">
+              <!-- Cosan box -->
+              <div style="background:rgba(236,112,0,.15);border:2px solid rgba(236,112,0,.4);border-radius:10px;padding:10px 28px;font-size:13px;font-weight:700;letter-spacing:-.2px">COSAN S.A. · CSAN3 · NYSE: CSAN</div>
+              <!-- Connector line -->
+              <div style="width:1px;height:16px;background:rgba(255,255,255,.15)"></div>
+              <!-- 5 subsidiaries -->
+              <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:100%">
+                <div style="background:rgba(29,209,161,.08);border:1px solid rgba(29,209,161,.25);border-radius:8px;padding:13px;text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:var(--green);margin-bottom:4px">RAIL3</div>
+                  <div style="font-size:12px;font-weight:600;color:white;margin-bottom:4px">Rumo</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">Logística Ferroviária</div>
+                  <div style="font-size:18px;font-weight:700;color:var(--green)">27,5%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px">stake Cosan</div>
+                  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.5)">EBITDA 2026E<br><b style="color:var(--green)">R$8,5bi</b></div>
+                </div>
+                <div style="background:rgba(236,112,0,.08);border:1px solid rgba(236,112,0,.25);border-radius:8px;padding:13px;text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:var(--orange);margin-bottom:4px">RAIZ4</div>
+                  <div style="font-size:12px;font-weight:600;color:white;margin-bottom:4px">Raízen</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">Energia / Etanol / Shell</div>
+                  <div style="font-size:18px;font-weight:700;color:var(--orange)">50%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px">JV c/ Shell</div>
+                  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.5)">EBITDA 2026E<br><b style="color:var(--orange)">R$13,5bi</b></div>
+                </div>
+                <div style="background:rgba(59,123,246,.08);border:1px solid rgba(59,123,246,.25);border-radius:8px;padding:13px;text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:#6FA3FF;margin-bottom:4px">Privado</div>
+                  <div style="font-size:12px;font-weight:600;color:white;margin-bottom:4px">Compass</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">Distribuição de Gás</div>
+                  <div style="font-size:18px;font-weight:700;color:#6FA3FF">100%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px">via Cosan Dez</div>
+                  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.5)">EBITDA 2026E<br><b style="color:#6FA3FF">R$5,5bi</b></div>
+                </div>
+                <div style="background:rgba(124,92,252,.08);border:1px solid rgba(124,92,252,.25);border-radius:8px;padding:13px;text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:#A78BFA;margin-bottom:4px">Privado</div>
+                  <div style="font-size:12px;font-weight:600;color:white;margin-bottom:4px">Moove</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">Lubrificantes Mobil</div>
+                  <div style="font-size:18px;font-weight:700;color:#A78BFA">100%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px">IPO Nasdaq previsto</div>
+                  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.5)">EBITDA 2026E<br><b style="color:#A78BFA">R$0,85bi</b></div>
+                </div>
+                <div style="background:rgba(255,180,0,.08);border:1px solid rgba(255,180,0,.25);border-radius:8px;padding:13px;text-align:center">
+                  <div style="font-size:16px;font-weight:800;color:#FBB040;margin-bottom:4px">Privado</div>
+                  <div style="font-size:12px;font-weight:600;color:white;margin-bottom:4px">Radar</div>
+                  <div style="font-size:10px;color:rgba(255,255,255,.4);margin-bottom:8px">Terras Agrícolas</div>
+                  <div style="font-size:18px;font-weight:700;color:#FBB040">100%</div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.3);margin-top:3px">1° desinvestimento</div>
+                  <div style="margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);font-size:10px;color:rgba(255,255,255,.5)">Portfólio<br><b style="color:#FBB040">R$16,8bi</b></div>
+                </div>
+              </div>
+              <div style="font-size:10px;color:rgba(255,255,255,.25);text-align:center;margin-top:4px">Fundada em 1936 · Presidente: Luis Henrique Guimarães · HQ: São Paulo, SP</div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>3</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 4 — MARKET DATA ═══ -->
+          <div class="slide s-body" id="sl4">
+            <div class="s-head"><div><div class="s-tag">Market Data</div><div class="s-title">CSAN3 · Dados de Mercado · abr/2026</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1">
+              <div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+                  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px">
+                    <div style="font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px">Preço (B3)</div>
+                    <div style="font-size:20px;font-weight:700;color:var(--green)">R$ 5,48</div>
+                    <div style="font-size:9px;color:var(--green)">+4,58% · 09/04/2026</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px">
+                    <div style="font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px">Preço (NYSE)</div>
+                    <div style="font-size:20px;font-weight:700">USD 4,43</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,.3)">CSAN · NYSE</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px">
+                    <div style="font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px">Market Cap BRL</div>
+                    <div style="font-size:20px;font-weight:700">R$ 21,4bi</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,.3)">1.900mm ações</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;padding:12px">
+                    <div style="font-size:9px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px">Market Cap USD</div>
+                    <div style="font-size:20px;font-weight:700">USD 4,4bi</div>
+                    <div style="font-size:9px;color:rgba(255,255,255,.3)">Free float ~72%</div>
+                  </div>
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:11px">
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.08)"><td style="padding:7px 0;color:rgba(255,255,255,.45)">52-week High</td><td style="text-align:right;font-weight:600">R$ 8,78</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:7px 0;color:rgba(255,255,255,.45)">ADTV (30 dias)</td><td style="text-align:right;font-weight:600">37,4mm ações</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:7px 0;color:rgba(255,255,255,.45)">Beta (5 anos)</td><td style="text-align:right;font-weight:600">0,73</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:7px 0;color:rgba(255,255,255,.45)">EPS TTM</td><td style="text-align:right;font-weight:600;color:var(--red)">-R$ 3,89</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:7px 0;color:rgba(255,255,255,.45)">Próximo Earnings</td><td style="text-align:right;font-weight:600">14/05/2026</td></tr>
+                  <tr><td style="padding:7px 0;color:rgba(255,255,255,.45)">Último dividendo</td><td style="text-align:right;font-weight:600">R$ 0,45 (jun/2024)</td></tr>
+                </table>
+              </div>
+              <div>
+                <!-- Relative performance chart (simplified) -->
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.35);margin-bottom:10px">Performance CSAN3 vs IBOV · 12 meses</div>
+                <svg viewBox="0 0 320 140" style="width:100%;margin-bottom:12px">
+                  <line x1="0" y1="110" x2="320" y2="110" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+                  <line x1="0" y1="80" x2="320" y2="80" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="4,4"/>
+                  <line x1="0" y1="50" x2="320" y2="50" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="4,4"/>
+                  <text x="0" y="113" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">0%</text>
+                  <text x="0" y="83" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">+10%</text>
+                  <text x="0" y="53" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">+20%</text>
+                  <!-- IBOV line (roughly flat/positive) -->
+                  <polyline points="20,110 60,104 100,98 140,92 180,88 220,85 260,80 300,78" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="1.5" stroke-dasharray="5,3"/>
+                  <!-- CSAN3 line (down then recovery) -->
+                  <polyline points="20,110 55,118 90,125 130,132 160,128 200,120 245,108 300,95" fill="none" stroke="var(--orange)" stroke-width="2" stroke-linecap="round"/>
+                  <text x="265" y="75" font-size="8" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">IBOV</text>
+                  <text x="265" y="90" font-size="8" fill="var(--orange)" font-family="Inter,sans-serif">CSAN3</text>
+                </svg>
+                <div style="background:rgba(236,112,0,.08);border:1px solid rgba(236,112,0,.2);border-radius:8px;padding:12px">
+                  <div style="font-size:10px;font-weight:700;color:var(--orange);margin-bottom:5px;text-transform:uppercase;letter-spacing:.8px">Índices de Comparação</div>
+                  <div style="display:flex;gap:16px;font-size:11px">
+                    <div><div style="color:rgba(255,255,255,.4);font-size:9px">EV/EBITDA Cosan</div><div style="font-weight:700">5,2x</div></div>
+                    <div><div style="color:rgba(255,255,255,.4);font-size:9px">Holdings Brasil</div><div style="font-weight:700">6,5x</div></div>
+                    <div><div style="color:rgba(255,255,255,.4);font-size:9px">Infra Brasil</div><div style="font-weight:700">7,8x</div></div>
+                    <div><div style="color:rgba(255,255,255,.4);font-size:9px">LatAm Holdings</div><div style="font-weight:700">6,5x</div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>4</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 5 — EBITDA EVOLUTION ═══ -->
+          <div class="slide s-body" id="sl5">
+            <div class="s-head"><div><div class="s-tag">Financials</div><div class="s-title">EBITDA sob Gestão · Evolução 2022–2026E (R$ bilhões)</div></div><div class="s-logo">í</div></div>
+            <svg viewBox="0 0 760 210" style="flex:1;width:100%">
+              <!-- Grid lines -->
+              <line x1="60" y1="10" x2="60" y2="175" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+              <line x1="60" y1="175" x2="750" y2="175" stroke="rgba(255,255,255,.07)" stroke-width="1"/>
+              <line x1="60" y1="140" x2="750" y2="140" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,4"/>
+              <line x1="60" y1="105" x2="750" y2="105" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,4"/>
+              <line x1="60" y1="70" x2="750" y2="70" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,4"/>
+              <line x1="60" y1="35" x2="750" y2="35" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,4"/>
+              <!-- Y labels -->
+              <text x="50" y="178" text-anchor="end" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">0</text>
+              <text x="50" y="143" text-anchor="end" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">5bi</text>
+              <text x="50" y="108" text-anchor="end" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">10bi</text>
+              <text x="50" y="73" text-anchor="end" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">15bi</text>
+              <text x="50" y="38" text-anchor="end" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">20bi</text>
+              <!-- 2022A = 17.2bi -->
+              <rect x="80" y="57" width="100" height="118" fill="rgba(255,255,255,.1)" rx="4"/>
+              <text x="130" y="48" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif" font-weight="600">R$17,2bi</text>
+              <text x="130" y="193" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2022A</text>
+              <!-- 2023A = 19bi -->
+              <rect x="210" y="44" width="100" height="131" fill="rgba(255,255,255,.12)" rx="4"/>
+              <text x="260" y="35" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif" font-weight="600">R$19,0bi</text>
+              <text x="260" y="193" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2023A</text>
+              <!-- 2024A = 27.5bi (highlight) -->
+              <rect x="340" y="13" width="100" height="162" fill="var(--orange)" opacity=".85" rx="4"/>
+              <text x="390" y="10" text-anchor="middle" font-size="10" fill="var(--orange)" font-family="Inter,sans-serif" font-weight="700">R$27,5bi</text>
+              <text x="390" y="193" text-anchor="middle" font-size="9" fill="var(--orange)" font-family="Inter,sans-serif" font-weight="600">2024A</text>
+              <!-- 2025E = 19bi -->
+              <rect x="470" y="44" width="100" height="131" fill="rgba(255,255,255,.08)" rx="4" stroke="rgba(255,255,255,.12)" stroke-width="1" stroke-dasharray="4,3"/>
+              <text x="520" y="35" text-anchor="middle" font-size="10" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif" font-weight="600">R$19,0bi</text>
+              <text x="520" y="193" text-anchor="middle" font-size="9" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">2025E</text>
+              <!-- 2026E = 21.5bi -->
+              <rect x="600" y="30" width="100" height="145" fill="rgba(29,209,161,.35)" rx="4" stroke="rgba(29,209,161,.4)" stroke-width="1" stroke-dasharray="4,3"/>
+              <text x="650" y="21" text-anchor="middle" font-size="10" fill="var(--green)" font-family="Inter,sans-serif" font-weight="700">R$21,5bi</text>
+              <text x="650" y="193" text-anchor="middle" font-size="9" fill="var(--green)" font-family="Inter,sans-serif">2026E</text>
+              <!-- Annotations -->
+              <text x="390" y="100" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.6)" font-family="Inter,sans-serif">Melhor ano</text>
+              <text x="390" y="111" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.6)" font-family="Inter,sans-serif">histórico</text>
+              <!-- CAGR arrow -->
+              <text x="412" y="207" text-anchor="middle" font-size="8" fill="var(--green)" font-family="Inter,sans-serif">CAGR 22–26E: +5,7% a.a.</text>
+            </svg>
+            <div style="display:flex;gap:14px;font-size:11px;margin-top:4px">
+              <div style="color:rgba(255,255,255,.4)">Nota: EBITDA sob gestão = soma ponderada dos EBITDA dos segmentos, independente do método de consolidação.</div>
+              <div style="color:rgba(255,255,255,.4)">2025E: redução por Raízen (-21% 4T24) e transição pós-capitalização. 2026E: recuperação liderada por Rumo.</div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>5</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 6 — P&L SUMMARY ═══ -->
+          <div class="slide s-body" id="sl6">
+            <div class="s-head"><div><div class="s-tag">Financials</div><div class="s-title">Resumo P&L Consolidado · 2022–2026E</div></div><div class="s-logo">í</div></div>
+            <table style="width:100%;border-collapse:collapse;font-size:10.5px;flex:1">
+                  <thead><tr style="border-bottom:1px solid rgba(255,255,255,.15)">
+                    <th style="text-align:left;padding:5px 7px;font-size:8px;text-transform:uppercase;letter-spacing:.6px;color:rgba(255,255,255,.35);font-weight:500">Segmento</th>
+                    <th style="text-align:right;padding:5px 7px;font-size:8px;color:rgba(255,255,255,.35);font-weight:500">EBITDA 26E</th>
+                    <th style="text-align:right;padding:5px 7px;font-size:8px;color:rgba(255,255,255,.35);font-weight:500">Múltiplo</th>
+                    <th style="text-align:right;padding:5px 7px;font-size:8px;color:rgba(255,255,255,.35);font-weight:500">Stake</th>
+                    <th style="text-align:right;padding:5px 7px;font-size:8px;color:rgba(255,255,255,.35);font-weight:500">Equity (R$mm)</th>
+                    <th style="text-align:right;padding:5px 7px;font-size:8px;color:rgba(255,255,255,.35);font-weight:500">R$/ação</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:6px 7px;color:var(--green);font-weight:600">Rumo (RAIL3)</td><td style="text-align:right;padding:6px 7px;font-family:monospace;font-size:9px">8.500</td><td style="text-align:right;padding:6px 7px">7,0x</td><td style="text-align:right;padding:6px 7px">27,5%</td><td style="text-align:right;padding:6px 7px;color:var(--green);font-weight:600">14.063</td><td style="text-align:right;padding:6px 7px;color:var(--green)">3,61</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:6px 7px;color:var(--orange);font-weight:600">Raízen (RAIZ4)</td><td style="text-align:right;padding:6px 7px;font-family:monospace;font-size:9px">13.500</td><td style="text-align:right;padding:6px 7px">4,5x</td><td style="text-align:right;padding:6px 7px">50,0%</td><td style="text-align:right;padding:6px 7px;color:var(--orange);font-weight:600">5.188</td><td style="text-align:right;padding:6px 7px;color:var(--orange)">1,33</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:6px 7px;color:#6FA3FF;font-weight:600">Compass</td><td style="text-align:right;padding:6px 7px;font-family:monospace;font-size:9px">5.500</td><td style="text-align:right;padding:6px 7px">8,0x</td><td style="text-align:right;padding:6px 7px">100%</td><td style="text-align:right;padding:6px 7px;color:#6FA3FF;font-weight:600">40.000</td><td style="text-align:right;padding:6px 7px;color:#6FA3FF">10,26</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:6px 7px;color:#A78BFA;font-weight:600">Moove</td><td style="text-align:right;padding:6px 7px;font-family:monospace;font-size:9px">850</td><td style="text-align:right;padding:6px 7px">7,0x</td><td style="text-align:right;padding:6px 7px">100%</td><td style="text-align:right;padding:6px 7px;color:#A78BFA;font-weight:600">5.950</td><td style="text-align:right;padding:6px 7px;color:#A78BFA">1,53</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:6px 7px;color:#FBB040;font-weight:600">Radar</td><td style="text-align:right;padding:6px 7px;font-family:monospace;font-size:9px">—</td><td style="text-align:right;padding:6px 7px">NAV</td><td style="text-align:right;padding:6px 7px">100%</td><td style="text-align:right;padding:6px 7px;color:#FBB040;font-weight:600">4.160</td><td style="text-align:right;padding:6px 7px;color:#FBB040">1,07</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td style="padding:5px 7px;color:rgba(255,255,255,.6)">Dívida Corp.</td><td style="text-align:right;padding:5px 7px">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right;padding:5px 7px;color:var(--red)">(14.000)</td><td style="text-align:right;padding:5px 7px;color:var(--red)">(3,59)</td></tr>
+                    <tr style="background:rgba(236,112,0,.07)"><td style="padding:7px 7px;font-weight:800;color:var(--orange);font-size:12px">NAV Total</td><td style="text-align:right;padding:7px 7px">—</td><td style="text-align:right">—</td><td style="text-align:right;padding:7px 7px;font-size:9px;color:rgba(255,255,255,.4)">3.900mm ações</td><td style="text-align:right;padding:7px 7px;font-weight:800;color:var(--orange)">55.361</td><td style="text-align:right;padding:7px 7px;font-weight:800;color:var(--orange);font-size:14px">R$14,19</td></tr>
+                  </tbody>
+                </table>
+            <div style="font-size:9px;color:rgba(255,255,255,.25);margin-top:8px">*2024A: prejuízo dominado por impairment Vale R$4,7bi + provisão IR/CSLL diferidos. Excl. não-recorrentes: prejuízo de R$909mm. Fontes: Cosan 4T24 release, XP Research, BTG Pactual, Nord Investimentos.</div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>6</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 7 — RUMO ═══ -->
+          <div class="slide s-body" id="sl7">
+            <div class="s-head"><div><div class="s-tag" style="color:var(--green)">Segmento · Rumo (27,5%)</div><div class="s-title">Maior operadora ferroviária da América Latina</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1">
+              <div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+                  <div style="background:rgba(29,209,161,.08);border:1px solid rgba(29,209,161,.2);border-radius:7px;padding:11px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.6px;text-transform:uppercase">Malha</div><div style="font-size:17px;font-weight:700;color:var(--green)">~15.000</div><div style="font-size:9px;color:rgba(255,255,255,.35)">km ferroviários</div></div>
+                  <div style="background:rgba(29,209,161,.08);border:1px solid rgba(29,209,161,.2);border-radius:7px;padding:11px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.6px;text-transform:uppercase">Volumes 2025</div><div style="font-size:17px;font-weight:700;color:var(--green)">84bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">RTK (record)</div></div>
+                  <div style="background:rgba(29,209,161,.08);border:1px solid rgba(29,209,161,.2);border-radius:7px;padding:11px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.6px;text-transform:uppercase">EBITDA 2025E</div><div style="font-size:17px;font-weight:700;color:var(--green)">R$8,1bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">guidance R$8,1–8,7bi</div></div>
+                  <div style="background:rgba(29,209,161,.08);border:1px solid rgba(29,209,161,.2);border-radius:7px;padding:11px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.6px;text-transform:uppercase">EBITDA 2026E</div><div style="font-size:17px;font-weight:700;color:var(--green)">R$8,5bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">+5% a/a</div></div>
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px">EBITDA Trimestral Recente</div>
+                <svg viewBox="0 0 280 80" style="width:100%">
+                  <line x1="0" y1="70" x2="280" y2="70" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+                  <!-- bars: 4T23 1.2, 1T24 1.5, 2T24 1.8, 3T24 2.0, 4T24 1.7, 3T25 2.3 -->
+                  <rect x="10" y="46" width="30" height="24" fill="rgba(29,209,161,.3)" rx="3"/>
+                  <rect x="55" y="38" width="30" height="32" fill="rgba(29,209,161,.4)" rx="3"/>
+                  <rect x="100" y="28" width="30" height="42" fill="rgba(29,209,161,.5)" rx="3"/>
+                  <rect x="145" y="21" width="30" height="49" fill="rgba(29,209,161,.6)" rx="3"/>
+                  <rect x="190" y="30" width="30" height="40" fill="var(--green)" opacity=".7" rx="3"/>
+                  <rect x="235" y="13" width="30" height="57" fill="var(--green)" rx="3"/>
+                  <text x="25" y="80" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">4T23</text>
+                  <text x="70" y="80" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">1T24</text>
+                  <text x="115" y="80" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">2T24</text>
+                  <text x="160" y="80" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">3T24</text>
+                  <text x="205" y="80" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">4T24</text>
+                  <text x="250" y="80" text-anchor="middle" font-size="7" fill="var(--green)" font-family="Inter,sans-serif">3T25</text>
+                  <text x="25" y="42" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">1,2</text>
+                  <text x="70" y="34" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">1,5</text>
+                  <text x="115" y="24" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">1,8</text>
+                  <text x="160" y="17" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">2,0</text>
+                  <text x="205" y="26" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">1,7</text>
+                  <text x="250" y="9" text-anchor="middle" font-size="8" fill="var(--green)" font-family="Inter,sans-serif" font-weight="700">2,3</text>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Estimativas de Analistas · EBITDA Rumo</div>
+                <table style="width:100%;border-collapse:collapse;font-size:11px;margin-bottom:12px">
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.08)"><th style="text-align:left;padding:6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:500">Banco</th><th style="text-align:right;padding:6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:500">2025E</th><th style="text-align:right;padding:6px;font-size:9px;color:rgba(255,255,255,.3);font-weight:500">2026E</th></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:7px 6px;color:rgba(255,255,255,.7)">XP</td><td style="text-align:right;padding:7px 6px">R$8,0bi</td><td style="text-align:right;padding:7px 6px;color:var(--green)">R$8,4bi</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:7px 6px;color:rgba(255,255,255,.7)">BTG Pactual</td><td style="text-align:right;padding:7px 6px">R$8,1bi</td><td style="text-align:right;padding:7px 6px;color:var(--green)">R$8,4bi</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:7px 6px;color:rgba(255,255,255,.7)">JPMorgan</td><td style="text-align:right;padding:7px 6px">R$8,0bi</td><td style="text-align:right;padding:7px 6px;color:var(--green)">R$8,4bi</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:7px 6px;color:rgba(255,255,255,.7)">Santander</td><td style="text-align:right;padding:7px 6px">R$8,2bi</td><td style="text-align:right;padding:7px 6px;color:var(--green)">R$9,1bi</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.05);background:rgba(29,209,161,.04)"><td style="padding:7px 6px;font-weight:700;color:white">Guidance Cosan</td><td style="text-align:right;padding:7px 6px;font-weight:700">R$8,1–8,7bi</td><td style="text-align:right;padding:7px 6px;color:var(--green);font-weight:700">—</td></tr>
+                </table>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px">Catalisadores &amp; Riscos</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.6);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--green);font-weight:700;margin-right:6px">+</span>Volumes recordes safra soja 2026 (82–87bi RTK guidance)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.6);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--green);font-weight:700;margin-right:6px">+</span>FCF ex-capex de expansão: R$4,4bi (IBA) · DY implícito 9%</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.6);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--green);font-weight:700;margin-right:6px">+</span>Expansão LDRV como catalisador de longo prazo</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.6);padding:5px 0;border-bottom:1px solid rgba(255,255,255,.05)"><span style="color:var(--red);font-weight:700;margin-right:6px">−</span>Pressão tarifária norte (yield -13% no 4T25)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.6);padding:5px 0"><span style="color:var(--red);font-weight:700;margin-right:6px">−</span>Sem contratos take-or-pay · ciclo de capex intenso</div>
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>7</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 8 — RAÍZEN ═══ -->
+          <div class="slide s-body" id="sl8">
+            <div class="s-head"><div><div class="s-tag" style="color:var(--orange)">Segmento · Raízen (50%) + Compass (100%)</div><div class="s-title">O maior risco e a maior oportunidade do portfólio</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1">
+              <div>
+                <div style="font-size:10px;color:var(--orange);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(236,112,0,.2)">Raízen · JV Cosan + Shell (50/50)</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+                  <div style="background:rgba(236,112,0,.07);border:1px solid rgba(236,112,0,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">Alavancagem</div><div style="font-size:17px;font-weight:700;color:var(--red)">5,1x</div><div style="font-size:9px;color:rgba(255,255,255,.35)">ND/EBITDA</div></div>
+                  <div style="background:rgba(236,112,0,.07);border:1px solid rgba(236,112,0,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">EBITDA 4T24</div><div style="font-size:17px;font-weight:700;color:var(--orange)">R$3,0bi</div><div style="font-size:9px;color:var(--red)">-21% a/a</div></div>
+                  <div style="background:rgba(236,112,0,.07);border:1px solid rgba(236,112,0,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">EBITDA 2026E</div><div style="font-size:17px;font-weight:700;color:var(--orange)">R$13,5bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">safra 25/26</div></div>
+                  <div style="background:rgba(236,112,0,.07);border:1px solid rgba(236,112,0,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">Mandato E30</div><div style="font-size:17px;font-weight:700;color:var(--green)">ago/25</div><div style="font-size:9px;color:var(--green)">+800mm L/ano</div></div>
+                </div>
+                <div style="font-size:10px;line-height:1.6;color:rgba(255,255,255,.5);background:rgba(255,71,87,.04);border:1px solid rgba(255,71,87,.15);border-radius:7px;padding:10px">
+                  <b style="color:var(--red)">Risco principal:</b> alavancagem 5,1x exige reestruturação. Corte G&amp;A -26%, capex -21%. Possível capitalização + divisão da empresa em açúcar/etanol vs. distribuição.
+                </div>
+              </div>
+              <div>
+                <div style="font-size:10px;color:#6FA3FF;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(59,123,246,.2)">Compass · Distribuição de Gás Natural</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+                  <div style="background:rgba(59,123,246,.07);border:1px solid rgba(59,123,246,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">Stake Cosan</div><div style="font-size:17px;font-weight:700;color:#6FA3FF">100%</div><div style="font-size:9px;color:rgba(255,255,255,.35)">via Cosan Dez</div></div>
+                  <div style="background:rgba(59,123,246,.07);border:1px solid rgba(59,123,246,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">EBITDA 3T25</div><div style="font-size:17px;font-weight:700;color:#6FA3FF">+12%</div><div style="font-size:9px;color:rgba(255,255,255,.35)">a/a normalizado</div></div>
+                  <div style="background:rgba(59,123,246,.07);border:1px solid rgba(59,123,246,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">Dividendos 4T24</div><div style="font-size:17px;font-weight:700;color:#6FA3FF">R$1,1bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">para Cosan</div></div>
+                  <div style="background:rgba(59,123,246,.07);border:1px solid rgba(59,123,246,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35);letter-spacing:.5px">EBITDA 2026E</div><div style="font-size:17px;font-weight:700;color:#6FA3FF">R$5,5bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">maior gás BR</div></div>
+                </div>
+                <div style="font-size:10px;line-height:1.6;color:rgba(255,255,255,.5);background:rgba(59,123,246,.04);border:1px solid rgba(59,123,246,.15);border-radius:7px;padding:10px">
+                  Dez/2025: BTG + Bradesco adquirem participação preferencial na Cosan Dez por <b style="color:white">R$4bi</b>, com put option no 5° ano. Reduz pressão de caixa e sinaliza valor implícito de <b style="color:white">R$40bi+</b> na Compass.
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>8</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 9 — MOOVE + RADAR ═══ -->
+          <div class="slide s-body" id="sl9">
+            <div class="s-head"><div><div class="s-tag" style="color:#A78BFA">Segmentos · Moove (100%) + Radar (100%)</div><div class="s-title">Valor oculto: ativos com múltiplos catalisadores</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1">
+              <div>
+                <div style="font-size:10px;color:#A78BFA;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(124,92,252,.2)">Moove · Lubrificantes (Mobil + Comma)</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+                  <div style="background:rgba(124,92,252,.07);border:1px solid rgba(124,92,252,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">EBITDA 2026E</div><div style="font-size:17px;font-weight:700;color:#A78BFA">R$850mm</div></div>
+                  <div style="background:rgba(124,92,252,.07);border:1px solid rgba(124,92,252,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">EV/EBITDA (SOTP)</div><div style="font-size:17px;font-weight:700;color:#A78BFA">7,0x</div></div>
+                  <div style="background:rgba(124,92,252,.07);border:1px solid rgba(124,92,252,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">Equity Value</div><div style="font-size:17px;font-weight:700;color:#A78BFA">R$5,9bi</div></div>
+                  <div style="background:rgba(124,92,252,.1);border:1px solid rgba(124,92,252,.3);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:#A78BFA;font-weight:700">Catalisador</div><div style="font-size:13px;font-weight:700;color:white">IPO Nasdaq</div><div style="font-size:9px;color:rgba(255,255,255,.4)">2H26E</div></div>
+                </div>
+                <div style="font-size:11px;line-height:1.6;color:rgba(255,255,255,.55);padding:10px;background:rgba(124,92,252,.04);border:1px solid rgba(124,92,252,.12);border-radius:7px">
+                  Maior produtor de lubrificantes da América do Sul. Marcas Mobil (licença) e Comma (Europa/Ásia). Mercados: Brasil, Bolívia, Uruguai, Paraguai e Europa. IPO no Nasdaq planejado mas com progresso limitado reportado em 2025/2026.
+                </div>
+              </div>
+              <div>
+                <div style="font-size:10px;color:#FBB040;text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid rgba(251,176,64,.2)">Radar · Gestão de Terras Agrícolas</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px">
+                  <div style="background:rgba(251,176,64,.07);border:1px solid rgba(251,176,64,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">Portfólio Total</div><div style="font-size:17px;font-weight:700;color:#FBB040">R$16,8bi</div></div>
+                  <div style="background:rgba(251,176,64,.07);border:1px solid rgba(251,176,64,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">Equity Cosan</div><div style="font-size:17px;font-weight:700;color:#FBB040">R$5,2bi</div><div style="font-size:9px;color:rgba(255,255,255,.35)">c/ 20% desc.</div></div>
+                  <div style="background:rgba(251,176,64,.07);border:1px solid rgba(251,176,64,.18);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.35)">Valor SOTP</div><div style="font-size:17px;font-weight:700;color:#FBB040">R$4,2bi</div></div>
+                  <div style="background:rgba(251,176,64,.1);border:1px solid rgba(251,176,64,.3);border-radius:7px;padding:10px;text-align:center"><div style="font-size:9px;color:#FBB040;font-weight:700">Prioridade</div><div style="font-size:13px;font-weight:700;color:white">1° Venda</div><div style="font-size:9px;color:rgba(255,255,255,.4)">per guidance</div></div>
+                </div>
+                <div style="font-size:11px;line-height:1.6;color:rgba(255,255,255,.55);padding:10px;background:rgba(251,176,64,.04);border:1px solid rgba(251,176,64,.12);border-radius:7px">
+                  Gestão de propriedades agrícolas para cultivo de cana e grãos. Identificado como primeiro ativo a ser desinvestido conforme guidance da companhia. Apreciação de terras no 4T23 gerou surpresa positiva nos resultados. Catalisador de curto prazo se venda for anunciada.
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>9</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 10 — CAPITAL STRUCTURE ═══ -->
+          <div class="slide s-body" id="sl10">
+            <div class="s-head"><div><div class="s-tag">Capital Structure</div><div class="s-title">Estrutura de Capital & Eventos de Desalavancagem</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;flex:1">
+              <div>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Dívida Corporativa · 4T24</div>
+                <table style="width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:8px">
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.08)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Dívida Bruta Total</td><td style="text-align:right;font-weight:700;color:var(--red)">R$ 27.800mm</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Caixa & Equivalentes</td><td style="text-align:right;font-weight:600;color:var(--green)">R$ 4.300mm</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06);background:rgba(255,71,87,.04)"><td style="padding:5px 0;color:white;font-weight:600">Dívida Líquida Corp.</td><td style="text-align:right;font-weight:700;color:var(--red)">R$ 23.500mm</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Custo Médio</td><td style="text-align:right;font-weight:600">CDI + 1,40%</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Prazo Médio</td><td style="text-align:right;font-weight:600">6,1 anos</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Primeiro Vencimento</td><td style="text-align:right;font-weight:600">2028</td></tr>
+                  <tr style="border-bottom:1px solid rgba(255,255,255,.06)"><td style="padding:5px 0;color:rgba(255,255,255,.5)">Alavancagem ND/EBITDA</td><td style="text-align:right;font-weight:700;color:var(--red)">2,9x</td></tr>
+                  <tr><td style="padding:5px 0;color:rgba(255,255,255,.5)">Cobertura de Juros LTM</td><td style="text-align:right;font-weight:700;color:var(--red)">1,1x</td></tr>
+                </table>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:7px">Trajetória da Alavancagem</div>
+                <svg viewBox="0 0 280 70" style="width:100%">
+                  <line x1="0" y1="60" x2="280" y2="60" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+                  <!-- 3.1, 2.4, 2.9, 2.0E, 1.7E -->
+                  <polyline points="25,22 80,38 135,25 190,43 245,50" fill="none" stroke="rgba(255,71,87,.7)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="0"/>
+                  <polyline points="190,43 245,50" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-dasharray="5,3"/>
+                  <circle cx="25" cy="22" r="3" fill="var(--red)"/>
+                  <circle cx="80" cy="38" r="3" fill="var(--orange)"/>
+                  <circle cx="135" cy="25" r="3" fill="var(--red)"/>
+                  <circle cx="190" cy="43" r="3" fill="var(--orange)" stroke="var(--orange)" stroke-dasharray="2,2" fill-opacity=".5"/>
+                  <circle cx="245" cy="50" r="3" fill="var(--green)" fill-opacity=".5" stroke="var(--green)" stroke-dasharray="2,2"/>
+                  <text x="25" y="15" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif">3,1x</text>
+                  <text x="80" y="31" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif">2,4x</text>
+                  <text x="135" y="18" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.5)" font-family="Inter,sans-serif">2,9x</text>
+                  <text x="190" y="36" text-anchor="middle" font-size="8" fill="var(--green)" font-family="Inter,sans-serif">2,0x</text>
+                  <text x="245" y="43" text-anchor="middle" font-size="8" fill="var(--green)" font-family="Inter,sans-serif">1,7x</text>
+                  <text x="25" y="70" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">2022A</text>
+                  <text x="80" y="70" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">2023A</text>
+                  <text x="135" y="70" text-anchor="middle" font-size="7" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">2024A</text>
+                  <text x="190" y="70" text-anchor="middle" font-size="7" fill="var(--green)" font-family="Inter,sans-serif">2025E</text>
+                  <text x="245" y="70" text-anchor="middle" font-size="7" fill="var(--green)" font-family="Inter,sans-serif">2026E</text>
+                </svg>
+              </div>
+              <div>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Capitalização 2025 · R$10,5 bilhões</div>
+                <div style="background:rgba(236,112,0,.06);border:1px solid rgba(236,112,0,.18);border-radius:7px;padding:9px;margin-bottom:8px">
+                  <div style="display:flex;flex-direction:column;gap:3px">
+                    <div style="display:flex;justify-content:space-between;font-size:10.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:rgba(255,255,255,.5)">BTG Pactual</span><span style="font-weight:700;color:var(--orange)">R$ 4.500mm</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:10.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:rgba(255,255,255,.5)">Perfin</span><span style="font-weight:700;color:var(--orange)">R$ 2.000mm</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:10.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:rgba(255,255,255,.5)">Aguassanta / Ometto</span><span style="font-weight:700;color:var(--orange)">R$ 750mm</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:10.5px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span style="color:rgba(255,255,255,.5)">Follow-on</span><span style="font-weight:700;color:var(--orange)">R$ 3.250mm</span></div>
+                    <div style="display:flex;justify-content:space-between;font-size:11px;padding:5px 0"><span style="font-weight:700;color:white">Total</span><span style="font-weight:700;color:var(--orange);font-size:13px">R$ 10.500mm</span></div>
+                  </div>
+                  <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:4px">R$5,00/ação · 287,5mm novas ações · nov/2025</div>
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px">Timeline de Desalavancagem</div>
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;gap:8px;font-size:10.5px;color:rgba(255,255,255,.6)"><span style="color:var(--orange);font-weight:700;min-width:52px">Jan/2025</span>Venda Vale R$9,1bi → amortização antecipada de bonds</div>
+                  <div style="display:flex;gap:8px;font-size:10.5px;color:rgba(255,255,255,.6)"><span style="color:var(--orange);font-weight:700;min-width:52px">Nov/2025</span>Capitalização R$10,5bi → redução alavancagem</div>
+                  <div style="display:flex;gap:8px;font-size:10.5px;color:rgba(255,255,255,.6)"><span style="color:var(--orange);font-weight:700;min-width:52px">Dez/2025</span>Compass deal R$4bi BTG+Bradesco → liquidez adicional</div>
+                  <div style="display:flex;gap:8px;font-size:10.5px;color:var(--green)"><span style="font-weight:700;min-width:52px">2026E</span>ND/EBITDA meta: 1,7x · Selic em queda ajuda CDI+1,40%</div>
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>10</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 11 — SOTP ═══ -->
+          <div class="slide s-body" id="sl11">
+            <div class="s-head"><div><div class="s-tag">Valuation</div><div class="s-title">Sum-of-the-Parts (SOTP) · NAV R$14,19/ação</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:14px;flex:1">
+              <div>
+                <table style="width:100%;border-collapse:collapse;font-size:11px">
+                  <thead><tr style="border-bottom:1px solid rgba(255,255,255,.15)">
+                    <th style="text-align:left;padding:7px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.7px;color:rgba(255,255,255,.35);font-weight:500">Segmento</th>
+                    <th style="text-align:right;padding:7px 8px;font-size:9px;color:rgba(255,255,255,.35);font-weight:500">EBITDA 26E</th>
+                    <th style="text-align:right;padding:7px 8px;font-size:9px;color:rgba(255,255,255,.35);font-weight:500">Múltiplo</th>
+                    <th style="text-align:right;padding:7px 8px;font-size:9px;color:rgba(255,255,255,.35);font-weight:500">Stake</th>
+                    <th style="text-align:right;padding:7px 8px;font-size:9px;color:rgba(255,255,255,.35);font-weight:500">Equity Value</th>
+                    <th style="text-align:right;padding:7px 8px;font-size:9px;color:rgba(255,255,255,.35);font-weight:500">R$/ação</th>
+                  </tr></thead>
+                  <tbody>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:9px 8px;color:var(--green);font-weight:600">Rumo (RAIL3)</td><td style="text-align:right;padding:9px 8px;font-family:monospace;font-size:10px">8.500</td><td style="text-align:right;padding:9px 8px">7,0x</td><td style="text-align:right;padding:9px 8px">27,5%</td><td style="text-align:right;padding:9px 8px;color:var(--green);font-weight:600">14.063</td><td style="text-align:right;padding:9px 8px;color:var(--green)">3,61</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:9px 8px;color:var(--orange);font-weight:600">Raízen (RAIZ4)</td><td style="text-align:right;padding:9px 8px;font-family:monospace;font-size:10px">13.500</td><td style="text-align:right;padding:9px 8px">4,5x</td><td style="text-align:right;padding:9px 8px">50,0%</td><td style="text-align:right;padding:9px 8px;color:var(--orange);font-weight:600">5.188</td><td style="text-align:right;padding:9px 8px;color:var(--orange)">1,33</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:9px 8px;color:#6FA3FF;font-weight:600">Compass</td><td style="text-align:right;padding:9px 8px;font-family:monospace;font-size:10px">5.500</td><td style="text-align:right;padding:9px 8px">8,0x</td><td style="text-align:right;padding:9px 8px">100%</td><td style="text-align:right;padding:9px 8px;color:#6FA3FF;font-weight:600">40.000</td><td style="text-align:right;padding:9px 8px;color:#6FA3FF">10,26</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:9px 8px;color:#A78BFA;font-weight:600">Moove</td><td style="text-align:right;padding:9px 8px;font-family:monospace;font-size:10px">850</td><td style="text-align:right;padding:9px 8px">7,0x</td><td style="text-align:right;padding:9px 8px">100%</td><td style="text-align:right;padding:9px 8px;color:#A78BFA;font-weight:600">5.950</td><td style="text-align:right;padding:9px 8px;color:#A78BFA">1,53</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.05)"><td style="padding:9px 8px;color:#FBB040;font-weight:600">Radar (Terras)</td><td style="text-align:right;padding:9px 8px;font-family:monospace;font-size:10px">—</td><td style="text-align:right;padding:9px 8px">NAV</td><td style="text-align:right;padding:9px 8px">100%</td><td style="text-align:right;padding:9px 8px;color:#FBB040;font-weight:600">4.160</td><td style="text-align:right;padding:9px 8px;color:#FBB040">1,07</td></tr>
+                    <tr style="border-bottom:1px solid rgba(255,255,255,.12)"><td style="padding:8px 8px;color:rgba(255,255,255,.6)">Dívida Corp. (net)</td><td style="text-align:right;padding:8px 8px">—</td><td style="text-align:right">—</td><td style="text-align:right">—</td><td style="text-align:right;padding:8px 8px;color:var(--red)">(14.000)</td><td style="text-align:right;padding:8px 8px;color:var(--red)">(3,59)</td></tr>
+                    <tr style="background:rgba(236,112,0,.07)"><td style="padding:10px 8px;font-weight:800;color:var(--orange);font-size:13px">NAV Total</td><td style="text-align:right;padding:10px 8px">—</td><td style="text-align:right">—</td><td style="text-align:right;padding:10px 8px;font-size:10px;color:rgba(255,255,255,.4)">3.900mm ações</td><td style="text-align:right;padding:10px 8px;font-weight:800;color:var(--orange)">55.361</td><td style="text-align:right;padding:10px 8px;font-weight:800;color:var(--orange);font-size:16px">R$14,19</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <!-- Waterfall visual -->
+                <div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px">Composição do NAV por Segmento</div>
+                <svg viewBox="0 0 200 160" style="width:100%">
+                  <!-- horizontal bars showing composition -->
+                  <!-- Rumo: 3.61 → 25.4% -->
+                  <rect x="0" y="5" width="51" height="18" fill="var(--green)" rx="3"/>
+                  <text x="53" y="17" font-size="9" fill="var(--green)" font-family="Inter,sans-serif" font-weight="600">Rumo R$3,61 (25,5%)</text>
+                  <!-- Raízen: 1.33 → 9.4% -->
+                  <rect x="0" y="30" width="19" height="18" fill="var(--orange)" rx="3"/>
+                  <text x="21" y="42" font-size="9" fill="var(--orange)" font-family="Inter,sans-serif" font-weight="600">Raízen R$1,33 (9,4%)</text>
+                  <!-- Compass: 10.26 → 72.3% -->
+                  <rect x="0" y="55" width="145" height="18" fill="#6FA3FF" rx="3"/>
+                  <text x="0" y="88" font-size="9" fill="#6FA3FF" font-family="Inter,sans-serif" font-weight="600">Compass R$10,26 (72,3%)</text>
+                  <!-- Moove: 1.53 → 10.8% -->
+                  <rect x="0" y="95" width="22" height="18" fill="#A78BFA" rx="3"/>
+                  <text x="24" y="107" font-size="9" fill="#A78BFA" font-family="Inter,sans-serif" font-weight="600">Moove R$1,53 (10,8%)</text>
+                  <!-- Radar: 1.07 → 7.5% -->
+                  <rect x="0" y="120" width="15" height="18" fill="#FBB040" rx="3"/>
+                  <text x="17" y="132" font-size="9" fill="#FBB040" font-family="Inter,sans-serif" font-weight="600">Radar R$1,07 (7,5%)</text>
+                  <!-- Divida: -3.59 -->
+                  <rect x="0" y="145" width="50" height="14" fill="rgba(255,71,87,.4)" rx="3"/>
+                  <text x="52" y="155" font-size="9" fill="var(--red)" font-family="Inter,sans-serif">Dívida -R$3,59</text>
+                </svg>
+                <div style="background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.25);border-radius:7px;padding:10px;margin-top:auto">
+                  <div style="font-size:9px;color:var(--orange);font-weight:700;margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px">Resumo do Desconto</div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:rgba(255,255,255,.5)">NAV SOTP</span><span style="font-size:12px;font-weight:700">R$ 14,19</span></div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:rgba(255,255,255,.5)">Preço atual</span><span style="font-size:12px;font-weight:700;color:var(--red)">R$ 5,48</span></div>
+                  <div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:10px;color:rgba(255,255,255,.5)">Target (15% HCO disc.)</span><span style="font-size:12px;font-weight:700;color:var(--orange)">R$ 12,00</span></div>
+                  <div style="display:flex;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:5px;margin-top:3px"><span style="font-size:10px;font-weight:700;color:white">Upside ao target</span><span style="font-size:15px;font-weight:800;color:var(--green)">+119%</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>11</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 12 — ANALYST COVERAGE ═══ -->
+          <div class="slide s-body" id="sl12">
+            <div class="s-head"><div><div class="s-tag">Analyst Coverage</div><div class="s-title">Cobertura de Analistas · CSAN3 · dez/2025–abr/2026</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:12px;flex:1">
+              <div style="background:rgba(29,209,161,.06);border:1px solid rgba(29,209,161,.2);border-radius:10px;padding:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px">BTG Pactual · dez/2025</div><div style="font-size:16px;font-weight:700;color:var(--green);margin-top:3px">BUY</div></div>
+                  <div style="text-align:right"><div style="font-size:26px;font-weight:800;color:var(--green)">R$ 10,50</div><div style="font-size:11px;color:var(--green)">+91,6% upside</div></div>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.6">Portfólio diversificado sugar/etanol, logística, gás, lubrificantes. Desconto 34% ao NAV. Transição de empresa de desalavancagem para gerador de valor de longo prazo sob nova governança pós-capitalização.</div>
+              </div>
+              <div style="background:rgba(236,112,0,.06);border:1px solid rgba(236,112,0,.2);border-radius:10px;padding:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px">Itaú BBA · mar/2024 (revisão pend.)</div><div style="font-size:16px;font-weight:700;color:var(--green);margin-top:3px">BUY</div></div>
+                  <div style="text-align:right"><div style="font-size:26px;font-weight:800;color:var(--orange)">R$ 23,00</div><div style="font-size:11px;color:var(--green)">+319,7% upside</div></div>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.6">EBITDA 4T23 proforma +16% acima das estimativas. Radar land appreciation surpresa positiva. Revisão de cobertura pendente para incorporar capitalização 2025 e eventos corporativos recentes.</div>
+              </div>
+              <div style="background:rgba(59,123,246,.06);border:1px solid rgba(59,123,246,.2);border-radius:10px;padding:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px">XP Investimentos · mar/2024 (revisão pend.)</div><div style="font-size:16px;font-weight:700;color:var(--green);margin-top:3px">BUY</div></div>
+                  <div style="text-align:right"><div style="font-size:26px;font-weight:800;color:#6FA3FF">R$ 31,80</div><div style="font-size:11px;color:var(--green)">Revisão pendente</div></div>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.6">Radar land appreciation como principal surpresa positiva no 4T23. Foco em desalavancagem e geração de caixa dos segmentos. Revisão pendente pós-capitalização e eventos de dez/2025.</div>
+              </div>
+              <div style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:16px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+                  <div><div style="font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px">Consenso NYSE · abr/2026</div><div style="font-size:16px;font-weight:700;color:var(--orange);margin-top:3px">HOLD</div></div>
+                  <div style="text-align:right"><div style="font-size:26px;font-weight:800">USD 5,00</div><div style="font-size:11px;color:rgba(255,255,255,.35)">CSAN · NYSE</div></div>
+                </div>
+                <div style="font-size:11px;color:rgba(255,255,255,.6);line-height:1.6;margin-bottom:8px">Consenso NYSE mais conservador: min USD 3,95 · max USD 7,48. Preocupações com alavancagem Raízen e complexidade estrutural do conglomerado pesam na avaliação.</div>
+                <div style="display:flex;gap:8px;font-size:10px"><div style="background:rgba(29,209,161,.1);border:1px solid rgba(29,209,161,.2);border-radius:5px;padding:4px 8px;color:var(--green)">3 BUY</div><div style="background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.2);border-radius:5px;padding:4px 8px;color:var(--orange)">2 HOLD</div><div style="background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.2);border-radius:5px;padding:4px 8px;color:var(--red)">0 SELL</div></div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>12</span></div>
+          </div>
+
+          <!-- ═══ SLIDE 13 — BULL VS BEAR ═══ -->
+          <div class="slide s-body" style="background:linear-gradient(135deg,#001230 0%,#001A3E 100%)" id="sl13">
+            <div class="s-head"><div><div class="s-tag">Investment Case</div><div class="s-title">Bull vs. Bear · Principais Teses</div></div><div class="s-logo">í</div></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1">
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+                  <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                  Bull Case
+                </div>
+                <div style="border-left:2px solid var(--green);padding:9px 12px;margin-bottom:8px;background:rgba(29,209,161,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Desconto 61% ao NAV — muito acima do holdco discount estrutural de 20–35%. Assimetria de risco/retorno extrema.</div>
+                <div style="border-left:2px solid var(--green);padding:9px 12px;margin-bottom:8px;background:rgba(29,209,161,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Rumo: volumes recordes (84bi RTK), safra soja 2026 excepcional. EBITDA cresce 5% a.a. com TIR real de 15%.</div>
+                <div style="border-left:2px solid var(--green);padding:9px 12px;margin-bottom:8px;background:rgba(29,209,161,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">IPO Moove (Nasdaq) e venda Radar como catalisadores próximos. Portfólio sem comparable listado no Brasil.</div>
+                <div style="border-left:2px solid var(--green);padding:9px 12px;margin-bottom:8px;background:rgba(29,209,161,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Selic esperada para 11,5% ao final de 2026 — reduz custo CDI+1,40% e melhora cobertura de juros atual de 1,1x.</div>
+                <div style="border-left:2px solid var(--green);padding:9px 12px;background:rgba(29,209,161,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Nova governança com BTG e Perfin traz credibilidade e alinhamento com minoritários. Ometto ainda > 30% de stake.</div>
+              </div>
+              <div>
+                <div style="font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+                  <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                  Bear Case
+                </div>
+                <div style="border-left:2px solid var(--red);padding:9px 12px;margin-bottom:8px;background:rgba(255,71,87,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Raízen 5,1x ND/EBITDA — risco de diluição significativo. Despesas financeiras R$3,2bi/ano limitam fluxo para Cosan.</div>
+                <div style="border-left:2px solid var(--red);padding:9px 12px;margin-bottom:8px;background:rgba(255,71,87,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Complexidade estrutural do conglomerado mantém desconto permanente. Dificuldade de precificação por investidores internacionais.</div>
+                <div style="border-left:2px solid var(--red);padding:9px 12px;margin-bottom:8px;background:rgba(255,71,87,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Selic ainda elevada (13,25% em abr/2026): despesas financeiras da holding consomem geração de caixa operacional.</div>
+                <div style="border-left:2px solid var(--red);padding:9px 12px;margin-bottom:8px;background:rgba(255,71,87,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">FX: BRL em R$5,85/USD aumenta custo de dívida USD-denominated. BRL a R$6,18 em dez/2024 foi pico recente.</div>
+                <div style="border-left:2px solid var(--red);padding:9px 12px;background:rgba(255,71,87,.04);border-radius:0 6px 6px 0;font-size:11px;line-height:1.55;color:rgba(255,255,255,.7)">Execução dos desinvestimentos (Moove IPO, Radar, Compass) dependente de condições de mercado e regulatórias.</div>
+              </div>
+            </div>
+            <div class="s-footer"><span>CONFIDENTIAL · Itaú BBA Research · April 2026</span><span>13</span></div>
+          </div>
+
+        </div><!-- /slide-viewport -->
+
+        <div class="slide-thumbs" style="flex-wrap:wrap;gap:5px">
+          <div class="s-thumb active" onclick="goToSlide(1)" style="min-width:60px;flex:none">Cover</div>
+          <div class="s-thumb" onclick="goToSlide(2)" style="min-width:60px;flex:none">Tese</div>
+          <div class="s-thumb" onclick="goToSlide(3)" style="min-width:60px;flex:none">Portfolio</div>
+          <div class="s-thumb" onclick="goToSlide(4)" style="min-width:60px;flex:none">Mercado</div>
+          <div class="s-thumb" onclick="goToSlide(5)" style="min-width:60px;flex:none">EBITDA</div>
+          <div class="s-thumb" onclick="goToSlide(6)" style="min-width:60px;flex:none">P&L</div>
+          <div class="s-thumb" onclick="goToSlide(7)" style="min-width:60px;flex:none">Rumo</div>
+          <div class="s-thumb" onclick="goToSlide(8)" style="min-width:60px;flex:none">Raízen</div>
+          <div class="s-thumb" onclick="goToSlide(9)" style="min-width:60px;flex:none">Moove</div>
+          <div class="s-thumb" onclick="goToSlide(10)" style="min-width:60px;flex:none">Capital</div>
+          <div class="s-thumb" onclick="goToSlide(11)" style="min-width:60px;flex:none">SOTP</div>
+          <div class="s-thumb" onclick="goToSlide(12)" style="min-width:60px;flex:none">Analistas</div>
+          <div class="s-thumb" onclick="goToSlide(13)" style="min-width:60px;flex:none">Bull/Bear</div>
+        </div>
+      </div>
+
+        </div><!-- /page-wrap -->
+  </div><!-- /main -->
+</div><!-- /app -->
+
+<!-- ──── DETAIL VIEW ──── -->
+<div id="detail-view">
+  <div class="dv-back" onclick="closeDetail()">
+    <svg style="width:15px;height:15px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Voltar ao Histórico
+  </div>
+  <div class="dv-header">
+    <div>
+      <div class="dv-company">Cosan S.A.</div>
+      <div class="dv-sector">Holdings · B3: CSAN3 · NYSE: CSAN · 14 Abr 2026</div>
+    </div>
+    <div>
+      <div class="dv-price">R$ 5,48</div>
+      <div class="dv-change">↑ +4,58% · 09/04/2026</div>
+    </div>
+  </div>
+  <div class="metrics-row">
+    <div class="mbox"><div class="mbox-lbl">Market Cap BRL</div><div class="mbox-val">R$ 21,4bi</div></div>
+    <div class="mbox"><div class="mbox-lbl">Market Cap USD</div><div class="mbox-val">USD 4,4bi</div></div>
+    <div class="mbox"><div class="mbox-lbl">Ações em Circulação</div><div class="mbox-val">1.900mm</div></div>
+    <div class="mbox"><div class="mbox-lbl">ADTV (30d)</div><div class="mbox-val">37,4mm ações</div></div>
+    <div class="mbox"><div class="mbox-lbl">52-week High</div><div class="mbox-val">R$ 8,78</div></div>
+    <div class="mbox"><div class="mbox-lbl">Beta (5 anos)</div><div class="mbox-val">0,73</div></div>
+    <div class="mbox"><div class="mbox-lbl">EPS (TTM)</div><div class="mbox-val" style="color:var(--red)">-R$ 3,89</div></div>
+    <div class="mbox"><div class="mbox-lbl">Próximo Earnings</div><div class="mbox-val">14/05/2026</div></div>
+  </div>
+  <div class="metrics-row" style="margin-top:-8px">
+    <div class="mbox"><div class="mbox-lbl">Dívida Bruta Corp.</div><div class="mbox-val" style="color:var(--red)">R$ 27,8bi</div></div>
+    <div class="mbox"><div class="mbox-lbl">Dívida Líquida Corp.</div><div class="mbox-val" style="color:var(--red)">R$ 23,5bi</div></div>
+    <div class="mbox"><div class="mbox-lbl">Custo da Dívida</div><div class="mbox-val">CDI + 1,40%</div></div>
+    <div class="mbox"><div class="mbox-lbl">Prazo Médio</div><div class="mbox-val">6,1 anos · 2028</div></div>
+    <div class="mbox"><div class="mbox-lbl">Leverage ND/EBITDA</div><div class="mbox-val" style="color:var(--red)">2,9x</div></div>
+    <div class="mbox"><div class="mbox-lbl">Cobertura de Juros</div><div class="mbox-val" style="color:var(--red)">1,1x</div></div>
+    <div class="mbox"><div class="mbox-lbl">EV/EBITDA 26E</div><div class="mbox-val">5,2x</div></div>
+    <div class="mbox"><div class="mbox-lbl">Upside (Target R$12)</div><div class="mbox-val" style="color:var(--green)">+119%</div></div>
+  </div>
+  <div class="charts-row-dv">
+    <div class="card">
+      <div class="card-title">EBITDA Histórico (R$ bilhões)</div>
+      <svg viewBox="0 0 420 160" style="width:100%">
+        <defs><linearGradient id="ag" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#EC7000" stop-opacity=".2"/><stop offset="100%" stop-color="#EC7000" stop-opacity="0"/></linearGradient></defs>
+        <line x1="35" y1="10" x2="35" y2="130" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line x1="35" y1="130" x2="415" y2="130" stroke="rgba(255,255,255,.05)" stroke-width="1"/>
+        <line x1="35" y1="97" x2="415" y2="97" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="35" y1="64" x2="415" y2="64" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,3"/>
+        <line x1="35" y1="30" x2="415" y2="30" stroke="rgba(255,255,255,.04)" stroke-width="1" stroke-dasharray="3,3"/>
+        <text x="28" y="133" text-anchor="end" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">0</text>
+        <text x="28" y="100" text-anchor="end" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">10bi</text>
+        <text x="28" y="67"  text-anchor="end" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">20bi</text>
+        <text x="28" y="33"  text-anchor="end" font-size="8" fill="rgba(255,255,255,.3)" font-family="Inter,sans-serif">30bi</text>
+        <path d="M70,115 L155,97 L240,84 L325,115 L415,106" fill="url(#ag)"/>
+        <polyline points="70,115 155,97 240,84 325,115 415,106" fill="none" stroke="#EC7000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="70"  cy="115" r="3" fill="#EC7000"/>
+        <circle cx="155" cy="97"  r="3" fill="#EC7000"/>
+        <circle cx="240" cy="84"  r="3" fill="#EC7000"/>
+        <circle cx="325" cy="115" r="3" fill="rgba(236,112,0,.5)" stroke="#EC7000" stroke-width="1.5"/>
+        <circle cx="415" cy="106" r="3" fill="rgba(236,112,0,.3)" stroke="#EC7000" stroke-width="1.5" stroke-dasharray="2,2"/>
+        <text x="70"  y="148" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2022A</text>
+        <text x="155" y="148" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2023A</text>
+        <text x="240" y="148" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2024A</text>
+        <text x="325" y="148" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2025E</text>
+        <text x="415" y="148" text-anchor="middle" font-size="8" fill="rgba(255,255,255,.35)" font-family="Inter,sans-serif">2026E</text>
+      </svg>
+    </div>
+    <div class="card">
+      <div class="card-title">EBITDA por Segmento 2026E</div>
+      <svg viewBox="0 0 120 120" style="width:110px;display:block;margin:0 auto">
+        <circle cx="60" cy="60" r="42" fill="none" stroke="#1DD1A1" stroke-width="14" stroke-dasharray="105 264" stroke-dashoffset="0"/>
+        <circle cx="60" cy="60" r="42" fill="none" stroke="#EC7000" stroke-width="14" stroke-dasharray="79 264" stroke-dashoffset="-105"/>
+        <circle cx="60" cy="60" r="42" fill="none" stroke="#3B7BF6" stroke-width="14" stroke-dasharray="54 264" stroke-dashoffset="-184"/>
+        <circle cx="60" cy="60" r="42" fill="none" stroke="#7C5CFC" stroke-width="14" stroke-dasharray="26 264" stroke-dashoffset="-238"/>
+        <text x="60" y="56" text-anchor="middle" font-size="11" fill="white" font-family="Inter,sans-serif" font-weight="700">R$21,5</text>
+        <text x="60" y="67" text-anchor="middle" font-size="7.5" fill="rgba(255,255,255,.4)" font-family="Inter,sans-serif">bilhões</text>
+      </svg>
+      <div style="margin-top:12px">
+        <div class="dl-item"><div class="dl-dot" style="background:var(--green)"></div><span class="dl-name">Rumo</span><span class="dl-val">39%</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--orange)"></div><span class="dl-name">Raízen</span><span class="dl-val">30%</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--blue)"></div><span class="dl-name">Compass</span><span class="dl-val">20%</span></div>
+        <div class="dl-item"><div class="dl-dot" style="background:var(--purple)"></div><span class="dl-name">Moove+Radar</span><span class="dl-val">11%</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="analyst-row-dv">
+    <div class="ac"><div class="ac-bank">BTG Pactual · dez/2025</div><div class="ac-rec rec-buy">BUY</div><div class="ac-tgt">R$ 10,50</div><div class="ac-up">+91,6% upside</div><div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">Desconto 34% ao NAV. Transição para gerador de valor.</div></div>
+    <div class="ac"><div class="ac-bank">Itaú BBA · mar/2024</div><div class="ac-rec rec-buy">BUY</div><div class="ac-tgt">R$ 23,00</div><div class="ac-up">+319,7% · revisão pendente</div><div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">4T23 EBITDA proforma +16% vs. estimativas.</div></div>
+    <div class="ac"><div class="ac-bank">XP Investimentos · mar/2024</div><div class="ac-rec rec-buy">BUY</div><div class="ac-tgt">R$ 31,80</div><div class="ac-up">Revisão pendente</div><div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">Radar land appreciation como surpresa positiva 4T23.</div></div>
+    <div class="ac"><div class="ac-bank">Consenso NYSE · abr/2026</div><div class="ac-rec rec-hold">HOLD</div><div class="ac-tgt">USD 5,00</div><div class="ac-up">Min USD 3,95 · Máx USD 7,48</div></div>
+  </div>
+  <div class="tl">
+    <div class="tl-title">Eventos Corporativos</div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Jan 2025</div><div class="tl-text">Venda da participação na Vale por R$9,1bi. Amortização antecipada de dívidas.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Set 2025</div><div class="tl-text">Capitalização de R$10,5bi. BTG (R$4,5bi) e Perfin (R$2bi) entram como acionistas. Ações -18% no anúncio.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Nov 2025</div><div class="tl-text">Conclusão do follow-on. Nova governança com BTG e Perfin no conselho.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">Dez 2025</div><div class="tl-text">BTG + Bradesco adquirem participação em Cosan Dez (holding da Compass) por R$4bi.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-date">2026</div><div class="tl-text">IPO Moove, venda Radar, capitalização Raízen como catalisadores esperados.</div></div>
+  </div>
+</div>
+
+<script>
+// ─── AUTH ─────────────────────────────────────────
+const USERS = [
+  { email:'analyst@itaubba.com.br', pass:'itaubba2026', name:'R. Analyst', initials:'RA' },
+  { email:'junior@itaubba.com.br',  pass:'itaubba2026', name:'Junior',     initials:'JR' },
+];
+
+function doLogin() {
+  const email = document.getElementById('lemail').value.trim().toLowerCase();
+  const pass  = document.getElementById('lpass').value;
+  const err   = document.getElementById('lerr');
+  const btn   = document.getElementById('lbtn');
+  const card  = document.querySelector('.login-card');
+  const user  = USERS.find(u => u.email === email && u.pass === pass);
+  if (!user) {
+    err.style.display = 'block';
+    document.getElementById('lpass').value = '';
+    document.getElementById('lpass').focus();
+    card.style.animation = 'none';
+    card.offsetHeight;
+    card.style.animation = 'shake 0.4s ease';
+    return;
+  }
+  err.style.display = 'none';
+  btn.textContent = 'Acessando...';
+  btn.disabled = true;
+  document.getElementById('sbAvatar').textContent = user.initials;
+  document.getElementById('sbName').textContent = user.name;
+  setTimeout(() => {
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    btn.textContent = 'Acessar plataforma';
+    btn.disabled = false;
+  }, 500);
+}
+
+function doLogout() {
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login').style.display = 'flex';
+  document.getElementById('lemail').value = '';
+  document.getElementById('lpass').value = '';
+  showPage('home', document.getElementById('nav-home'));
+}
+
+// ─── NAVIGATION ────────────────────────────────────
+const PAGE_TITLES = {
+  home:'Dashboard', research:'Research',
+  historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT'
+};
+
+function showPage(name, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
+  const pg = document.getElementById('page-' + name);
+  if (pg) pg.classList.add('active');
+  if (btn) btn.classList.add('active');
+  document.getElementById('topbarTitle').textContent = PAGE_TITLES[name] || name;
+  // Research page needs full height - adjust page-wrap padding
+  const wrap = document.querySelector('.page-wrap');
+  if (name === 'research') {
+    wrap.style.padding = '0';
+    wrap.style.overflow = 'hidden';
+    wrap.style.height = 'calc(100vh - 52px)';
+    wrap.style.display = 'flex';
+    wrap.style.flexDirection = 'column';
+  } else if (name === 'buildppt') {
+    wrap.style.padding = '20px 20px';
+    wrap.style.overflow = 'auto';
+    wrap.style.height = '';
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.padding = '28px 32px';
+    wrap.style.overflow = 'auto';
+    wrap.style.height = '';
+  }
+}
+
+// ─── DASHBOARD BAR CHART ──────────────────────────
+(function buildBarChart() {
+  const data = [
+    {m:'Nov',v:5},{m:'Dez',v:4},{m:'Jan',v:6},{m:'Fev',v:9},{m:'Mar',v:7},{m:'Abr',v:12,curr:true}
+  ];
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.getElementById('monthChart');
+  // W=340, H=130: topPad=18 for value labels, labelH=16 for month labels, chartH=96
+  const W = 340, H = 130, topPad = 18, labelH = 16;
+  const chartH = H - topPad - labelH; // 96px usable bar area
+  const pad = 10;
+  const max = Math.max(...data.map(d => d.v));
+  const colW = (W - pad * 2) / data.length;
+
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+
+  // Baseline
+  const base = document.createElementNS(ns, 'line');
+  base.setAttribute('x1', pad); base.setAttribute('x2', W - pad);
+  base.setAttribute('y1', topPad + chartH); base.setAttribute('y2', topPad + chartH);
+  base.setAttribute('stroke', 'rgba(255,255,255,0.07)');
+  base.setAttribute('stroke-width', '1');
+  svg.appendChild(base);
+
+  data.forEach((d, i) => {
+    const barH = Math.round((d.v / max) * (chartH - 6));
+    const x = pad + i * colW + colW * 0.18;
+    const w = colW * 0.64;
+    const barY = topPad + chartH - barH;
+
+    // Value bar
+    const rect = document.createElementNS(ns, 'rect');
+    rect.setAttribute('x', x); rect.setAttribute('width', w);
+    rect.setAttribute('y', barY); rect.setAttribute('height', barH);
+    rect.setAttribute('rx', '3');
+    rect.setAttribute('fill', d.curr ? '#EC7000' : 'rgba(255,255,255,0.10)');
+    svg.appendChild(rect);
+
+    // Value label above bar — always inside viewBox (topPad ensures room)
+    const valTxt = document.createElementNS(ns, 'text');
+    valTxt.setAttribute('x', x + w / 2);
+    valTxt.setAttribute('y', barY - 5);
+    valTxt.setAttribute('text-anchor', 'middle');
+    valTxt.setAttribute('font-size', '9');
+    valTxt.setAttribute('font-family', 'Inter,sans-serif');
+    valTxt.setAttribute('font-weight', '600');
+    valTxt.setAttribute('fill', d.curr ? '#EC7000' : 'rgba(255,255,255,0.35)');
+    valTxt.textContent = d.v;
+    svg.appendChild(valTxt);
+
+    // Month label below baseline
+    const lbl = document.createElementNS(ns, 'text');
+    lbl.setAttribute('x', x + w / 2);
+    lbl.setAttribute('y', topPad + chartH + 12);
+    lbl.setAttribute('text-anchor', 'middle');
+    lbl.setAttribute('font-size', '9');
+    lbl.setAttribute('font-family', 'Inter,sans-serif');
+    lbl.setAttribute('fill', d.curr ? 'rgba(236,112,0,0.9)' : 'rgba(255,255,255,0.28)');
+    lbl.textContent = d.m;
+    svg.appendChild(lbl);
+  });
+})();
+
+// ─── RESEARCH CHAT ─────────────────────────────────
+const RESEARCH_SCRIPT = [
+  { delay:600,  type:'log', tag:'search',  text:'Buscando "Cosan S.A." no Yahoo Finance...' },
+  { delay:1400, type:'log', tag:'found',   text:'CSAN3.SA encontrado · Preço R$5,48 · Market Cap R$21,4bi · ADTV 37,4mm' },
+  { delay:900,  type:'log', tag:'search',  text:'Acessando SEC EDGAR · Form 6-K · resultados 4T24...' },
+  { delay:1600, type:'log', tag:'parse',   text:'Extraindo financeiros: EBITDA R$7,6bi · Prejuízo R$9,4bi · Dívida R$23,5bi' },
+  { delay:800,  type:'log', tag:'search',  text:'Consultando XP Research · 3T25 earnings review...' },
+  { delay:1200, type:'log', tag:'found',   text:'EBITDA 3T25 R$4,7bi (+12% t/t) · Rumo volumes record' },
+  { delay:700,  type:'log', tag:'search',  text:'BTG Pactual Research · CSAN3 · dez/2025...' },
+  { delay:1100, type:'log', tag:'found',   text:'Target R$10,50 · BUY · Desconto 34% ao NAV' },
+  { delay:900,  type:'log', tag:'think',   text:'Calculando SOTP: Rumo + Raízen + Compass + Moove + Radar...' },
+  { delay:1300, type:'log', tag:'think',   text:'Montando tese de investimento e análise de riscos...' },
+  { delay:800,  type:'log', tag:'done',    text:'Análise concluída · 5 segmentos · 4 analistas · 8 catalisadores identificados' },
+  { delay:600,  type:'result' },
+];
+
+const TAG_LABELS = { search:'Buscando', found:'Encontrado', parse:'Processando', think:'Analisando', done:'Concluído' };
+const TAG_CSS    = { search:'t-search', found:'t-found', parse:'t-parse', think:'t-think', done:'t-done' };
+
+let isSearching = false;
+
+function setQuery(text) {
+  document.getElementById('chatInp').value = text;
+  sendQuery();
+}
+
+function handleChatKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuery(); }
+}
+
+function sendQuery() {
+  if (isSearching) return;
+  const inp = document.getElementById('chatInp');
+  const query = inp.value.trim();
+  if (!query) return;
+  isSearching = true;
+  inp.value = '';
+
+  const body = document.getElementById('chatBody');
+  const welcome = document.getElementById('chatWelcome');
+  if (welcome) welcome.remove();
+
+  // User message
+  addMessage('user', query);
+
+  // System log message container
+  const sysMsg = addMessage('system', null, true);
+  const logBubble = document.createElement('div');
+  logBubble.className = 'log-bubble';
+  sysMsg.querySelector('.msg-body').appendChild(logBubble);
+
+  let step = 0;
+  let cumDelay = 400;
+
+  function runStep() {
+    if (step >= RESEARCH_SCRIPT.length) { isSearching = false; return; }
+    const s = RESEARCH_SCRIPT[step];
+    cumDelay += s.delay;
+    setTimeout(() => {
+      if (s.type === 'log') {
+        const line = document.createElement('div');
+        line.className = 'log-line';
+        line.innerHTML = `<span class="log-tag ${TAG_CSS[s.tag]}">${TAG_LABELS[s.tag]}</span><span class="log-text">${s.text}</span>`;
+        logBubble.appendChild(line);
+        body.scrollTop = body.scrollHeight;
+      } else if (s.type === 'result') {
+        // Cards appear one by one with delays
+        const CARD_DELAY = 900;
+        setTimeout(() => { addResultCard(body);  body.scrollTop = body.scrollHeight; }, 0);
+        setTimeout(() => { addFinancialsCard(body); body.scrollTop = body.scrollHeight; }, CARD_DELAY * 1);
+        setTimeout(() => { addEventsCard(body);   body.scrollTop = body.scrollHeight; }, CARD_DELAY * 2);
+        setTimeout(() => { addAnalystsCard(body); body.scrollTop = body.scrollHeight; }, CARD_DELAY * 3);
+        setTimeout(() => { addSOTPCard(body);     body.scrollTop = body.scrollHeight; }, CARD_DELAY * 4);
+        setTimeout(() => { addCatalystsCard(body);body.scrollTop = body.scrollHeight; }, CARD_DELAY * 5);
+        setTimeout(() => { addGenButton(body);    body.scrollTop = body.scrollHeight; isSearching = false; }, CARD_DELAY * 6);
+      }
+      step++;
+      runStep();
+    }, cumDelay);
+    cumDelay = 0;
+  }
+  runStep();
+}
+
+function addMessage(role, text, empty) {
+  const body = document.getElementById('chatBody');
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  const icon = document.createElement('div');
+  icon.className = `msg-icon ${role}`;
+  icon.textContent = role === 'system' ? 'í' : 'RA';
+  const msgBody = document.createElement('div');
+  msgBody.className = 'msg-body';
+  const sender = document.createElement('div');
+  sender.className = 'msg-sender';
+  sender.textContent = role === 'system' ? 'Itaú BBA Research' : 'Você';
+  msgBody.appendChild(sender);
+  if (text && !empty) {
+    const bubble = document.createElement('div');
+    bubble.className = role === 'user' ? 'user-bubble' : 'log-bubble';
+    bubble.textContent = text;
+    msgBody.appendChild(bubble);
+  }
+  msg.appendChild(icon);
+  msg.appendChild(msgBody);
+  body.appendChild(msg);
+  body.scrollTop = body.scrollHeight;
+  return msg;
+}
+
+function addResultCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Dados de Mercado · CSAN3</div>
+      <div class="result-card">
+        <div class="rc-header">
+          <div class="rc-ticker-block">
+            <div class="rc-ticker">CSAN3 · NYSE: CSAN</div>
+            <div class="rc-name">Cosan S.A. · Holdings · São Paulo, BR</div>
+          </div>
+          <div>
+            <div class="rc-price">R$ 5,48</div>
+            <div class="rc-change">↑ +4,58% · 09/04/2026</div>
+          </div>
+        </div>
+        <div class="rc-grid" style="grid-template-columns:repeat(4,1fr)">
+          <div class="rc-cell"><div class="rc-cell-lbl">Market Cap (BRL)</div><div class="rc-cell-val">R$ 21,4bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Market Cap (USD)</div><div class="rc-cell-val">USD 4,4bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Ações em Circulação</div><div class="rc-cell-val">1.900mm</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">ADTV (30d)</div><div class="rc-cell-val">37,4mm ações</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">52-week High</div><div class="rc-cell-val">R$ 8,78</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Beta (5Y)</div><div class="rc-cell-val">0,73</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">EPS (TTM)</div><div class="rc-cell-val" style="color:var(--red)">-R$ 3,89</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Próximo Earnings</div><div class="rc-cell-val">14/05/2026</div></div>
+        </div>
+        <div class="rc-footer">Holding com portfólio diversificado: Rumo (logística ferroviária, 27,5%), Raízen (etanol/Shell JV, 50%), Compass (gás natural, 100%), Moove (lubrificantes Mobil, 100%) e Radar (terras agrícolas, 100%). Fundada em 1936, listada na B3 no Novo Mercado e na NYSE.</div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+function addFinancialsCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Financeiros · Histórico & Estimativas</div>
+      <div class="result-card">
+        <div class="rc-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="rc-cell" style="background:rgba(255,255,255,0.02)"><div class="rc-cell-lbl">EBITDA sob Gestão 2023A</div><div class="rc-cell-val">R$ 19,0bi</div></div>
+          <div class="rc-cell" style="background:rgba(255,255,255,0.02)"><div class="rc-cell-lbl">EBITDA sob Gestão 2024A</div><div class="rc-cell-val">R$ 27,5bi</div></div>
+          <div class="rc-cell" style="background:rgba(255,255,255,0.02)"><div class="rc-cell-lbl">EBITDA sob Gestão 2026E</div><div class="rc-cell-val" style="color:var(--green)">R$ 21,5bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Lucro Líquido 2023A</div><div class="rc-cell-val" style="color:var(--green)">R$ 1,1bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Lucro Líquido 2024A</div><div class="rc-cell-val" style="color:var(--red)">-R$ 9,4bi*</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Lucro Líquido 2026E</div><div class="rc-cell-val" style="color:var(--green)">R$ 0,5bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Dívida Bruta Corp. 4T24</div><div class="rc-cell-val" style="color:var(--red)">R$ 27,8bi</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Custo da Dívida</div><div class="rc-cell-val">CDI + 1,40%</div></div>
+          <div class="rc-cell"><div class="rc-cell-lbl">Primeiro Vencimento</div><div class="rc-cell-val">2028</div></div>
+        </div>
+        <div class="rc-footer">*2024A dominado por impairment Vale R$4,7bi e provisão IR/CSLL. Excluindo não-recorrentes: prejuízo de R$909mm. Prazo médio da dívida: 6,1 anos. Cobertura de juros LTM: 1,1x.</div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+function addEventsCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Eventos Corporativos Recentes</div>
+      <div class="result-card">
+        <div style="padding:12px 16px;display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;gap:10px;font-size:12px;line-height:1.5;padding:7px 0;border-bottom:1px solid var(--bdr-lt)"><span style="color:var(--orange);font-weight:700;min-width:60px">Jan/2025</span><span style="color:var(--text-2)">Venda da participação na Vale por R$9,1bi. Amortização antecipada de bonds 2027, 2029, 2030, 2031.</span></div>
+          <div style="display:flex;gap:10px;font-size:12px;line-height:1.5;padding:7px 0;border-bottom:1px solid var(--bdr-lt)"><span style="color:var(--orange);font-weight:700;min-width:60px">Set/2025</span><span style="color:var(--text-2)">Capitalização R$10,5bi: BTG Pactual (R$4,5bi), Perfin (R$2bi), Aguassanta/Ometto (R$750mm). Ações -18% no anúncio.</span></div>
+          <div style="display:flex;gap:10px;font-size:12px;line-height:1.5;padding:7px 0;border-bottom:1px solid var(--bdr-lt)"><span style="color:var(--orange);font-weight:700;min-width:60px">Nov/2025</span><span style="color:var(--text-2)">Conclusão do follow-on total R$10,5bi. BTG e Perfin assumem assentos no conselho de administração.</span></div>
+          <div style="display:flex;gap:10px;font-size:12px;line-height:1.5;padding:7px 0"><span style="color:var(--orange);font-weight:700;min-width:60px">Dez/2025</span><span style="color:var(--text-2)">BTG + Bradesco adquirem participação preferencial na Cosan Dez (holding da Compass) por R$4bi, com put option no 5° ano.</span></div>
+        </div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+function addAnalystsCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Cobertura de Analistas · dez/2025–abr/2026</div>
+      <div class="analyst-mini">
+        <div class="am-card">
+          <div class="am-bank">BTG Pactual · dez/2025</div>
+          <div class="am-rec" style="color:var(--green)">BUY</div>
+          <div class="am-tgt">R$ 10,50</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">+91,6% upside</div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">Desconto 34% ao NAV. Transição para geradora de valor.</div>
+        </div>
+        <div class="am-card">
+          <div class="am-bank">Itaú BBA · mar/2024</div>
+          <div class="am-rec" style="color:var(--green)">BUY</div>
+          <div class="am-tgt">R$ 23,00</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">+319,7% upside</div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">Revisão pendente. EBITDA 4T23 +16% vs estimativas.</div>
+        </div>
+        <div class="am-card">
+          <div class="am-bank">XP Investimentos · mar/2024</div>
+          <div class="am-rec" style="color:var(--green)">BUY</div>
+          <div class="am-tgt">R$ 31,80</div>
+          <div style="font-size:10px;color:var(--green);margin-top:2px">Revisão pendente</div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:4px;line-height:1.4">Radar land appreciation surpresa positiva no 4T23.</div>
+        </div>
+        <div class="am-card">
+          <div class="am-bank">Consenso NYSE</div>
+          <div class="am-rec" style="color:var(--orange)">HOLD</div>
+          <div class="am-tgt">USD 5,00</div>
+          <div style="font-size:10px;color:var(--text-3);margin-top:6px;line-height:1.4">Min USD 3,95 · Máx USD 7,48</div>
+        </div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+function addSOTPCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Valuation · Sum-of-the-Parts (SOTP) · abr/2026</div>
+      <div class="result-card">
+        <div class="rc-grid" style="grid-template-columns:2fr 1fr 1fr 1fr">
+          <div class="rc-cell" style="font-weight:600;color:var(--text-3);font-size:10px;text-transform:uppercase;letter-spacing:.6px">Segmento</div>
+          <div class="rc-cell" style="font-weight:600;color:var(--text-3);font-size:10px;text-transform:uppercase;letter-spacing:.6px">EV/EBITDA</div>
+          <div class="rc-cell" style="font-weight:600;color:var(--text-3);font-size:10px;text-transform:uppercase;letter-spacing:.6px">Stake</div>
+          <div class="rc-cell" style="font-weight:600;color:var(--text-3);font-size:10px;text-transform:uppercase;letter-spacing:.6px">Equity Value</div>
+          <div class="rc-cell">Rumo (RAIL3)</div><div class="rc-cell">7,0x</div><div class="rc-cell">27,5%</div><div class="rc-cell" style="color:var(--green)">R$ 14,1bi</div>
+          <div class="rc-cell">Raízen (RAIZ4)</div><div class="rc-cell">4,5x</div><div class="rc-cell">50,0%</div><div class="rc-cell" style="color:var(--green)">R$ 5,2bi</div>
+          <div class="rc-cell">Compass</div><div class="rc-cell">8,0x</div><div class="rc-cell">100,0%</div><div class="rc-cell" style="color:var(--green)">R$ 40,0bi</div>
+          <div class="rc-cell">Moove</div><div class="rc-cell">7,0x</div><div class="rc-cell">100,0%</div><div class="rc-cell" style="color:var(--green)">R$ 5,9bi</div>
+          <div class="rc-cell">Radar (Terras)</div><div class="rc-cell">NAV</div><div class="rc-cell">100,0%</div><div class="rc-cell" style="color:var(--green)">R$ 4,2bi</div>
+          <div class="rc-cell" style="font-weight:700;color:white;border-top:1px solid var(--bdr)">NAV Total / ação</div>
+          <div class="rc-cell" style="border-top:1px solid var(--bdr)"></div>
+          <div class="rc-cell" style="border-top:1px solid var(--bdr)">3.900mm ações</div>
+          <div class="rc-cell" style="color:var(--orange);font-weight:700;font-size:15px;border-top:1px solid var(--bdr)">R$ 14,19</div>
+        </div>
+        <div class="rc-footer">Preço atual R$5,48 implica desconto de 61% ao NAV de R$14,19. Desconto holdco estrutural típico é 20–35%. Excesso explicado por alavancagem da Raízen (5,1x), juros altos e complexidade do conglomerado.</div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+function addCatalystsCard(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Catalisadores & Riscos</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div class="result-card">
+          <div style="padding:11px 14px;border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.8px">Catalisadores</div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">IPO da Moove na Nasdaq</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Venda de ativos da Raízen (R$5bi alvo)</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Desinvestimento do portfólio Radar (R$16,8bi)</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Rumo: volumes recordes + safra soja 2026</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0">Queda da Selic → reduz custo CDI+1,40%</div>
+          </div>
+        </div>
+        <div class="result-card">
+          <div style="padding:11px 14px;border-bottom:1px solid var(--bdr);font-size:11px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:.8px">Riscos Principais</div>
+          <div style="padding:10px 14px;display:flex;flex-direction:column;gap:6px">
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Raízen: alavancagem 5,1x, risco de diluição</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Selic alta: despesas financeiras R$3,2bi/ano na Raízen</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">Desconto estrutural de holding difícil de eliminar</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0;border-bottom:1px solid var(--bdr-lt)">FX: dívida USD vs receitas BRL</div>
+            <div style="font-size:12px;color:var(--text-2);padding:5px 0">Execução dos desinvestimentos dependente do mercado</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+}
+
+// Legacy alias — kept so any stale reference doesn't break
+function addAnalystRow(body) { addAnalystsCard(body); }
+
+function addGenButton(body) {
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Próximos passos</div>
+      <div style="font-size:13px;color:var(--text-2);margin-bottom:8px;line-height:1.6">Análise concluída com sucesso. Dados salvos no Histórico. Deseja gerar a apresentação?</div>
+      <button class="btn-gen" onclick="showPage('buildppt',document.getElementById('nav-buildppt'))">
+        <svg style="width:15px;height:15px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+        Gerar Apresentação
+      </button>
+    </div>`;
+  body.appendChild(msg);
+  body.scrollTop = body.scrollHeight;
+}
+
+// ─── HISTORIC FILTER ───────────────────────────────
+function filterHist(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.hist-card').forEach(card => {
+    const status = card.dataset.status;
+    card.style.display = (type==='all' || (type==='done'&&status==='done') || (type==='prog'&&status==='prog')) ? 'block' : 'none';
+  });
+}
+
+// ─── DETAIL VIEW ───────────────────────────────────
+function openDetail() {
+  document.getElementById('detail-view').style.display = 'block';
+  document.body.style.overflow = 'hidden';
+}
+function closeDetail() {
+  document.getElementById('detail-view').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+// ─── DOC ANALYSIS ──────────────────────────────────
+// ─── DRAG & DROP ────────────────────────────────────
+let dragCounter = 0;
+document.addEventListener('dragenter', e => {
+  if (!e.dataTransfer.types.includes('Files')) return;
+  dragCounter++;
+  document.getElementById('dragOverlay').classList.add('active');
+});
+document.addEventListener('dragleave', e => {
+  dragCounter--;
+  if (dragCounter <= 0) { dragCounter = 0; document.getElementById('dragOverlay').classList.remove('active'); }
+});
+document.addEventListener('dragover', e => { e.preventDefault(); });
+document.addEventListener('drop', e => {
+  e.preventDefault();
+  dragCounter = 0;
+  document.getElementById('dragOverlay').classList.remove('active');
+  const files = e.dataTransfer.files;
+  if (files.length > 0) {
+    // Switch to doc analysis page and trigger analysis
+    showPage('docanalysis', document.getElementById('nav-docanalysis'));
+    setTimeout(startDocAnalysis, 200);
+  }
+});
+
+function startDocAnalysis() {
+  document.getElementById('uploadZone').style.display = 'none';
+  document.getElementById('docResult').classList.remove('visible');
+  const loader = document.getElementById('docLoading');
+  loader.classList.add('visible');
+  const steps = ['ds1','ds2','ds3','ds4','ds5','ds6'];
+  // Reset steps
+  steps.forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.remove('active','done');
+    el.querySelector('.step-icon').innerHTML = el.querySelector('.step-icon').textContent.replace(/<[^>]*>/g,'') || el.getAttribute('data-n') || '0';
+  });
+  steps.forEach((id,i) => {
+    setTimeout(() => {
+      if (i>0) {
+        const p = document.getElementById(steps[i-1]);
+        p.classList.remove('active'); p.classList.add('done');
+        p.querySelector('.step-icon').textContent = '✓';
+      }
+      const el = document.getElementById(id);
+      el.classList.add('active');
+      el.querySelector('.step-icon').innerHTML = '<div class="step-spinner"></div>';
+      if (i === steps.length-1) {
+        setTimeout(() => {
+          el.classList.remove('active'); el.classList.add('done');
+          el.querySelector('.step-icon').textContent = '✓';
+          loader.classList.remove('visible');
+          document.getElementById('docResult').classList.add('visible');
+        }, 900);
+      }
+    }, i * 900);
+  });
+}
+
+// ─── PPT SLIDES ────────────────────────────────────
+let curSlide = 1; const totalSlides = 13;
+function goToSlide(n) {
+  document.getElementById('sl'+curSlide).classList.remove('active');
+  document.querySelectorAll('.s-thumb')[curSlide-1].classList.remove('active');
+  curSlide = n;
+  document.getElementById('sl'+curSlide).classList.add('active');
+  document.querySelectorAll('.s-thumb')[curSlide-1].classList.add('active');
+  document.getElementById('slideCounter').textContent = `Slide ${curSlide} / ${totalSlides}`;
+}
+function nextSlide() { goToSlide(curSlide < totalSlides ? curSlide+1 : 1); }
+function prevSlide() { goToSlide(curSlide > 1 ? curSlide-1 : totalSlides); }
+document.addEventListener('keydown', e => {
+  if (!document.getElementById('page-buildppt').classList.contains('active')) return;
+  if (e.key==='ArrowRight') nextSlide();
+  if (e.key==='ArrowLeft')  prevSlide();
+});
+</script>
+<!-- Full-screen drag overlay -->
+<div class="drag-overlay" id="dragOverlay">
+  <div class="do-ring">
+    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+  </div>
+  <h2>Solte o arquivo para analisar</h2>
+  <p>Formatos aceitos: .docx · .doc · .pdf</p>
+</div>
+
+</body>
+</html>
