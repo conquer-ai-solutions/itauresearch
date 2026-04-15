@@ -877,6 +877,119 @@ svg { display:block; }
   display: flex; align-items: center; justify-content: center; gap: 6px;
 }
 .guide-replay:hover { border-color: var(--orange-bdr); color: var(--orange); }
+
+/* ─── CONNECTORS / DATA SOURCES PAGE ─── */
+.conn-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; }
+.conn-card {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:var(--r);
+  padding:22px; transition:all var(--t); position:relative; overflow:hidden;
+}
+.conn-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:2px;
+  background:linear-gradient(90deg,var(--orange),transparent); opacity:0; transition:opacity var(--t);
+}
+.conn-card:hover { border-color:var(--border-orange,rgba(236,112,0,.28)); background:var(--bg-3); }
+.conn-card:hover::before { opacity:.7; }
+.conn-card.connected { border-color:rgba(29,209,161,.3); }
+.conn-card.connected::before { background:linear-gradient(90deg,var(--green),transparent); opacity:.7; }
+
+.conn-logo {
+  width:46px; height:46px; border-radius:10px; margin-bottom:14px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px; font-weight:800; letter-spacing:-1px;
+  flex-shrink:0;
+}
+.conn-name { font-size:14px; font-weight:700; margin-bottom:3px; }
+.conn-desc { font-size:12px; color:var(--text-3); line-height:1.5; margin-bottom:14px; }
+.conn-tags { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:14px; }
+.conn-tag { font-size:10px; padding:2px 8px; border-radius:99px; background:var(--bg-4); border:1px solid var(--bdr); color:var(--text-3); }
+.conn-status {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:600;
+  margin-bottom:12px;
+}
+.conn-status-dot { width:7px; height:7px; border-radius:50%; }
+.conn-btn {
+  width:100%; padding:9px; border:1px solid var(--bdr);
+  border-radius:var(--r-sm); font-family:'Inter',sans-serif;
+  font-size:12px; font-weight:600; cursor:pointer; transition:all var(--t);
+}
+.conn-btn.connect { background:var(--orange); border-color:var(--orange); color:white; }
+.conn-btn.connect:hover { background:var(--orange-lt); }
+.conn-btn.disconnect { background:transparent; color:var(--text-3); }
+.conn-btn.disconnect:hover { border-color:var(--red); color:var(--red); }
+
+/* Modal */
+.conn-modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.65); backdrop-filter:blur(8px);
+  z-index:5000; display:none; align-items:center; justify-content:center;
+}
+.conn-modal-overlay.open { display:flex; }
+.conn-modal {
+  background:var(--bg-2); border:1px solid var(--bdr); border-radius:16px;
+  width:480px; padding:28px; box-shadow:0 32px 80px rgba(0,0,0,.6);
+  animation:cardIn .3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.conn-modal-header { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+.conn-modal-title { font-size:17px; font-weight:700; }
+.conn-modal-sub { font-size:12px; color:var(--text-3); margin-top:2px; }
+.conn-modal-close { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); transition:color var(--t); }
+.conn-modal-close:hover { color:var(--red); }
+.conn-modal-close svg { width:18px; height:18px; }
+.conn-field { margin-bottom:14px; }
+.conn-field label { display:block; font-size:11px; font-weight:600; color:var(--text-3); text-transform:uppercase; letter-spacing:.6px; margin-bottom:5px; }
+.conn-field input, .conn-field select {
+  width:100%; background:rgba(255,255,255,.04); border:1px solid var(--bdr);
+  border-radius:var(--r-sm); padding:10px 13px; font-family:'Inter',sans-serif;
+  font-size:13px; color:var(--text); outline:none; transition:border-color var(--t);
+}
+.conn-field input:focus, .conn-field select:focus { border-color:var(--orange); }
+.conn-field input::placeholder { color:var(--text-3); }
+.conn-modal-actions { display:flex; gap:10px; margin-top:20px; }
+.conn-modal-actions .btn-impl { flex:1; justify-content:center; }
+.conn-modal-actions .btn-cancel {
+  padding:11px 20px; background:transparent; border:1px solid var(--bdr);
+  border-radius:var(--r-sm); font-family:'Inter',sans-serif;
+  font-size:13px; font-weight:500; color:var(--text-3); cursor:pointer;
+  transition:all var(--t);
+}
+.conn-modal-actions .btn-cancel:hover { border-color:var(--red); color:var(--red); }
+
+.conn-success { display:flex; align-items:center; gap:8px; padding:10px 12px; background:rgba(29,209,161,.08); border:1px solid rgba(29,209,161,.25); border-radius:var(--r-sm); font-size:12px; color:var(--green); margin-top:12px; }
+
+/* ─── FILE UPLOAD BUBBLE ─── */
+.chat-attach {
+  width:34px; height:34px; background:transparent; border:1px solid var(--bdr);
+  border-radius:8px; display:flex; align-items:center; justify-content:center;
+  cursor:pointer; transition:all var(--t); flex-shrink:0;
+}
+.chat-attach:hover { border-color:var(--orange-bdr); background:var(--orange-dim); }
+.chat-attach svg { width:16px; height:16px; color:var(--text-3); }
+.chat-attach:hover svg { color:var(--orange); }
+#chatFileInput { display:none; }
+
+.file-bubble {
+  display:flex; align-items:center; gap:10px;
+  background:var(--bg-4); border:1px solid var(--bdr);
+  border-radius:var(--r) 0 var(--r) var(--r);
+  padding:10px 14px; max-width:80%;
+}
+.file-bubble-icon {
+  width:36px; height:36px; border-radius:8px;
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; font-size:17px;
+}
+.file-bubble-info .fn { font-size:13px; font-weight:600; color:var(--text); }
+.file-bubble-info .fs { font-size:11px; color:var(--text-3); margin-top:2px; }
+
+/* ─── CONNECTOR SOURCE TAG in chat ─── */
+.source-tag-conn {
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:10px; font-weight:700; padding:2px 8px; border-radius:4px;
+  background:rgba(124,92,252,.18); color:#A78BFA;
+  text-transform:uppercase; letter-spacing:.4px;
+}
+
 </style>
 </head>
 <body>
@@ -930,6 +1043,14 @@ svg { display:block; }
       <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
       Historic
       <span class="sb-badge">3</span>
+    </button>
+
+    <div class="sb-section">Integrações</div>
+
+    <button class="sb-btn" id="nav-connectors" onclick="showPage('connectors',this)">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+      Fontes de Dados
+      <span class="sb-badge" id="connectorBadge" style="display:none">0</span>
     </button>
 
     <div class="sb-section">Documentos</div>
@@ -1119,8 +1240,12 @@ svg { display:block; }
           </div>
 
           <div class="chat-input-wrap">
+            <input type="file" id="chatFileInput" accept=".pdf,.docx,.doc,.xlsx,.csv,.txt,.json" onchange="handleFileUpload(event)">
             <div class="chat-input-inner">
-              <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Digite o nome da empresa ou ticker..." onkeydown="handleChatKey(event)"></textarea>
+              <button class="chat-attach" onclick="document.getElementById('chatFileInput').click()" title="Anexar arquivo">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
+              </button>
+              <textarea class="chat-inp" id="chatInp" rows="1" placeholder="Digite o nome da empresa, ticker ou anexe um arquivo..." onkeydown="handleChatKey(event)"></textarea>
               <button class="chat-send" onclick="sendQuery()">
                 <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
               </button>
@@ -2021,7 +2146,253 @@ svg { display:block; }
         </div>
       </div>
 
-        </div><!-- /page-wrap -->
+    
+      <!-- ──── CONNECTORS ──── -->
+      <div class="page" id="page-connectors">
+        <div class="dash-header">
+          <h1>Fontes de Dados</h1>
+          <p>Arquitetura desacoplada de ingestão — ETL tradicional alimenta o Data Lake, o motor de IA lê apenas do lake</p>
+        </div>
+
+        <!-- Architecture constraint banner -->
+        <div style="display:flex; align-items:flex-start; gap:14px; margin-bottom:20px; padding:16px 20px; background:linear-gradient(135deg,rgba(236,112,0,.06),rgba(236,112,0,.02)); border:1px solid rgba(236,112,0,.2); border-radius:var(--r);">
+          <svg style="width:20px;height:20px;color:var(--orange);flex-shrink:0;margin-top:1px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/></svg>
+          <div>
+            <div style="font-size:13px;font-weight:700;color:var(--orange);margin-bottom:4px">Restrição Arquitetural: Duas Camadas Isoladas</div>
+            <div style="font-size:12px;color:var(--text-2);line-height:1.6">Bloomberg e Capital IQ <strong style="color:var(--text)">proíbem conexão direta por agentes de IA/MCP</strong>. A Camada 1 (ETL tradicional, sem IA) ingesta dados no Data Lake normalizado. A Camada 2 (Motor de IA) lê exclusivamente do lake — nunca toca fontes licenciadas diretamente. Isso resolve compliance de licenciamento e garante rastreabilidade completa.</div>
+          </div>
+        </div>
+
+        <!-- Three integration patterns -->
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:28px;">
+          <div style="padding:12px 16px; background:var(--bg-2); border:1px solid rgba(236,112,0,.2); border-radius:var(--r-sm); text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--orange);font-weight:700;margin-bottom:4px">Pipeline Automatizado</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4">Fontes públicas com APIs abertas — ingestão agendada sem intervenção</div>
+          </div>
+          <div style="padding:12px 16px; background:var(--bg-2); border:1px solid rgba(59,123,246,.2); border-radius:var(--r-sm); text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--blue);font-weight:700;margin-bottom:4px">Ingestão Staged</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4">Fontes licenciadas — adaptado ao nível de acesso (API, SFTP ou export)</div>
+          </div>
+          <div style="padding:12px 16px; background:var(--bg-2); border:1px solid rgba(124,92,252,.2); border-radius:var(--r-sm); text-align:center;">
+            <div style="font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:#A78BFA;font-weight:700;margin-bottom:4px">Mosaico Agêntico</div>
+            <div style="font-size:11px;color:var(--text-3);line-height:1.4">Empresas privadas — orquestração multi-fonte com score de confiança</div>
+          </div>
+        </div>
+
+        <!-- TIER 1: Licensed Sources -->
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--orange);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+          Fontes Licenciadas — Ingestão Staged
+        </div>
+        <div class="conn-grid" id="connGrid" style="margin-bottom:28px">
+
+          <!-- Bloomberg -->
+          <div class="conn-card" id="conn-bloomberg">
+            <div class="conn-logo" style="background:rgba(255,165,0,.1);color:#FFA500;border:1px solid rgba(255,165,0,.25)">BBG</div>
+            <div class="conn-name">Bloomberg</div>
+            <div class="conn-desc">Preços real-time, estimativas de consenso, earnings transcripts, dados fundamentalistas. Requer licença específica AI/ML para uso programático.</div>
+            <div class="conn-tags"><span class="conn-tag">Data License</span><span class="conn-tag">BLPAPI</span><span class="conn-tag">SFTP/REST</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-bottom:10px;padding:6px 8px;background:var(--bg-4);border-radius:4px;line-height:1.5">
+              <strong style="color:var(--text-2)">3 cenários:</strong> Data License REST/SFTP → Xpressfeed bulk → Terminal BDH/BDP export
+            </div>
+            <div class="conn-status" id="status-bloomberg"><div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">Aguardando licença AI/ML</span></div>
+            <button class="conn-btn connect" onclick="openConnModal('bloomberg')">Configurar</button>
+          </div>
+
+          <!-- Capital IQ -->
+          <div class="conn-card" id="conn-capitaliq">
+            <div class="conn-logo" style="background:rgba(0,120,215,.1);color:#0078D7;border:1px solid rgba(0,120,215,.25)">CIQ</div>
+            <div class="conn-name">S&P Capital IQ</div>
+            <div class="conn-desc">Financials padronizados, deals M&A, comps, ownership. CIQ proíbe explicitamente conexão por agentes AI/MCP — requer middleware.</div>
+            <div class="conn-tags"><span class="conn-tag">Pro API</span><span class="conn-tag">Xpressfeed</span><span class="conn-tag">Excel Plugin</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-bottom:10px;padding:6px 8px;background:var(--bg-4);border-radius:4px;line-height:1.5">
+              <strong style="color:var(--text-2)">3 cenários:</strong> Pro API (bearer token 60min) → Xpressfeed SFTP bulk → Analyst Excel export
+            </div>
+            <div class="conn-status" id="status-capitaliq"><div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">Aguardando nível de acesso</span></div>
+            <button class="conn-btn connect" onclick="openConnModal('capitaliq')">Configurar</button>
+          </div>
+
+          <!-- Economatica -->
+          <div class="conn-card" id="conn-economatica">
+            <div class="conn-logo" style="background:rgba(29,209,161,.1);color:var(--green);border:1px solid rgba(29,209,161,.25)">ECO</div>
+            <div class="conn-name">Economatica</div>
+            <div class="conn-desc">100% cobertura B3, séries históricas longas, dados ajustados por proventos. REST API com CSV/TXT ou export via terminal.</div>
+            <div class="conn-tags"><span class="conn-tag">REST API</span><span class="conn-tag">B3 100%</span><span class="conn-tag">Séries históricas</span></div>
+            <div style="font-size:10px;color:var(--text-3);margin-bottom:10px;padding:6px 8px;background:var(--bg-4);border-radius:4px;line-height:1.5">
+              <strong style="color:var(--text-2)">2 cenários:</strong> REST API scheduled pull → Terminal/plugin CSV export
+            </div>
+            <div class="conn-status" id="status-economatica"><div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">Aguardando credenciais</span></div>
+            <button class="conn-btn connect" onclick="openConnModal('economatica')">Configurar</button>
+          </div>
+
+        </div>
+
+        <!-- TIER 2: Public Sources -->
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--green);font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          Fontes Públicas — Pipeline Automatizado
+        </div>
+        <div class="conn-grid" style="margin-bottom:28px">
+
+          <!-- CVM -->
+          <div class="conn-card connected" id="conn-cvm">
+            <div class="conn-logo" style="background:rgba(0,75,150,.1);color:#004B96;border:1px solid rgba(0,75,150,.25)">CVM</div>
+            <div class="conn-name">CVM / B3 Oficial</div>
+            <div class="conn-desc">ITR (trimestral), DFP (anual), FRE (referência) via dados.cvm.gov.br. Bulk download XML/CSV com parser flexível para schema drift.</div>
+            <div class="conn-tags"><span class="conn-tag">Bulk download</span><span class="conn-tag">XML/CSV</span><span class="conn-tag">Gratuito</span></div>
+            <div class="conn-status" id="status-cvm"><div class="conn-status-dot" style="background:var(--green)"></div><span style="color:var(--green)">Pipeline ativo — pull diário</span></div>
+            <button class="conn-btn disconnect" onclick="disconnectConn('cvm')">Desconectar</button>
+          </div>
+
+          <!-- IBGE SIDRA -->
+          <div class="conn-card connected" id="conn-ibge">
+            <div class="conn-logo" style="background:rgba(59,123,246,.1);color:var(--blue);border:1px solid rgba(59,123,246,.25)">IBGE</div>
+            <div class="conn-name">IBGE SIDRA</div>
+            <div class="conn-desc">PIB (tabela 5932), produção agrícola (5457), IPCA (7060) via REST API servicodados.ibge.gov.br/api/v3. Scheduled pull + query broker on-demand.</div>
+            <div class="conn-tags"><span class="conn-tag">REST API</span><span class="conn-tag">Macro/PIB</span><span class="conn-tag">Gratuito</span></div>
+            <div class="conn-status" id="status-ibge"><div class="conn-status-dot" style="background:var(--green)"></div><span style="color:var(--green)">Pipeline ativo — scheduled pull</span></div>
+            <button class="conn-btn disconnect" onclick="disconnectConn('ibge')">Desconectar</button>
+          </div>
+
+          <!-- ANP -->
+          <div class="conn-card connected" id="conn-anp">
+            <div class="conn-logo" style="background:rgba(29,209,161,.1);color:var(--green);border:1px solid rgba(29,209,161,.25)">ANP</div>
+            <div class="conn-name">ANP Dados Abertos</div>
+            <div class="conn-desc">Preços combustíveis, produção petróleo/gás, dados regulatórios. CSVs limpos de dados.gov.br — download automático e parse direto.</div>
+            <div class="conn-tags"><span class="conn-tag">CSV direto</span><span class="conn-tag">Energia</span><span class="conn-tag">Gratuito</span></div>
+            <div class="conn-status" id="status-anp"><div class="conn-status-dot" style="background:var(--green)"></div><span style="color:var(--green)">Pipeline ativo — pull semanal</span></div>
+            <button class="conn-btn disconnect" onclick="disconnectConn('anp')">Desconectar</button>
+          </div>
+
+          <!-- CONAB -->
+          <div class="conn-card connected" id="conn-conab">
+            <div class="conn-logo" style="background:rgba(255,165,0,.1);color:#FFA500;border:1px solid rgba(255,165,0,.25)">CON</div>
+            <div class="conn-name">CONAB Safras</div>
+            <div class="conn-desc">Relatórios mensais de safra (sem API). Pipeline de 5 etapas: classificação → detecção de tabelas → OCR/parse → entity resolution → validação.</div>
+            <div class="conn-tags"><span class="conn-tag">PDF Pipeline</span><span class="conn-tag">OCR</span><span class="conn-tag">Agro</span></div>
+            <div class="conn-status" id="status-conab"><div class="conn-status-dot" style="background:var(--green)"></div><span style="color:var(--green)">PDF pipeline ativo — mensal</span></div>
+            <button class="conn-btn disconnect" onclick="disconnectConn('conab')">Desconectar</button>
+          </div>
+
+        </div>
+
+        <!-- TIER 3: Internal -->
+        <div style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#A78BFA;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:8px">
+          <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+          Fontes Internas — Dados Proprietários
+        </div>
+        <div class="conn-grid">
+
+          <!-- Salesforce -->
+          <div class="conn-card" id="conn-salesforce">
+            <div class="conn-logo" style="background:rgba(0,176,240,.1);color:#00B0F0;border:1px solid rgba(0,176,240,.25)">SF</div>
+            <div class="conn-name">Salesforce CRM</div>
+            <div class="conn-desc">Pipeline de deals, atividades de clientes, notas de relacionamento. API REST para sincronização de dados de cobertura e histórico de interações.</div>
+            <div class="conn-tags"><span class="conn-tag">REST API</span><span class="conn-tag">CRM</span><span class="conn-tag">Deals</span></div>
+            <div class="conn-status" id="status-salesforce"><div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">Aguardando acesso API</span></div>
+            <button class="conn-btn connect" onclick="openConnModal('salesforce')">Configurar</button>
+          </div>
+
+          <!-- Internal Docs -->
+          <div class="conn-card" id="conn-internaldocs">
+            <div class="conn-logo" style="background:rgba(124,92,252,.1);color:#A78BFA;border:1px solid rgba(124,92,252,.25)">DOC</div>
+            <div class="conn-name">Docs Internos</div>
+            <div class="conn-desc">Relatórios de research anteriores, pitchbooks, modelos. SharePoint/Confluence com embeddings vetoriais para busca semântica.</div>
+            <div class="conn-tags"><span class="conn-tag">SharePoint</span><span class="conn-tag">Embeddings</span><span class="conn-tag">Busca semântica</span></div>
+            <div class="conn-status" id="status-internaldocs"><div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">Aguardando configuração</span></div>
+            <button class="conn-btn connect" onclick="openConnModal('internaldocs')">Configurar</button>
+          </div>
+
+        </div>
+
+        <!-- Data Lake summary -->
+        <div style="margin-top:28px;padding:18px 22px;background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r);">
+          <div style="font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:8px">
+            <svg style="width:16px;height:16px;color:var(--orange)" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg>
+            Data Lake Normalizado
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Company Financials</strong><br><span style="color:var(--text-3)">IS · BS · CF padronizados</span></div>
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Market Data</strong><br><span style="color:var(--text-3)">Preços · Volumes · Índices</span></div>
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Regulatory Filings</strong><br><span style="color:var(--text-3)">CVM · SEC · XBRL parsed</span></div>
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Macro & Sector</strong><br><span style="color:var(--text-3)">IBGE · CONAB · ANP</span></div>
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Internal Docs</strong><br><span style="color:var(--text-3)">Reports · Pitchbooks</span></div>
+            <div style="padding:8px 12px;background:var(--bg-4);border-radius:4px;font-size:11px;text-align:center"><strong style="color:var(--text)">Data Provenance</strong><br><span style="color:var(--text-3)">Source · Date · License</span></div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- CONNECTOR MODAL -->
+      <div class="conn-modal-overlay" id="connModalOverlay" onclick="if(event.target===this)closeConnModal()">
+        <div class="conn-modal">
+          <div class="conn-modal-header">
+            <div>
+              <div class="conn-modal-title" id="connModalTitle">Configurar Fonte</div>
+              <div class="conn-modal-sub" id="connModalSub">Selecione o método de integração</div>
+            </div>
+            <button class="conn-modal-close" onclick="closeConnModal()">
+              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+          <!-- Integration method selector -->
+          <div class="conn-field">
+            <label>Método de Integração</label>
+            <select id="connMethod" onchange="updateModalFields()">
+              <option value="api">REST API (Microserviço Middleware)</option>
+              <option value="sftp">SFTP Bulk Delivery (Xpressfeed)</option>
+              <option value="export">Analyst Export (CSV/Excel)</option>
+            </select>
+          </div>
+          <!-- Dynamic fields container -->
+          <div id="connDynamicFields">
+            <div class="conn-field" id="connFieldApi">
+              <label>API Endpoint / Host</label>
+              <input type="text" id="connApiHost" placeholder="https://api.example.com/v1">
+            </div>
+            <div class="conn-field" id="connFieldKey">
+              <label>API Key / Bearer Token</label>
+              <input type="password" id="connApiKey" placeholder="••••••••••••••••••••••••••••••••">
+            </div>
+            <div class="conn-field" id="connFieldSftp" style="display:none">
+              <label>SFTP Host / Caminho</label>
+              <input type="text" id="connSftpHost" placeholder="sftp://xpressfeed.spglobal.com/outgoing/">
+            </div>
+            <div class="conn-field" id="connFieldRefresh" style="display:none">
+              <label>Token Refresh Interval</label>
+              <select id="connRefresh">
+                <option value="60">60 min (CIQ Pro API padrão)</option>
+                <option value="30">30 min</option>
+                <option value="manual">Refresh manual</option>
+              </select>
+            </div>
+          </div>
+          <!-- License warning -->
+          <div id="connLicenseWarn" style="display:none;padding:10px 12px;background:rgba(236,112,0,.06);border:1px solid rgba(236,112,0,.18);border-radius:var(--r-sm);font-size:11px;color:var(--orange);margin-bottom:12px;line-height:1.5">
+            <strong>Nota de licenciamento:</strong> <span id="connLicenseText">Verificar com a equipe jurídica se a licença atual permite uso programático via API.</span>
+          </div>
+          <div class="conn-field">
+            <label>Ambiente</label>
+            <select id="connEnv">
+              <option value="prod">Produção</option>
+              <option value="poc">POC / Sandbox</option>
+            </select>
+          </div>
+          <div id="connSuccess" style="display:none" class="conn-success">
+            <svg style="width:14px;height:14px;flex-shrink:0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+            Pipeline configurado com sucesso! Ingestão será iniciada no próximo ciclo.
+          </div>
+          <div class="conn-modal-actions">
+            <button class="btn-cancel" onclick="closeConnModal()">Cancelar</button>
+            <button class="btn-impl" id="connSaveBtn" onclick="saveConnector()">
+              <svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+              Salvar & Ativar Pipeline
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-wrap -->
   </div><!-- /main -->
 </div><!-- /app -->
 
@@ -2170,7 +2541,7 @@ function doLogout() {
 // ─── NAVIGATION ────────────────────────────────────
 const PAGE_TITLES = {
   home:'Dashboard', research:'Research',
-  historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT'
+  historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT', connectors:'Fontes de Dados'
 };
 
 function showPage(name, btn) {
@@ -2187,7 +2558,7 @@ function showPage(name, btn) {
       clearGuideTimers();
       guideCurrentPage = name;
       const badge = document.getElementById('guidePageName');
-      const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT' };
+      const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT', connectors:'Fontes de Dados' };
       if (badge) badge.textContent = labels[name] || name;
       const t = setTimeout(() => playGuide(name), 350);
       guideTimers.push(t);
@@ -2211,6 +2582,14 @@ function showPage(name, btn) {
     wrap.style.overflow = 'auto';
     wrap.style.height = '';
     wrap.style.display = 'block';
+  } else if (name === 'connectors') {
+    wrap.style.padding = '28px 32px';
+    wrap.style.overflow = 'auto';
+    wrap.style.height = '';
+    wrap.style.display = 'block';
+    // Reset docanalysis display if needed
+    const da = document.getElementById('page-docanalysis');
+    if (da) da.style.display = 'none';
   } else {
     wrap.style.padding = '28px 32px';
     wrap.style.overflow = 'auto';
@@ -2319,6 +2698,21 @@ function sendQuery() {
   isSearching = true;
   inp.value = '';
 
+  // Inject active connectors into RESEARCH_SCRIPT temporarily
+  if (typeof connectorState !== 'undefined') {
+    const activeConns = Object.entries(connectorState).filter(([,v]) => v.connected);
+    activeConns.forEach(([id, info]) => {
+      RESEARCH_SCRIPT.splice(4, 0, {
+        delay: 700,
+        type: 'log',
+        tag: (id === 'cvm' || id === 'edgar') ? 'found' : 'parse',
+        text: '<span class="source-tag-conn">' + info.name + '</span> &nbsp;Consultando dados via conector ativo...',
+      });
+    });
+    // Store count so we can remove after
+    window._injectedConnLines = activeConns.length;
+  }
+
   const body = document.getElementById('chatBody');
   const welcome = document.getElementById('chatWelcome');
   if (welcome) welcome.remove();
@@ -2355,7 +2749,16 @@ function sendQuery() {
         setTimeout(() => { addAnalystsCard(body); body.scrollTop = body.scrollHeight; }, CARD_DELAY * 3);
         setTimeout(() => { addSOTPCard(body);     body.scrollTop = body.scrollHeight; }, CARD_DELAY * 4);
         setTimeout(() => { addCatalystsCard(body);body.scrollTop = body.scrollHeight; }, CARD_DELAY * 5);
-        setTimeout(() => { addGenButton(body);    body.scrollTop = body.scrollHeight; isSearching = false; }, CARD_DELAY * 6);
+        setTimeout(() => {
+          addGenButton(body);
+          body.scrollTop = body.scrollHeight;
+          isSearching = false;
+          // Restore RESEARCH_SCRIPT
+          if (window._injectedConnLines > 0) {
+            RESEARCH_SCRIPT.splice(4, window._injectedConnLines);
+            window._injectedConnLines = 0;
+          }
+        }, CARD_DELAY * 6);
       }
       step++;
       runStep();
@@ -2723,6 +3126,14 @@ const GUIDE_SCRIPTS = {
     { delay: 2000, text: 'O resultado mostra lado a lado: <span class="hlg">Pontos Fortes</span> a preservar (com excerpt do texto original) e <span class="hl">Sugestões de Melhoria</span> com texto atual vs. versão corrigida.' },
     { delay: 1800, text: 'Com um clique em <b>"Aplicar todas as sugestões"</b>, a IA reescreve o documento e disponibiliza o .docx revisado — zero trabalho manual de edição.' },
   ],
+  connectors: [
+    { delay: 400,  text: 'Aqui está a arquitetura de <b>Fontes de Dados</b> — organizada em três camadas: fontes licenciadas, públicas e internas.' },
+    { delay: 2000, text: '<span class="hl">Restrição crítica:</span> Bloomberg e Capital IQ <b>proíbem conexão direta por agentes AI/MCP</b>. Por isso usamos uma arquitetura de duas camadas isoladas.' },
+    { delay: 2200, text: '<b>Camada 1</b> (ETL tradicional, sem IA) ingesta os dados no Data Lake normalizado. <b>Camada 2</b> (Motor de IA) lê exclusivamente do lake — nunca toca fontes licenciadas.' },
+    { delay: 2000, text: 'Fontes públicas como <span class="hlg">CVM</span>, <span class="hlg">IBGE SIDRA</span>, <span class="hlg">ANP</span> já estão com pipelines automáticos ativos. <span class="hl">CONAB</span> usa um pipeline de 5 etapas com OCR para extrair dados de PDFs mensais.' },
+    { delay: 2200, text: 'Para cada fonte licenciada, há <b>3 cenários de integração</b> adaptados ao nível de acesso: API com middleware, SFTP bulk delivery, ou export de analista.' },
+    { delay: 1800, text: 'Tudo converge no <span class="hlg">Data Lake Normalizado</span> — 6 domínios: Company Financials, Market Data, Regulatory Filings, Macro/Sector, Internal Docs e Data Provenance.' },
+  ],
   buildppt: [
     { delay: 400,  text: 'O <b>Build PPT</b> é o produto final do fluxo — uma apresentação completa gerada automaticamente com dados reais dos JSONs coletados na etapa de Research.' },
     { delay: 1800, text: 'São <span class="hl">13 slides</span> cobrindo: Capa → Tese → Portfolio → Mercado → EBITDA → P&L → Segmentos (Rumo, Raízen, Compass, Moove, Radar) → Capital → SOTP → Analistas → Bull/Bear.' },
@@ -2778,7 +3189,7 @@ function playGuide(page) {
   guideCurrentPage = page;
 
   // Update page badge
-  const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT' };
+  const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT', connectors:'Fontes de Dados' };
   if (badge) badge.textContent = labels[page] || page;
 
   const script = GUIDE_SCRIPTS[page] || GUIDE_SCRIPTS.home;
@@ -2820,6 +3231,291 @@ function playGuide(page) {
 }
 
 // Guide page tracking handled inside original showPage
+
+
+// ════════════════════════════════════════════════════
+// CONNECTORS (Data Sources — Decoupled Architecture)
+// ════════════════════════════════════════════════════
+const connectorState = {
+  bloomberg:    { name:'Bloomberg',          connected: false, tier:'licensed', methods:['api','sftp','export'], licenseNote:'Requer licença AI/ML específica. Verificar se Data License ou apenas Terminal.' },
+  capitaliq:    { name:'S&P Capital IQ',     connected: false, tier:'licensed', methods:['api','sftp','export'], licenseNote:'CIQ proíbe agentes AI/MCP. Pro API requer middleware com bearer token refresh 60min.' },
+  economatica:  { name:'Economatica',        connected: false, tier:'licensed', methods:['api','export'], licenseNote:'Verificar se licença inclui acesso REST API ou apenas terminal.' },
+  cvm:          { name:'CVM / B3 Oficial',   connected: true,  tier:'public' },
+  ibge:         { name:'IBGE SIDRA',         connected: true,  tier:'public' },
+  anp:          { name:'ANP Dados Abertos',  connected: true,  tier:'public' },
+  conab:        { name:'CONAB Safras',       connected: true,  tier:'public' },
+  salesforce:   { name:'Salesforce CRM',     connected: false, tier:'internal', methods:['api'], licenseNote:'Verificar acesso API REST no plano atual do Salesforce.' },
+  internaldocs: { name:'Docs Internos',      connected: false, tier:'internal', methods:['api','export'], licenseNote:'Configurar acesso SharePoint/Confluence API ou upload batch.' },
+};
+
+let modalTargetId = null;
+
+const connectorMeta = {
+  bloomberg:    { title:'Bloomberg', sub:'Configurar pipeline de ingestão Bloomberg' },
+  capitaliq:    { title:'S&P Capital IQ', sub:'Configurar middleware CIQ (AI/MCP bloqueado)' },
+  economatica:  { title:'Economatica', sub:'Configurar integração Economatica' },
+  salesforce:   { title:'Salesforce CRM', sub:'Configurar sincronização CRM' },
+  internaldocs: { title:'Docs Internos', sub:'Configurar ingestão de documentos internos' },
+};
+
+function openConnModal(id) {
+  modalTargetId = id;
+  const meta = connectorMeta[id] || { title: connectorState[id]?.name || id, sub: 'Configurar integração' };
+  document.getElementById('connModalTitle').textContent = 'Configurar ' + meta.title;
+  document.getElementById('connModalSub').textContent = meta.sub;
+
+  // Reset fields
+  const keyInput = document.getElementById('connApiKey');
+  if (keyInput) keyInput.value = '';
+  const hostInput = document.getElementById('connApiHost');
+  if (hostInput) hostInput.value = '';
+  document.getElementById('connSuccess').style.display = 'none';
+  document.getElementById('connSaveBtn').innerHTML = '<svg style="width:13px;height:13px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg> Salvar & Ativar Pipeline';
+  document.getElementById('connSaveBtn').disabled = false;
+
+  // Set available methods in dropdown
+  const methodSelect = document.getElementById('connMethod');
+  const src = connectorState[id];
+  const methods = src?.methods || ['api'];
+  methodSelect.innerHTML = '';
+  const methodLabels = {
+    api: 'REST API (Microserviço Middleware)',
+    sftp: 'SFTP Bulk Delivery (Xpressfeed)',
+    export: 'Analyst Export (CSV/Excel → Ingest)'
+  };
+  methods.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m;
+    opt.textContent = methodLabels[m] || m;
+    methodSelect.appendChild(opt);
+  });
+
+  // License warning
+  const warn = document.getElementById('connLicenseWarn');
+  const warnText = document.getElementById('connLicenseText');
+  if (src?.licenseNote) {
+    warn.style.display = 'block';
+    warnText.textContent = src.licenseNote;
+  } else {
+    warn.style.display = 'none';
+  }
+
+  updateModalFields();
+  document.getElementById('connModalOverlay').classList.add('open');
+}
+
+function updateModalFields() {
+  const method = document.getElementById('connMethod').value;
+  document.getElementById('connFieldApi').style.display = method === 'api' ? 'block' : 'none';
+  document.getElementById('connFieldKey').style.display = method !== 'export' ? 'block' : 'none';
+  document.getElementById('connFieldSftp').style.display = method === 'sftp' ? 'block' : 'none';
+  const refreshField = document.getElementById('connFieldRefresh');
+  if (refreshField) refreshField.style.display = (method === 'api' && (modalTargetId === 'capitaliq' || modalTargetId === 'bloomberg')) ? 'block' : 'none';
+}
+
+function closeConnModal() {
+  document.getElementById('connModalOverlay').classList.remove('open');
+  document.getElementById('connSuccess').style.display = 'none';
+  modalTargetId = null;
+}
+
+function saveConnector() {
+  const btn = document.getElementById('connSaveBtn');
+  btn.innerHTML = '<div class="step-spinner" style="width:13px;height:13px;margin-right:6px;display:inline-block;vertical-align:-2px"></div>Validando pipeline...';
+  btn.disabled = true;
+  setTimeout(() => {
+    document.getElementById('connSuccess').style.display = 'flex';
+    btn.textContent = 'Pipeline Ativo';
+    if (modalTargetId) {
+      connectorState[modalTargetId].connected = true;
+      setTimeout(() => {
+        setConnected(modalTargetId, true);
+        closeConnModal();
+      }, 900);
+    }
+  }, 1800);
+}
+
+function disconnectConn(id) {
+  connectorState[id].connected = false;
+  setConnected(id, false);
+}
+
+function setConnected(id, val) {
+  const card = document.getElementById('conn-' + id);
+  const status = document.getElementById('status-' + id);
+  const btn = card ? card.querySelector('.conn-btn') : null;
+  const src = connectorState[id];
+  if (val) {
+    card && card.classList.add('connected');
+    const statusLabel = src?.tier === 'public' ? 'Pipeline ativo' : 'Conectado';
+    if (status) status.innerHTML = '<div class="conn-status-dot" style="background:var(--green)"></div><span style="color:var(--green)">' + statusLabel + '</span>';
+    if (btn) { btn.className = 'conn-btn disconnect'; btn.textContent = 'Desconectar'; btn.onclick = () => disconnectConn(id); }
+  } else {
+    card && card.classList.remove('connected');
+    const offLabel = src?.tier === 'licensed' ? 'Aguardando configuração' : 'Não conectado';
+    if (status) status.innerHTML = '<div class="conn-status-dot" style="background:var(--text-3)"></div><span style="color:var(--text-3)">' + offLabel + '</span>';
+    if (btn) { btn.className = 'conn-btn connect'; btn.textContent = 'Configurar'; btn.onclick = () => openConnModal(id); }
+  }
+  updateConnBadge();
+}
+
+function updateConnBadge() {
+  const count = Object.values(connectorState).filter(v => v.connected).length;
+  const badge = document.getElementById('connectorBadge');
+  if (!badge) return;
+  badge.style.display = count > 0 ? 'inline-flex' : 'none';
+  badge.textContent = count;
+}
+
+// Init badge on load
+setTimeout(updateConnBadge, 100);
+
+// ════════════════════════════════════════════════════
+// RESEARCH CHAT — FILE UPLOAD
+// ════════════════════════════════════════════════════
+function handleFileUpload(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  event.target.value = '';
+
+  const body = document.getElementById('chatBody');
+  const welcome = document.getElementById('chatWelcome');
+  if (welcome) welcome.remove();
+
+  // File type icon
+  const ext = file.name.split('.').pop().toLowerCase();
+  const icons = { pdf:'📑', docx:'📄', doc:'📄', xlsx:'📊', csv:'📊', txt:'📝', json:'🗂' };
+  const icon = icons[ext] || '📎';
+  const size = file.size > 1024*1024 ? (file.size/1024/1024).toFixed(1)+' MB' : Math.round(file.size/1024)+' KB';
+
+  // User message with file bubble
+  const userMsg = document.createElement('div');
+  userMsg.className = 'msg';
+  userMsg.innerHTML = `
+    <div class="msg-icon user">RA</div>
+    <div class="msg-body">
+      <div class="msg-sender">Você</div>
+      <div class="file-bubble">
+        <div class="file-bubble-icon" style="background:var(--bg-2);border:1px solid var(--bdr)">${icon}</div>
+        <div class="file-bubble-info">
+          <div class="fn">${file.name}</div>
+          <div class="fs">${size} · ${ext.toUpperCase()}</div>
+        </div>
+      </div>
+    </div>`;
+  body.appendChild(userMsg);
+  body.scrollTop = body.scrollHeight;
+
+  // AI analyses the file
+  setTimeout(() => analyzeUploadedFile(file, body, ext, size), 500);
+}
+
+function analyzeUploadedFile(file, body, ext, size) {
+  if (isSearching) return;
+  isSearching = true;
+
+  const sysMsg = addMessage('system', null, true);
+  const logBubble = document.createElement('div');
+  logBubble.className = 'log-bubble';
+  sysMsg.querySelector('.msg-body').appendChild(logBubble);
+
+  const NS = 'http://www.w3.org/2000/svg';
+  const fileScripts = [
+    { delay: 500,  tag:'parse',  text:`Lendo arquivo "${file.name}" (${size})...` },
+    { delay: 1200, tag:'found',  text:`Formato ${ext.toUpperCase()} detectado · estrutura identificada` },
+    { delay: 900,  tag:'think',  text:'Extraindo dados financeiros, métricas e texto relevante...' },
+    { delay: 1400, tag:'think',  text:'Cruzando conteúdo com base de dados de mercado (B3, SEC, CVM)...' },
+    { delay: 1000, tag:'done',   text:'Análise concluída · gerando sumário estruturado' },
+  ];
+
+  let cumDelay = 0;
+  fileScripts.forEach((s, i) => {
+    cumDelay += s.delay;
+    setTimeout(() => {
+      const line = document.createElement('div');
+      line.className = 'log-line';
+      line.innerHTML = `<span class="log-tag ${TAG_CSS[s.tag]}">${TAG_LABELS[s.tag]}</span><span class="log-text">${s.text}</span>`;
+      logBubble.appendChild(line);
+      body.scrollTop = body.scrollHeight;
+      if (i === fileScripts.length - 1) {
+        setTimeout(() => showFileAnalysisResult(body, file, ext), 700);
+      }
+    }, cumDelay);
+  });
+}
+
+function showFileAnalysisResult(body, file, ext) {
+  const isPdf = ext === 'pdf';
+  const isDoc = ['doc','docx'].includes(ext);
+  const isData = ['xlsx','csv'].includes(ext);
+
+  const summaries = {
+    pdf: [
+      ['Empresa identificada', 'Cosan S.A. (CSAN3)'],
+      ['Tipo de documento', 'Relatório de Research · Initiation of Coverage'],
+      ['Páginas detectadas', '47 páginas · 5 seções'],
+      ['Dados financeiros', 'EBITDA 2024A R$27,5bi · Leverage 2,9x · Target R$12,00'],
+      ['Recomendação', 'BUY · Upside +119%'],
+    ],
+    docx: [
+      ['Empresa identificada', 'Cosan S.A. (CSAN3)'],
+      ['Palavras', '12.340 · 47 páginas · 8 gráficos'],
+      ['Seções principais', 'Executive Summary, Valuation, Riscos, Catalisadores'],
+      ['Dados desatualizados', '2 referências de preço-alvo desatualizadas detectadas'],
+      ['Sugestões de melhoria', '5 identificadas (ver Análise Documental)'],
+    ],
+    default: [
+      ['Arquivo processado', file.name],
+      ['Dados extraídos', '124 registros · 18 colunas'],
+      ['Período coberto', '2022–2026E'],
+      ['Tickers identificados', 'CSAN3, RAIL3, RAIZ4, VALE3'],
+      ['Qualidade dos dados', 'Alta — sem valores ausentes relevantes'],
+    ],
+  };
+
+  const rows = isPdf ? summaries.pdf : isDoc ? summaries.docx : summaries.default;
+  const rowsHtml = rows.map(([k,v]) => `
+    <div class="rc-cell"><div class="rc-cell-lbl">${k}</div><div style="font-size:12px;font-weight:600;color:var(--text);margin-top:2px">${v}</div></div>
+  `).join('');
+
+  const msg = document.createElement('div');
+  msg.className = 'msg';
+  msg.innerHTML = `
+    <div class="msg-icon system">í</div>
+    <div class="msg-body">
+      <div class="msg-sender">Análise do Arquivo · ${file.name}</div>
+      <div class="result-card">
+        <div class="rc-grid" style="grid-template-columns:repeat(2,1fr)">${rowsHtml}</div>
+        <div class="rc-footer">Arquivo analisado e incorporado ao contexto do Research. Os dados extraídos serão considerados nas próximas pesquisas desta sessão.</div>
+      </div>
+    </div>`;
+  body.appendChild(msg);
+
+  // Action button
+  if (isDoc) {
+    const actionMsg = document.createElement('div');
+    actionMsg.className = 'msg';
+    actionMsg.innerHTML = `
+      <div class="msg-icon system">í</div>
+      <div class="msg-body">
+        <div class="msg-sender">Próximos passos</div>
+        <div style="font-size:13px;color:var(--text-2);margin-bottom:8px;line-height:1.6">Documento carregado. Deseja abrir a <b>Análise Documental</b> para revisão completa com sugestões de melhoria?</div>
+        <button class="btn-gen" onclick="showPage('docanalysis',document.getElementById('nav-docanalysis'));setTimeout(startDocAnalysis,300)" style="font-size:13px;padding:10px 18px">
+          <svg style="width:14px;height:14px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          Analisar Documento
+        </button>
+      </div>`;
+    body.appendChild(actionMsg);
+  }
+
+  body.scrollTop = body.scrollHeight;
+  isSearching = false;
+}
+
+// ════════════════════════════════════════════════════
+// RESEARCH — connector injection handled inside sendQuery directly
+// ════════════════════════════════════════════════════
 
 </script>
 <!-- Full-screen drag overlay -->
