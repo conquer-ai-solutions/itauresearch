@@ -689,6 +689,194 @@ body { background: var(--bg); color: var(--text); min-height: 100vh; overflow-x:
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:99px; }
 svg { display:block; }
+
+/* ══════════════════════════════════════════════════
+   AI GUIDE CHAT
+══════════════════════════════════════════════════ */
+.guide-btn {
+  position: fixed;
+  bottom: 28px; right: 28px;
+  width: 52px; height: 52px;
+  background: var(--orange);
+  border-radius: 50%;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 4px 20px rgba(236,112,0,.45);
+  z-index: 8000;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.guide-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(236,112,0,.6); }
+.guide-btn svg { width: 22px; height: 22px; color: white; transition: transform 0.3s; }
+/* no icon rotation */
+
+/* Pulse ring */
+.guide-btn::before {
+  content: '';
+  position: absolute; inset: -4px;
+  border-radius: 50%;
+  border: 2px solid rgba(236,112,0,.35);
+  animation: guidePulse 2.5s ease-out infinite;
+}
+@keyframes guidePulse {
+  0%   { transform: scale(1); opacity: .8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Tooltip on hover */
+.guide-btn .guide-tooltip {
+  position: absolute;
+  right: 60px; bottom: 50%;
+  transform: translateY(50%);
+  background: var(--bg-3);
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px; font-weight: 500;
+  color: var(--text-2);
+  white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.2s;
+}
+.guide-btn:hover .guide-tooltip { opacity: 1; }
+
+/* Chat panel */
+.guide-panel {
+  position: fixed;
+  bottom: 92px; right: 28px;
+  width: 340px;
+  background: var(--bg-2);
+  border: 1px solid var(--bdr);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6), 0 0 0 1px rgba(255,255,255,.04) inset;
+  z-index: 7999;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 480px;
+  animation: guideIn 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.guide-panel.open { display: flex; }
+@keyframes guideIn {
+  from { opacity:0; transform: scale(0.92) translateY(16px); transform-origin: bottom right; }
+  to   { opacity:1; transform: scale(1) translateY(0); }
+}
+
+/* Panel header */
+.guide-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--bdr);
+  background: var(--bg-3);
+  flex-shrink: 0;
+}
+.guide-header-icon {
+  width: 30px; height: 30px;
+  background: var(--orange-dim);
+  border: 1px solid var(--orange-bdr);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; color: var(--orange);
+  flex-shrink: 0;
+}
+.guide-header-text b { display: block; font-size: 13px; font-weight: 700; }
+.guide-header-text span { font-size: 10px; color: var(--text-3); }
+.guide-live {
+  margin-left: auto;
+  display: flex; align-items: center; gap: 5px;
+  font-size: 10px; color: var(--green);
+}
+.guide-live-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  animation: livePulse 2s ease-in-out infinite;
+}
+@keyframes livePulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* Messages */
+.guide-messages {
+  flex: 1; overflow-y: auto;
+  padding: 14px 14px;
+  display: flex; flex-direction: column; gap: 10px;
+  scroll-behavior: smooth;
+}
+
+.guide-msg {
+  display: flex; gap: 8px;
+  animation: guideMsgIn 0.35s ease both;
+}
+@keyframes guideMsgIn {
+  from { opacity:0; transform: translateY(8px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.guide-msg-icon {
+  width: 26px; height: 26px;
+  background: var(--orange-dim);
+  border: 1px solid var(--orange-bdr);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 10px; font-weight: 700; color: var(--orange);
+  flex-shrink: 0; margin-top: 1px;
+}
+.guide-bubble {
+  background: var(--bg-3);
+  border: 1px solid var(--bdr);
+  border-radius: 4px 10px 10px 10px;
+  padding: 9px 12px;
+  font-size: 12px; line-height: 1.6; color: var(--text-2);
+  flex: 1;
+}
+.guide-bubble b { color: var(--text); font-weight: 600; }
+.guide-bubble .hl { color: var(--orange); font-weight: 600; }
+.guide-bubble .hlg { color: var(--green); font-weight: 600; }
+
+/* Typing indicator */
+.guide-typing {
+  display: flex; gap: 8px; align-items: flex-end;
+}
+.guide-typing-dots {
+  background: var(--bg-3); border: 1px solid var(--bdr);
+  border-radius: 4px 10px 10px 10px;
+  padding: 10px 14px;
+  display: flex; gap: 4px; align-items: center;
+}
+.guide-typing-dots span {
+  width: 5px; height: 5px; background: var(--text-3);
+  border-radius: 50%; animation: guideDot 1.2s infinite;
+}
+.guide-typing-dots span:nth-child(2) { animation-delay: .2s; }
+.guide-typing-dots span:nth-child(3) { animation-delay: .4s; }
+@keyframes guideDot { 0%,80%,100%{transform:scale(.7);opacity:.35} 40%{transform:scale(1);opacity:1} }
+
+/* Page badge */
+.guide-page-badge {
+  display: flex; align-items: center; justify-content: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--bdr);
+  gap: 6px;
+  background: var(--bg-4);
+  flex-shrink: 0;
+}
+.guide-page-name {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: .8px; color: var(--orange);
+}
+.guide-page-sep { font-size: 9px; color: var(--text-3); }
+
+/* Replay button */
+.guide-footer {
+  padding: 10px 14px;
+  border-top: 1px solid var(--bdr);
+  flex-shrink: 0;
+}
+.guide-replay {
+  width: 100%; padding: 8px;
+  background: var(--bg-3); border: 1px solid var(--bdr);
+  border-radius: var(--r-sm); font-family: 'Inter',sans-serif;
+  font-size: 11px; font-weight: 500; color: var(--text-3);
+  cursor: pointer; transition: all var(--t);
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+}
+.guide-replay:hover { border-color: var(--orange-bdr); color: var(--orange); }
 </style>
 </head>
 <body>
@@ -1992,6 +2180,24 @@ function showPage(name, btn) {
   if (pg) pg.classList.add('active');
   if (btn) btn.classList.add('active');
   document.getElementById('topbarTitle').textContent = PAGE_TITLES[name] || name;
+
+  // Notify guide chat of page change
+  if (typeof guideOpen !== 'undefined') {
+    if (guideOpen) {
+      clearGuideTimers();
+      guideCurrentPage = name;
+      const badge = document.getElementById('guidePageName');
+      const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT' };
+      if (badge) badge.textContent = labels[name] || name;
+      const t = setTimeout(() => playGuide(name), 350);
+      guideTimers.push(t);
+    } else {
+      guideCurrentPage = name;
+      const msgs = document.getElementById('guideMessages');
+      if (msgs) msgs.innerHTML = '';
+    }
+  }
+
   // Research page needs full height - adjust page-wrap padding
   const wrap = document.querySelector('.page-wrap');
   if (name === 'research') {
@@ -2481,6 +2687,140 @@ document.addEventListener('keydown', e => {
   if (e.key==='ArrowRight') nextSlide();
   if (e.key==='ArrowLeft')  prevSlide();
 });
+
+// ═══════════════════════════════════════════════
+// AI GUIDE CHAT
+// ═══════════════════════════════════════════════
+const GUIDE_SCRIPTS = {
+  home: [
+    { delay: 400,  text: 'Olá! Sou o <b>Assistente de Demonstração</b> do Itaú BBA Research Intelligence. Vou te explicar como cada página funciona e como a <span class="hl">IA suporta os dados</span>.' },
+    { delay: 1800, text: 'Este é o <b>Dashboard principal</b> — uma visão consolidada de todos os projetos de research em andamento e métricas da plataforma em tempo real.' },
+    { delay: 2000, text: 'Os <span class="hl">4 KPIs</span> no topo são atualizados via integração contínua com as APIs de mercado. O preço da <b>CSAN3 R$5,48</b> vem direto do feed da B3.' },
+    { delay: 2200, text: 'O gráfico de barras mostra o volume de análises geradas pela IA nos últimos 6 meses. Abril está em destaque por ser o mês corrente — <span class="hlg">12 análises</span> já concluídas.' },
+    { delay: 2000, text: 'Os cards de <b>Projetos em andamento</b> refletem o status real de cada análise. A IA monitora continuamente as fontes e atualiza o progresso conforme novos dados chegam.' },
+    { delay: 1800, text: 'A tabela de análises recentes é alimentada pelos relatórios gerados — recomendação, preço-alvo e upside são calculados automaticamente pelo modelo de valuation da IA.' },
+  ],
+  research: [
+    { delay: 400,  text: 'Esta é a <b>interface de Research</b> — o coração da plataforma. Aqui a IA realiza pesquisa autônoma em múltiplas fontes financeiras simultaneamente.' },
+    { delay: 2000, text: 'Quando você digita o nome de uma empresa, a IA inicia coleta paralela em: <span class="hl">Yahoo Finance</span> (preço, market cap), <span class="hl">SEC EDGAR</span> (filings 6-K, 20-F), <span class="hl">XP Research</span> e <span class="hl">BTG Pactual</span>.' },
+    { delay: 2200, text: 'Os <b>logs em tempo real</b> mostram exatamente o que está acontecendo — cada linha representa uma chamada a uma fonte diferente, com status de sucesso ou falha.' },
+    { delay: 2000, text: 'Após a coleta, o modelo <span class="hl">Claude Sonnet</span> analisa e sintetiza os dados: calcula o SOTP, cruza estimativas de analistas, identifica catalisadores e riscos com base no contexto histórico.' },
+    { delay: 2200, text: 'O resultado são <b>6 cards estruturados</b>: Dados de Mercado → Financeiros → Eventos Corporativos → Analistas → SOTP Valuation → Catalisadores & Riscos.' },
+    { delay: 1800, text: 'Todo esse processo leva <span class="hlg">menos de 30 segundos</span>. No fluxo real, a IA ainda escreveria o texto do relatório e geraria o PPT automaticamente.' },
+  ],
+  historic: [
+    { delay: 400,  text: 'O <b>Histórico</b> armazena todas as análises realizadas pela plataforma, com acesso rápido aos dados sem precisar abrir cada relatório.' },
+    { delay: 1800, text: 'Cada card exibe um <b>resumo executivo completo</b>: ticker, setor, data, status, tipo de análise, recomendação, preço-alvo, upside e prévia da tese de investimento.' },
+    { delay: 2000, text: 'O <span class="hl">sparkline</span> à direita mostra a performance histórica do ativo desde a análise — verde indica alta, vermelho queda. É gerado automaticamente com dados de preço coletados.' },
+    { delay: 2000, text: 'Os <b>filtros</b> no topo permitem separar análises Concluídas de Em andamento — útil para o analista gerenciar seu pipeline de trabalho.' },
+    { delay: 1800, text: 'Ao clicar em um card, abre o <b>relatório completo</b>: gráficos de EBITDA histórico, donut por segmento, cobertura de 4 analistas e timeline de eventos corporativos com datas e valores exatos.' },
+  ],
+  docanalysis: [
+    { delay: 400,  text: 'A <b>Análise Documental</b> usa IA para revisar relatórios existentes em .docx e identificar oportunidades de melhoria com precisão editorial.' },
+    { delay: 1800, text: 'Basta <span class="hl">arrastar um arquivo</span> para qualquer lugar da tela — o overlay de drag & drop detecta automaticamente e redireciona para esta página.' },
+    { delay: 2000, text: 'O processo roda em <b>6 etapas sequenciais</b>: leitura da estrutura → identificação de seções → análise de dados financeiros → avaliação da tese → geração de sugestões → compilação.' },
+    { delay: 2200, text: 'O modelo verifica <span class="hl">consistência dos dados</span> (ex: "BTG revisou target para R$10,50 em dez/2025"), <b>qualidade da argumentação</b> e conformidade com o padrão IB da instituição.' },
+    { delay: 2000, text: 'O resultado mostra lado a lado: <span class="hlg">Pontos Fortes</span> a preservar (com excerpt do texto original) e <span class="hl">Sugestões de Melhoria</span> com texto atual vs. versão corrigida.' },
+    { delay: 1800, text: 'Com um clique em <b>"Aplicar todas as sugestões"</b>, a IA reescreve o documento e disponibiliza o .docx revisado — zero trabalho manual de edição.' },
+  ],
+  buildppt: [
+    { delay: 400,  text: 'O <b>Build PPT</b> é o produto final do fluxo — uma apresentação completa gerada automaticamente com dados reais dos JSONs coletados na etapa de Research.' },
+    { delay: 1800, text: 'São <span class="hl">13 slides</span> cobrindo: Capa → Tese → Portfolio → Mercado → EBITDA → P&L → Segmentos (Rumo, Raízen, Compass, Moove, Radar) → Capital → SOTP → Analistas → Bull/Bear.' },
+    { delay: 2000, text: 'Todos os <b>gráficos SVG</b> são gerados dinamicamente. As barras do EBITDA (R$17,2bi → R$27,5bi → R$21,5bi) usam os dados reais das fontes <span class="hl">XP Research, BTG e SEC EDGAR</span>.' },
+    { delay: 2200, text: 'O <b>SOTP na slide 11</b> aplica múltiplos EV/EBITDA consenso por segmento sobre as estimativas 2026E: Rumo 7x, Raízen 4,5x, Compass 8x — resultando em <span class="hlg">NAV de R$14,19/ação</span>.' },
+    { delay: 2000, text: 'O visual segue o padrão <b>Itaú BBA</b>: paleta azul marinho + laranja, tipografia Inter, confidentiality footer e tag de seção em cada slide — pronto para envio ao cliente.' },
+    { delay: 1800, text: 'No ambiente real, o export geraria um <b>.pptx editável</b> via python-pptx, mantendo todos os gráficos como objetos nativos do PowerPoint. <span class="hlg">Zero trabalho manual de formatação.</span>' },
+  ],
+};
+
+let guideOpen = false;
+let guideCurrentPage = 'home';
+let guidePlaying = false;
+let guideTimers = [];
+
+function toggleGuide() {
+  guideOpen = !guideOpen;
+  const panel = document.getElementById('guidePanel');
+  const btn = document.getElementById('guideBtn');
+  panel.classList.toggle('open', guideOpen);
+  btn.classList.toggle('open', guideOpen);
+  if (guideOpen) {
+    const current = getCurrentPage();
+    if (current !== guideCurrentPage || document.getElementById('guideMessages').children.length === 0) {
+      guideCurrentPage = current;
+      playGuide(current);
+    }
+  }
+}
+
+function getCurrentPage() {
+  const active = document.querySelector('.page.active');
+  if (!active) return 'home';
+  const id = active.id.replace('page-', '');
+  return id;
+}
+
+function clearGuideTimers() {
+  guideTimers.forEach(t => clearTimeout(t));
+  guideTimers = [];
+}
+
+function replayGuide() {
+  playGuide(guideCurrentPage);
+}
+
+function playGuide(page) {
+  clearGuideTimers();
+  guidePlaying = true;
+  const msgs = document.getElementById('guideMessages');
+  const badge = document.getElementById('guidePageName');
+  msgs.innerHTML = '';
+  guideCurrentPage = page;
+
+  // Update page badge
+  const labels = { home:'Dashboard', research:'Research', historic:'Historic', docanalysis:'Análise Documental', buildppt:'Build PPT' };
+  if (badge) badge.textContent = labels[page] || page;
+
+  const script = GUIDE_SCRIPTS[page] || GUIDE_SCRIPTS.home;
+  let cumDelay = 0;
+
+  script.forEach((item, i) => {
+    cumDelay += item.delay;
+
+    // Show typing indicator
+    const tDelay = cumDelay - (item.delay * 0.6);
+    const t1 = setTimeout(() => {
+      // Remove previous typing
+      const prev = msgs.querySelector('.guide-typing');
+      if (prev) prev.remove();
+      // Add typing
+      const typing = document.createElement('div');
+      typing.className = 'guide-typing';
+      typing.innerHTML = '<div class="guide-msg-icon">AI</div><div class="guide-typing-dots"><span></span><span></span><span></span></div>';
+      msgs.appendChild(typing);
+      msgs.scrollTop = msgs.scrollHeight;
+    }, tDelay);
+    guideTimers.push(t1);
+
+    // Show message
+    const t2 = setTimeout(() => {
+      const prev = msgs.querySelector('.guide-typing');
+      if (prev) prev.remove();
+
+      const msg = document.createElement('div');
+      msg.className = 'guide-msg';
+      msg.innerHTML = '<div class="guide-msg-icon">AI</div><div class="guide-bubble">' + item.text + '</div>';
+      msgs.appendChild(msg);
+      msgs.scrollTop = msgs.scrollHeight;
+
+      if (i === script.length - 1) guidePlaying = false;
+    }, cumDelay);
+    guideTimers.push(t2);
+  });
+}
+
+// Guide page tracking handled inside original showPage
+
 </script>
 <!-- Full-screen drag overlay -->
 <div class="drag-overlay" id="dragOverlay">
@@ -2489,6 +2829,37 @@ document.addEventListener('keydown', e => {
   </div>
   <h2>Solte o arquivo para analisar</h2>
   <p>Formatos aceitos: .docx · .doc · .pdf</p>
+</div>
+
+
+<!-- ═══════════════ AI GUIDE CHAT ═══════════════ -->
+<button class="guide-btn" id="guideBtn" onclick="toggleGuide()">
+  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+    <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+  </svg>
+  <div class="guide-tooltip">Como funciona esta página?</div>
+</button>
+
+<div class="guide-panel" id="guidePanel">
+  <div class="guide-header">
+    <div class="guide-header-icon">AI</div>
+    <div class="guide-header-text">
+      <b>Assistente de Demonstração</b>
+      <span>Itaú BBA Research Intelligence</span>
+    </div>
+    <div class="guide-live"><div class="guide-live-dot"></div>ao vivo</div>
+  </div>
+  <div class="guide-page-badge">
+    <span class="guide-page-sep">Você está em</span>
+    <span class="guide-page-name" id="guidePageName">Dashboard</span>
+  </div>
+  <div class="guide-messages" id="guideMessages"></div>
+  <div class="guide-footer">
+    <button class="guide-replay" onclick="replayGuide()">
+      <svg style="width:12px;height:12px" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+      Repetir explicação desta página
+    </button>
+  </div>
 </div>
 
 </body>
