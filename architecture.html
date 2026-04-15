@@ -1,508 +1,697 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Itaú BBA Research Intelligence — Technical Architecture</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#0B1120;--bg-2:#141C2E;--bg-3:#1A2332;
-  --navy:#002D62;--navy-dk:#001A3E;
-  --orange:#EC7000;--orange-lt:#F59E42;--orange-dim:rgba(236,112,0,.08);--orange-bdr:rgba(236,112,0,.3);
-  --green:#1DD1A1;--red:#FF4757;--blue:#3B7BF6;--purple:#7C5CFC;
-  --text:#F1F3F9;--text-2:rgba(255,255,255,.7);--text-3:rgba(255,255,255,.38);
-  --bdr:rgba(255,255,255,.08);--bdr-lt:rgba(255,255,255,.05);
-  --r:10px;--r-sm:7px;--t:.2s;
-}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Architecture & Integration Strategy</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(11,17,32,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;align-items:center;padding:0 28px;z-index:100}
-.nav-brand{display:flex;align-items:center;gap:8px}
-.nav-mark{width:28px;height:28px;background:var(--orange);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:white}
-.nav-name{font-size:13px;font-weight:600}.nav-name span{color:var(--orange)}
-.nav-title{margin-left:20px;padding-left:20px;border-left:1px solid var(--bdr);font-size:11px;color:var(--text-3);text-transform:uppercase;letter-spacing:1.5px;font-weight:600}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px}
-.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
-.nav-status{font-size:10px;color:var(--text-3)}
-.nav-counter{font-size:11px;color:var(--text-3);min-width:65px;text-align:right}
-.nav-arrows{display:flex;gap:4px}
-.nav-btn{width:30px;height:30px;background:var(--bg-2);border:1px solid var(--bdr);border-radius:6px;cursor:pointer;color:var(--text);display:flex;align-items:center;justify-content:center;font-size:13px;transition:all var(--t)}
-.nav-btn:hover{border-color:var(--orange-bdr);color:var(--orange)}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0B1120;
+            color: #F1F3F9;
+            overflow: hidden;
+        }
 
-/* ── SLIDES ── */
-.slide-container{position:fixed;top:52px;left:0;right:0;bottom:0;overflow:hidden}
-.slide{position:absolute;inset:0;padding:48px 56px;display:flex;flex-direction:column;opacity:0;transform:translateX(40px);transition:opacity .45s ease,transform .45s ease;pointer-events:none;overflow-y:auto}
-.slide.active{opacity:1;transform:none;pointer-events:auto}
-.slide.prev{transform:translateX(-40px)}
+        .nav-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 40px;
+            background: #141C2E;
+            border-bottom: 1px solid #1A2332;
+            height: 70px;
+        }
 
-.s-tag{font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--orange);font-weight:700;margin-bottom:8px}
-.s-title{font-size:32px;font-weight:800;letter-spacing:-.5px;margin-bottom:28px;line-height:1.15}
-.s-title em{color:var(--orange);font-style:normal}
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            font-size: 14px;
+        }
 
-/* ── CARDS ── */
-.card{background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;transition:all .25s ease}
-.card:hover{border-color:var(--orange-bdr);transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,0,0,.3)}
-.card-accent{height:3px;width:100%}
-.card-body{padding:20px 22px}
-.card-tag{font-size:9px;text-transform:uppercase;letter-spacing:2px;font-weight:700;margin-bottom:6px}
-.card-title{font-size:17px;font-weight:700;margin-bottom:10px;line-height:1.25}
-.card-text{font-size:12px;color:var(--text-2);line-height:1.7}
-.card-footer{padding:10px 22px;border-top:1px solid var(--bdr-lt);font-size:10px;line-height:1.5}
+        .itau-box {
+            background: #EC7000;
+            color: #0B1120;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 16px;
+        }
 
-/* ── GRIDS ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
-.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.flex-1{flex:1}
+        .slide-counter {
+            font-size: 13px;
+            color: #999;
+        }
 
-/* ── STAT BOXES ── */
-.stat{background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r);padding:18px;text-align:center}
-.stat-val{font-size:20px;font-weight:800;margin-bottom:4px}
-.stat-lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.8px}
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+        }
 
-/* ── ITEMS ── */
-.item{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--bdr-lt)}
-.item:last-child{border-bottom:none}
-.item-dot{width:5px;height:5px;border-radius:50%;margin-top:6px;flex-shrink:0}
-.item-title{font-size:12px;font-weight:600;margin-bottom:3px}
-.item-desc{font-size:11px;color:var(--text-3);line-height:1.6}
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            background: #1A2332;
+            border: 1px solid #2A3340;
+            border-radius: 4px;
+            color: #F1F3F9;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.2s;
+        }
 
-/* ── QUOTE BAR ── */
-.quote-bar{background:rgba(15,23,42,.8);border:1px solid var(--bdr);border-radius:var(--r-sm);padding:14px 20px;display:flex;align-items:center;gap:10px;margin-top:auto}
-.quote-mark{font-size:28px;color:var(--orange);font-weight:800;line-height:1}
-.quote-text{font-size:12px;color:var(--text-2);font-style:italic;flex:1}
-.quote-attr{font-size:10px;color:var(--text-3);white-space:nowrap}
+        .nav-btn:hover {
+            background: #2A3340;
+            border-color: #3A4350;
+        }
 
-/* ── OPTION CARDS ── */
-.opt-card{background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r);padding:22px 24px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
-.opt-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
-.opt-card:hover{transform:translateY(-3px);box-shadow:0 12px 35px rgba(0,0,0,.35)}
-.opt-card.selected{border-color:var(--blue);box-shadow:0 0 0 1px var(--blue),0 12px 35px rgba(59,123,246,.15)}
-.opt-a::before{background:var(--green)}.opt-b::before{background:var(--orange)}.opt-c::before{background:var(--blue)}
-.opt-letter{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;margin-bottom:12px}
-.opt-title{font-size:16px;font-weight:700;margin-bottom:6px}
-.opt-cond{font-size:10px;font-style:italic;margin-bottom:12px;line-height:1.5}
-.opt-desc{font-size:11px;color:var(--text-2);line-height:1.65;margin-bottom:14px}
-.opt-meta{display:flex;justify-content:space-between;padding-top:12px;border-top:1px solid var(--bdr-lt)}
-.opt-meta-item{text-align:center}
-.opt-meta-val{font-size:13px;font-weight:700;margin-bottom:2px}
-.opt-meta-lbl{font-size:9px;color:var(--text-3);text-transform:uppercase;letter-spacing:.5px}
+        .progress-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 4px;
+            background: #EC7000;
+            transition: width 0.6s ease-out;
+            z-index: 100;
+        }
 
-.opt-rec{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;background:rgba(59,123,246,.08);border:1px solid rgba(59,123,246,.25);border-radius:20px;font-size:11px;font-weight:600;color:var(--blue);margin-top:16px}
+        .slides-container {
+            width: 100vw;
+            height: calc(100vh - 70px);
+            overflow: hidden;
+            position: relative;
+        }
 
-/* ── FLOW ── */
-.flow-step{display:flex;gap:16px;align-items:flex-start;position:relative}
-.flow-num{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:white;flex-shrink:0;position:relative;z-index:2}
-.flow-line{position:absolute;left:21px;top:44px;width:2px;height:calc(100% - 10px);z-index:1}
-.flow-content{flex:1;padding-bottom:28px}
-.flow-title{font-size:15px;font-weight:700;margin-bottom:4px}
-.flow-desc{font-size:12px;color:var(--text-2);line-height:1.65}
+        .slide {
+            width: 100vw;
+            height: 100%;
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 80px;
+            opacity: 0;
+            transform: translateX(100vw);
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 1;
+        }
 
-/* ── PROBLEM/SOLUTION ── */
-.panel{background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden}
-.panel-head{padding:16px 22px;border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:8px}
-.panel-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px}
-.panel-body{padding:18px 22px}
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            z-index: 10;
+        }
 
-.prob-item{padding:12px 0;border-bottom:1px solid var(--bdr-lt)}
-.prob-item:last-child{border-bottom:none}
-.prob-bar{width:4px;height:100%;border-radius:2px;flex-shrink:0}
-.prob-title{font-size:13px;font-weight:600;margin-bottom:4px}
-.prob-desc{font-size:11px;color:var(--text-3);line-height:1.65}
+        .slide.prev {
+            transform: translateX(-100vw);
+        }
 
-.sol-item{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--bdr-lt)}
-.sol-item:last-child{border-bottom:none}
-.sol-dot{width:10px;height:10px;border-radius:50%;margin-top:3px;flex-shrink:0}
-.sol-title{font-size:12px;font-weight:600;margin-bottom:3px}
-.sol-desc{font-size:11px;color:var(--text-3);line-height:1.6}
+        h1 {
+            font-size: 48px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
 
-/* ── QUESTION ROW ── */
-.q-row{background:var(--bg-2);border:1px solid var(--bdr);border-radius:var(--r-sm);padding:14px 18px;display:flex;align-items:flex-start;gap:14px;transition:all .2s ease}
-.q-row:hover{border-color:var(--orange-bdr);background:var(--bg-3)}
-.q-num{width:28px;height:28px;border-radius:50%;background:var(--orange-dim);border:1px solid var(--orange-bdr);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--orange);flex-shrink:0}
-.q-title{font-size:13px;font-weight:600;margin-bottom:3px}
-.q-desc{font-size:11px;color:var(--text-3);line-height:1.55}
+        h2 {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+        }
 
-/* ── CTA ── */
-.cta-bar{margin-top:auto;padding:14px 20px;background:rgba(236,112,0,.06);border:1px solid var(--orange-bdr);border-radius:var(--r-sm);display:flex;align-items:center;gap:10px}
-.cta-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--orange)}
-.cta-text{font-size:12px;color:var(--text-2)}
+        .subtitle {
+            font-size: 20px;
+            color: #999;
+            text-align: center;
+            margin-bottom: 10px;
+        }
 
-/* ── COVER ── */
-.cover{background:linear-gradient(135deg,#001A3E 0%,#002D62 60%,#003E8A 100%);justify-content:center;position:relative;overflow:hidden}
-.cover::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;background:radial-gradient(circle,rgba(236,112,0,.12) 0%,transparent 60%)}
-.cover-tag{font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:14px;position:relative;z-index:1}
-.cover-title{font-size:48px;font-weight:800;line-height:1.08;letter-spacing:-1px;position:relative;z-index:1;margin-bottom:14px}
-.cover-title em{color:var(--orange);font-style:normal}
-.cover-sub{font-size:14px;color:rgba(255,255,255,.45);position:relative;z-index:1;margin-bottom:40px}
-.cover-meta{display:flex;gap:28px;position:relative;z-index:1}
-.cover-mi{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.8px}
-.cover-mi span{display:block;color:rgba(255,255,255,.75);font-weight:600;margin-top:3px;font-size:13px;letter-spacing:0;text-transform:none}
+        .meta {
+            font-size: 16px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
-/* ── CLOSE ── */
-.close-slide{background:linear-gradient(135deg,#001A3E 0%,#002D62 60%,#003E8A 100%);justify-content:center;align-items:flex-start;position:relative;overflow:hidden}
-.close-slide::before{content:'';position:absolute;top:-20%;right:-5%;width:500px;height:500px;background:radial-gradient(circle,rgba(236,112,0,.12) 0%,transparent 60%)}
+        .quote-box {
+            background: #1A2332;
+            border-left: 4px solid #EC7000;
+            padding: 16px 24px;
+            margin-top: 40px;
+            font-style: italic;
+            font-size: 14px;
+            max-width: 600px;
+        }
 
-/* ── PROGRESS ── */
-.progress{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.03);z-index:100}
-.progress-bar{height:100%;background:var(--orange);transition:width .4s ease}
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
 
-/* ── ANIMATIONS ── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.card,.stat,.opt-card,.q-row,.flow-step,.panel{animation:fadeUp .5s ease both}
-.slide.active .card:nth-child(1),.slide.active .stat:nth-child(1),.slide.active .opt-card:nth-child(1){animation-delay:.1s}
-.slide.active .card:nth-child(2),.slide.active .stat:nth-child(2),.slide.active .opt-card:nth-child(2){animation-delay:.2s}
-.slide.active .card:nth-child(3),.slide.active .stat:nth-child(3),.slide.active .opt-card:nth-child(3){animation-delay:.3s}
-.slide.active .stat:nth-child(4){animation-delay:.4s}
+        .data-card {
+            background: #1A2332;
+            border: 1px solid #2A3340;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
 
-/* ── SCROLLBAR ── */
-::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px}
-</style>
+        .data-card:hover {
+            border-color: #EC7000;
+            background: #1E2638;
+        }
+
+        .source-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .source-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .source-detail {
+            font-size: 11px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .section-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #666;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .arch-block {
+            background: #1A2332;
+            border: 1px solid #2A3340;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .arch-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #F1F3F9;
+        }
+
+        .arch-content {
+            font-size: 13px;
+            color: #999;
+            line-height: 1.7;
+        }
+
+        .timeline {
+            background: #0B1120;
+            border-left: 3px solid #3B7BF6;
+            padding-left: 16px;
+            margin-top: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #3B7BF6;
+        }
+
+        .condition {
+            background: #0B1120;
+            border-left: 3px solid #7C5CFC;
+            padding-left: 16px;
+            margin-top: 8px;
+            font-weight: 500;
+            font-size: 12px;
+            color: #999;
+        }
+
+        .flow-step {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .flow-step-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .flow-step-detail {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .question-box {
+            background: #1A2332;
+            border-left: 4px solid #1DD1A1;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 4px;
+        }
+
+        .question-num {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1DD1A1;
+            margin-bottom: 6px;
+        }
+
+        .question-text {
+            font-size: 13px;
+            color: #F1F3F9;
+            line-height: 1.6;
+        }
+
+        .goal-box {
+            background: linear-gradient(135deg, #1A2332 0%, #1E2638 100%);
+            border: 2px solid #EC7000;
+            padding: 24px;
+            border-radius: 8px;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .goal-text {
+            font-size: 16px;
+            font-weight: 600;
+            color: #EC7000;
+            line-height: 1.7;
+        }
+
+        .tech-stack {
+            font-size: 13px;
+            color: #999;
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .stack-item {
+            display: inline-block;
+            background: #1A2332;
+            padding: 8px 16px;
+            margin: 4px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-
-<!-- NAV -->
-<nav class="nav">
-  <div class="nav-brand">
-    <div class="nav-mark">í</div>
-    <div class="nav-name">Itaú <span>BBA</span></div>
-  </div>
-  <div class="nav-title">Research Intelligence · Technical Architecture</div>
-  <div class="nav-right">
-    <div class="nav-dot"></div>
-    <span class="nav-status">April 2026</span>
-    <span class="nav-counter" id="counter">1 / 8</span>
-    <div class="nav-arrows">
-      <button class="nav-btn" onclick="prev()">&#8592;</button>
-      <button class="nav-btn" onclick="next()">&#8594;</button>
-    </div>
-  </div>
-</nav>
-
-<div class="slide-container">
-
-<!-- ══════ SLIDE 1: COVER ══════ -->
-<div class="slide cover active" data-i="0">
-  <div class="cover-tag">Research Intelligence · Technical Approach</div>
-  <div class="cover-title">Data Architecture &<br><em>Technical Approach</em></div>
-  <div class="cover-sub">POC Checkpoint · Conquer AI × Itaú BBA</div>
-  <div class="cover-meta">
-    <div class="cover-mi">Engagement<span>Research Intelligence</span></div>
-    <div class="cover-mi">Date<span>April 2026</span></div>
-    <div class="cover-mi">Status<span>Architecture Design</span></div>
-    <div class="cover-mi">Prepared by<span>Conquer AI</span></div>
-  </div>
-</div>
-
-<!-- ══════ SLIDE 2: TWO-BLOCK CHALLENGE ══════ -->
-<div class="slide" data-i="1">
-  <div class="s-tag">What We Heard</div>
-  <div class="s-title">Rodrigo's <em>Two-Block</em> Challenge</div>
-
-  <div class="grid-2" style="flex:1;align-content:start">
-    <div class="card">
-      <div class="card-accent" style="background:var(--orange)"></div>
-      <div class="card-body">
-        <div class="card-tag" style="color:var(--orange)">Block 1</div>
-        <div class="card-title">Data Mining & Thesis Construction</div>
-        <div class="card-text">
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Private company data is scattered across unstructured, sector-specific Brazilian sources</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Capital IQ / Bloomberg / Economatica won't allow API access for AI agents — data must be brought in-house</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Public company data is available but synthesis across sources is manual and time-consuming</div></div></div>
+    <div class="nav-bar">
+        <div class="logo">
+            <div class="itau-box">í</div>
+            <span>Itaú BBA Research</span>
         </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-accent" style="background:var(--blue)"></div>
-      <div class="card-body">
-        <div class="card-tag" style="color:var(--blue)">Block 2</div>
-        <div class="card-title">Visual Presentation Generation</div>
-        <div class="card-text">
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">Converting research into IB-grade PowerPoint following Itaú's design standards</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">Internal tests with AI (not yet enabled in-bank) showed promising results for text-to-slide transformation</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc" style="color:var(--green)">Already proven by Conquer: Pitchbook POC generates full PPTX decks programmatically</div></div></div>
+        <div class="slide-counter"><span id="current-slide">1</span> / 10</div>
+        <div class="nav-buttons">
+            <button class="nav-btn" id="prev-btn" onclick="prevSlide()">←</button>
+            <button class="nav-btn" id="next-btn" onclick="nextSlide()">→</button>
         </div>
-      </div>
     </div>
-  </div>
 
-  <div class="quote-bar">
-    <div class="quote-mark">"</div>
-    <div class="quote-text">Combine forces — you attack that end, we add to what we've built here</div>
-    <div class="quote-attr">— Rodrigo Megale, Jan 2026</div>
-  </div>
-</div>
+    <div class="progress-bar" id="progress"></div>
 
-<!-- ══════ SLIDE 3: THREE-TIER DATA ARCHITECTURE ══════ -->
-<div class="slide" data-i="2">
-  <div class="s-tag">Data Architecture</div>
-  <div class="s-title"><em>Three-Tier</em> Data Model</div>
-
-  <div class="grid-3" style="flex:1">
-    <div class="card">
-      <div class="card-accent" style="background:var(--green)"></div>
-      <div class="card-body">
-        <div class="card-tag" style="color:var(--green)">Tier 1 · Internal</div>
-        <div class="card-title">Itaú's Own Data</div>
-        <div class="card-text">
-          <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Historical research reports & pitchbooks — years of analyst work</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Salesforce workflow data & CRM records</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Internal analyst notes, models, sector coverage</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Past presentations and sector thematic pieces</div></div></div>
+    <div class="slides-container" id="slides-container">
+        <!-- Slide 1: Cover -->
+        <div class="slide active">
+            <h1>Data Architecture & Integration Strategy</h1>
+            <div class="subtitle">POC Checkpoint · Conquer AI × Itaú BBA</div>
+            <div class="meta">April 2026</div>
         </div>
-      </div>
-      <div class="card-footer" style="color:var(--green);background:rgba(29,209,161,.04)">Highest value, lowest friction — already inside the bank</div>
-    </div>
 
-    <div class="card">
-      <div class="card-accent" style="background:var(--orange)"></div>
-      <div class="card-body">
-        <div class="card-tag" style="color:var(--orange)">Tier 2 · Licensed Market Data</div>
-        <div class="card-title">Bloomberg · Capital IQ · Economatica</div>
-        <div class="card-text">
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Analysts already export data into Excel/PDF as part of their workflow</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">We ingest those exports — no API violation, no licensing breach</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Structured financials, comp tables, consensus estimates</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Public company coverage for listed entities</div></div></div>
+        <!-- Slide 2: Rodrigo's Two-Block Challenge -->
+        <div class="slide">
+            <h2>The Research Workflow Challenge</h2>
+            <div style="max-width: 900px; margin-top: 40px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 16px;">Block 1: Data Mining</div>
+                        <div style="font-size: 14px; color: #999; line-height: 1.8;">
+                            Identify relevant sources. Extract & normalize data. Construct thesis foundations from disparate feeds.
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 16px;">Block 2: Generation</div>
+                        <div style="font-size: 14px; color: #999; line-height: 1.8;">
+                            Synthesize findings into narratives. Build visual storylines. Produce polished presentation decks.
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-box">
+                "Today we do both manually. We need automation that keeps Rodrigo's research judgment in the loop, not a black box."
+            </div>
         </div>
-      </div>
-      <div class="card-footer" style="color:var(--orange);background:rgba(236,112,0,.04)">Proven pattern in IB — analyst-in-the-loop ingestion</div>
-    </div>
 
-    <div class="card">
-      <div class="card-accent" style="background:var(--blue)"></div>
-      <div class="card-body">
-        <div class="card-tag" style="color:var(--blue)">Tier 3 · Public & Alternative</div>
-        <div class="card-title">Open Sources · Agentic Search</div>
-        <div class="card-text">
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">SEC EDGAR / CVM (Brazilian SEC) — free API access</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">Company IR pages, annual reports, press releases</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">Industry associations, government datasets, news</div></div></div>
-          <div class="item"><div class="item-dot" style="background:var(--blue)"></div><div><div class="item-desc">Niche sector data (IBGE, CONAB, ANP)</div></div></div>
+        <!-- Slide 3: Data Source Inventory -->
+        <div class="slide">
+            <h2>Data Source Inventory</h2>
+            <div class="data-grid" style="margin-top: 30px;">
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #EC7000;"></span>Bloomberg</div>
+                    <div class="section-label">Market Data</div>
+                    <div class="source-detail"><strong>Format:</strong> CSV, Parquet<br><strong>Access:</strong> DL REST API, SFTP, BLPAPI, Excel BDH/BDP/BDS<br><strong>Refresh:</strong> Real-time to daily<br><strong>License:</strong> Per-seat or enterprise DL. AI/ML use requires amendment.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #3B7BF6;"></span>Capital IQ</div>
+                    <div class="section-label">Fundamentals</div>
+                    <div class="source-detail"><strong>Format:</strong> JSON (REST), pipe-delimited flat files<br><strong>Access:</strong> CIQ Pro API (REST/HTTPS), Xpressfeed (SFTP bulk), Excel plugin<br><strong>Refresh:</strong> Daily bulk, on-demand API<br><strong>License:</strong> Enterprise. Distribution restricted without authorization.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #1DD1A1;"></span>Economatica</div>
+                    <div class="section-label">LatAm Equities</div>
+                    <div class="source-detail"><strong>Format:</strong> CSV/TXT<br><strong>Access:</strong> REST API feed, Excel plugin, Terminal<br><strong>Refresh:</strong> Scheduled/on-demand<br><strong>License:</strong> Commercial. Direct exchange feeds, 100% Brazil coverage.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #7C5CFC;"></span>CVM Filings</div>
+                    <div class="section-label">Regulatory</div>
+                    <div class="source-detail"><strong>Format:</strong> XML, CSV<br><strong>Access:</strong> Bulk download (dados.cvm.gov.br)<br><strong>Refresh:</strong> As filed (ITR quarterly, DFP annual)<br><strong>License:</strong> Free public access.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #FF4757;"></span>IBGE SIDRA</div>
+                    <div class="section-label">Economic Stats</div>
+                    <div class="source-detail"><strong>Format:</strong> JSON, CSV<br><strong>Access:</strong> REST API (servicodados.ibge.gov.br/api/v3)<br><strong>Refresh:</strong> Varies by series<br><strong>License:</strong> Free public API.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #EC7000;"></span>CONAB/ANP</div>
+                    <div class="section-label">Commodities</div>
+                    <div class="source-detail"><strong>Format:</strong> PDF (CONAB), CSV (ANP)<br><strong>Access:</strong> Bulk download, PDF extraction pipeline<br><strong>Refresh:</strong> Monthly forecasts/production<br><strong>License:</strong> Free public access.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #3B7BF6;"></span>Salesforce CRM</div>
+                    <div class="section-label">Internal</div>
+                    <div class="source-detail"><strong>Format:</strong> JSON (REST API)<br><strong>Access:</strong> Salesforce API, internal doc stores<br><strong>Refresh:</strong> Continuous<br><strong>License:</strong> Internal — no external licensing.</div>
+                </div>
+
+                <div class="data-card">
+                    <div class="source-name"><span class="source-indicator" style="background: #1DD1A1;"></span>Web Search</div>
+                    <div class="section-label">News & IR</div>
+                    <div class="source-detail"><strong>Format:</strong> Unstructured HTML<br><strong>Access:</strong> Agentic web search with extraction<br><strong>Refresh:</strong> Real-time<br><strong>License:</strong> Public domain.</div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="card-footer" style="color:var(--blue);background:rgba(59,123,246,.04)">Critical for private companies — where AI adds most value</div>
-    </div>
-  </div>
-</div>
 
-<!-- ══════ SLIDE 4: PRIVATE COMPANY PROBLEM ══════ -->
-<div class="slide" data-i="3">
-  <div class="s-tag">The Hard Problem</div>
-  <div class="s-title">Private Company <em>Research</em></div>
-
-  <div class="grid-2" style="flex:1">
-    <div class="panel">
-      <div class="panel-head"><div class="panel-dot" style="background:var(--red)"></div><div class="panel-title" style="color:var(--red)">Why This Is Different</div></div>
-      <div class="panel-body">
-        <div class="prob-item" style="display:flex;gap:10px">
-          <div class="prob-bar" style="background:var(--red)"></div>
-          <div><div class="prob-title">No single data provider</div><div class="prob-desc">Private companies aren't on Bloomberg or Capital IQ. Data is scattered across government databases, industry associations, and niche Brazilian sources.</div></div>
+        <!-- Slide 4: The Private Company Problem -->
+        <div class="slide">
+            <h2>The Private Company Research Gap</h2>
+            <div style="max-width: 1000px; margin-top: 40px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 16px; color: #FF4757;">The Problem</div>
+                        <div style="font-size: 13px; color: #999; line-height: 1.8;">
+                            • Bloomberg/CIQ don't cover private companies<br>
+                            • Brazilian sources are fragmented & unstructured<br>
+                            • Sector-specific data spread across multiple free/commercial feeds<br>
+                            • Manual cross-referencing is time-intensive
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 16px; margin-bottom: 16px; color: #1DD1A1;">The Solution</div>
+                        <div style="font-size: 13px; color: #999; line-height: 1.8;">
+                            • IBGE SIDRA API for macro/sector baseline<br>
+                            • CVM filings for public comparables<br>
+                            • CONAB/ANP for commodity-specific thesis<br>
+                            • Agentic web search for news & IR pages<br>
+                            • Smart data fusion in context window
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="prob-item" style="display:flex;gap:10px">
-          <div class="prob-bar" style="background:var(--red)"></div>
-          <div><div class="prob-title">Unstructured & multilingual</div><div class="prob-desc">PDF reports from IBGE, CONAB filings, state-level agricultural data, news in Portuguese — none structured for machine consumption.</div></div>
+
+        <!-- Slide 5: Option A -->
+        <div class="slide">
+            <h2>Option A: Full Automated Pipeline</h2>
+            <div style="max-width: 1100px; margin-top: 30px; width: 100%;">
+                <div class="arch-block">
+                    <div class="arch-title">Data Ingestion Layer</div>
+                    <div class="arch-content">
+                        Bloomberg Data License REST API → daily CSV/Parquet via SFTP<br>
+                        Capital IQ Pro API → on-demand JSON queries for fundamentals<br>
+                        Economatica API feed → scheduled LatAm equity pulls<br>
+                        CVM/IBGE/ANP → automated REST API polling + bulk download<br>
+                        CONAB → PDF extraction pipeline (OCR + structured parsing)<br>
+                        Internal Itaú → Salesforce API integration
+                    </div>
+                </div>
+
+                <div class="arch-block">
+                    <div class="arch-title">Research Engine</div>
+                    <div class="arch-content">
+                        1M-token context AI engine ingests all normalized feeds<br>
+                        Produces structured research output (thesis, comparables, risks)
+                    </div>
+                    <div class="timeline">⏱ Timeline: 8–10 weeks</div>
+                    <div class="condition">⚠ Requires Itaú to extend Bloomberg DL and CIQ Pro API access to our integration layer</div>
+                </div>
+            </div>
         </div>
-        <div class="prob-item" style="display:flex;gap:10px">
-          <div class="prob-bar" style="background:var(--red)"></div>
-          <div><div class="prob-title">Sector-specific knowledge</div><div class="prob-desc">Building a thesis for orange production in Rio Grande do Sul requires understanding that specific market — not just financial models.</div></div>
+
+        <!-- Slide 6: Option B -->
+        <div class="slide">
+            <h2>Option B: Analyst-in-the-Loop</h2>
+            <div style="max-width: 1100px; margin-top: 30px; width: 100%;">
+                <div class="arch-block">
+                    <div class="arch-title">Data Ingestion Layer</div>
+                    <div class="arch-content">
+                        Analysts export from Bloomberg Excel (BDH/BDP) → CSV upload<br>
+                        Analysts export from Capital IQ plugin (formulas) → CSV upload<br>
+                        Analysts export from Economatica terminal → CSV upload<br>
+                        Public sources (CVM, IBGE, ANP) → still fully automated<br>
+                        CONAB → automated PDF extraction<br>
+                        Internal data → manual upload or Salesforce API
+                    </div>
+                </div>
+
+                <div class="arch-block">
+                    <div class="arch-title">Research Engine</div>
+                    <div class="arch-content">
+                        AI ingests uploaded analyst files + automated public feeds<br>
+                        Analyst retains full control over licensed data quality
+                    </div>
+                    <div class="timeline">⏱ Timeline: 5–6 weeks</div>
+                    <div class="condition">✓ No new licensing required. Works within existing analyst workflow.</div>
+                </div>
+            </div>
         </div>
-      </div>
+
+        <!-- Slide 7: Option C (Recommended) -->
+        <div class="slide">
+            <h2>Option C: Hybrid (Recommended)</h2>
+            <div style="max-width: 1100px; margin-top: 30px; width: 100%;">
+                <div class="arch-block">
+                    <div class="arch-title">Tier 1 (Internal)</div>
+                    <div class="arch-content">
+                        Automated via Salesforce API — no licensing barrier
+                    </div>
+                </div>
+
+                <div class="arch-block">
+                    <div class="arch-title">Tier 2 (Licensed)</div>
+                    <div class="arch-content">
+                        Analyst-in-the-loop for Bloomberg/CIQ/Economatica exports — respects licensing terms
+                    </div>
+                </div>
+
+                <div class="arch-block">
+                    <div class="arch-title">Tier 3 (Public)</div>
+                    <div class="arch-content">
+                        Fully automated: CVM REST + IBGE SIDRA API + ANP bulk download + CONAB PDF extraction + agentic web search
+                    </div>
+                </div>
+
+                <div class="arch-block">
+                    <div style="font-weight: 600; color: #1DD1A1; margin-bottom: 12px;">Why Recommended</div>
+                    <div class="arch-content">
+                        Start proving value immediately with Tiers 1 & 3 (no licensing negotiation). Layer in Tier 2 via analyst exports. Negotiate API access in parallel for future automation.
+                    </div>
+                    <div class="timeline">⏱ Timeline: 6–8 weeks</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: End-to-End Flow -->
+        <div class="slide">
+            <h2>End-to-End Research Flow</h2>
+            <div style="max-width: 1000px; margin-top: 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px;">
+                <div class="flow-step">
+                    <div style="font-size: 24px; margin-bottom: 12px;">📥</div>
+                    <div class="flow-step-title">Data Ingestion</div>
+                    <div class="flow-step-detail">Bloomberg, CIQ, Economatica, CVM, IBGE, ANP, CONAB, Salesforce, web search</div>
+                </div>
+
+                <div class="flow-step">
+                    <div style="font-size: 24px; margin-bottom: 12px;">🧠</div>
+                    <div class="flow-step-title">AI Research Engine</div>
+                    <div class="flow-step-detail">1M-token context. Thesis construction, comparables analysis, risk synthesis.</div>
+                </div>
+
+                <div class="flow-step">
+                    <div style="font-size: 24px; margin-bottom: 12px;">✍️</div>
+                    <div class="flow-step-title">Narrative Builder</div>
+                    <div class="flow-step-detail">Structured research narrative. Executive summary, investment thesis, downside risks.</div>
+                </div>
+
+                <div class="flow-step">
+                    <div style="font-size: 24px; margin-bottom: 12px;">📊</div>
+                    <div class="flow-step-title">Presentation Gen</div>
+                    <div class="flow-step-detail">Automated slide deck production with visuals, tables, and cited sources.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 9: Proven Foundation -->
+        <div class="slide">
+            <h2>Proven Foundation</h2>
+            <div style="max-width: 1000px; margin-top: 40px;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                    <div>
+                        <div style="font-weight: 600; font-size: 15px; margin-bottom: 16px; color: #3B7BF6;">Already Built (Pitchbook POC)</div>
+                        <div style="font-size: 13px; color: #999; line-height: 1.8;">
+                            ✓ Large-context AI integration<br>
+                            ✓ Data normalization pipelines<br>
+                            ✓ PDF extraction & parsing<br>
+                            ✓ Presentation generation<br>
+                            ✓ AWS Bedrock infrastructure
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-weight: 600; font-size: 15px; margin-bottom: 16px; color: #1DD1A1;">New for Research</div>
+                        <div style="font-size: 13px; color: #999; line-height: 1.8;">
+                            → Brazilian data source integrations<br>
+                            → Multi-source thesis fusion<br>
+                            → Analyst export workflow<br>
+                            → Research narrative templates<br>
+                            → Interactive investor pitch decks
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tech-stack">
+                <div style="margin-bottom: 12px; font-weight: 600;">Tech Stack</div>
+                <div class="stack-item">Large-context AI (1M token)</div>
+                <div class="stack-item">AWS Bedrock</div>
+                <div class="stack-item">REST API integrations</div>
+                <div class="stack-item">Python data pipelines</div>
+                <div class="stack-item">PDF parsing + OCR</div>
+                <div class="stack-item">Presentation APIs</div>
+            </div>
+        </div>
+
+        <!-- Slide 10: What We Need -->
+        <div class="slide">
+            <h2>What We Need From Itaú</h2>
+            <div style="max-width: 1000px; margin-top: 30px; width: 100%;">
+                <div class="question-box">
+                    <div class="question-num">1. BLOOMBERG ACCESS</div>
+                    <div class="question-text">Do you have Bloomberg Data License, or terminal-only? Can we get DL REST API access for the POC environment?</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-num">2. CAPITAL IQ</div>
+                    <div class="question-text">Is CIQ Pro API available, or only the Excel plugin? Do you have Xpressfeed bulk delivery access?</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-num">3. INTERNAL DATA & SYSTEMS</div>
+                    <div class="question-text">Salesforce API access? Where do historical research reports and pitchbooks live — SharePoint, Confluence, internal wiki?</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-num">4. PILOT WORKFLOW</div>
+                    <div class="question-text">Which output first — coverage initiation, sector thematic, or private company pitch? Who are the 2–3 pilot analysts we'll work with?</div>
+                </div>
+
+                <div class="question-box">
+                    <div class="question-num">5. DEPLOYMENT</div>
+                    <div class="question-text">AWS Bedrock access? VPC requirements? Same environment as the Pitchbook POC?</div>
+                </div>
+
+                <div class="goal-box">
+                    <div class="goal-text">Answer these today → Scope MVP this week → First integration in 4–6 weeks</div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="panel">
-      <div class="panel-head"><div class="panel-dot" style="background:var(--green)"></div><div class="panel-title" style="color:var(--green)">Our Technical Approach</div></div>
-      <div class="panel-body">
-        <div class="sol-item"><div class="sol-dot" style="background:var(--green)"></div><div><div class="sol-title">Reasoning over sparse data</div><div class="sol-desc">Large-context AI synthesises across fragmentary sources — 5 partial documents become a coherent thesis</div></div></div>
-        <div class="sol-item"><div class="sol-dot" style="background:var(--green)"></div><div><div class="sol-title">1M token context window</div><div class="sol-desc">No RAG needed. Load all available documents directly. The model sees everything at once — no retrieval gaps</div></div></div>
-        <div class="sol-item"><div class="sol-dot" style="background:var(--green)"></div><div><div class="sol-title">Analyst-in-the-loop</div><div class="sol-desc">Analyst uploads whatever they have. The system reasons, surfaces conflicts, builds the narrative iteratively</div></div></div>
-        <div class="sol-item"><div class="sol-dot" style="background:var(--green)"></div><div><div class="sol-title">Source traceability</div><div class="sol-desc">Every claim links back to its source document — proven pattern from our Pitchbook POC</div></div></div>
-      </div>
-    </div>
-  </div>
-</div>
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
 
-<!-- ══════ SLIDE 5: OPTION PATHS ══════ -->
-<div class="slide" data-i="4">
-  <div class="s-tag">Option Paths</div>
-  <div class="s-title">Architecture Adapts to <em>Your Data Access</em></div>
+        function showSlide(n) {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active', 'prev');
+                if (index === n) {
+                    slide.classList.add('active');
+                } else if (index < n) {
+                    slide.classList.add('prev');
+                }
+            });
 
-  <div class="grid-3" style="flex:1;align-content:start">
-    <div class="opt-card opt-a" onclick="selectOpt(this)">
-      <div class="opt-letter" style="background:rgba(29,209,161,.12);color:var(--green)">A</div>
-      <div class="opt-title">Full API Access</div>
-      <div class="opt-cond" style="color:var(--green)">If Itaú provides programmatic access to internal data services</div>
-      <div class="opt-desc">Fully automated pipeline. Agents query internal APIs, Capital IQ feeds, and public sources. Analyst reviews synthesised output.</div>
-      <div class="opt-meta">
-        <div class="opt-meta-item"><div class="opt-meta-val" style="color:var(--green)">8–10 wks</div><div class="opt-meta-lbl">Timeline</div></div>
-        <div class="opt-meta-item"><div class="opt-meta-val">Low</div><div class="opt-meta-lbl">Risk</div></div>
-      </div>
-    </div>
+            document.getElementById('current-slide').textContent = n + 1;
+            document.getElementById('progress').style.width = ((n + 1) / totalSlides * 100) + '%';
+        }
 
-    <div class="opt-card opt-b" onclick="selectOpt(this)">
-      <div class="opt-letter" style="background:var(--orange-dim);color:var(--orange)">B</div>
-      <div class="opt-title">Analyst-in-the-Loop</div>
-      <div class="opt-cond" style="color:var(--orange)">If licensing prevents API access to market data providers</div>
-      <div class="opt-desc">Analysts export from Bloomberg/Capital IQ as today. Upload to platform. AI ingests and builds thesis from exports + public sources.</div>
-      <div class="opt-meta">
-        <div class="opt-meta-item"><div class="opt-meta-val" style="color:var(--orange)">5–6 wks</div><div class="opt-meta-lbl">Timeline</div></div>
-        <div class="opt-meta-item"><div class="opt-meta-val">Medium</div><div class="opt-meta-lbl">Risk</div></div>
-      </div>
-    </div>
+        function nextSlide() {
+            if (currentSlide < totalSlides - 1) {
+                currentSlide++;
+                showSlide(currentSlide);
+            }
+        }
 
-    <div class="opt-card opt-c selected" onclick="selectOpt(this)">
-      <div class="opt-letter" style="background:rgba(59,123,246,.12);color:var(--blue)">C</div>
-      <div class="opt-title">Hybrid Model</div>
-      <div class="opt-cond" style="color:var(--blue)">Automated for internal + public, manual for licensed data</div>
-      <div class="opt-desc">Automated ingestion for Tiers 1 & 3 (internal + public sources). Manual upload for Tier 2 (licensed market data). Best of both worlds.</div>
-      <div class="opt-meta">
-        <div class="opt-meta-item"><div class="opt-meta-val" style="color:var(--blue)">6–8 wks</div><div class="opt-meta-lbl">Timeline</div></div>
-        <div class="opt-meta-item"><div class="opt-meta-val">Recommended</div><div class="opt-meta-lbl">Risk</div></div>
-      </div>
-    </div>
-  </div>
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                showSlide(currentSlide);
+            }
+        }
 
-  <div class="opt-rec">
-    <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
-    Recommended: Option C lets us start in weeks while respecting licensing. Prove value fast with Tiers 1 & 3, then expand.
-  </div>
-</div>
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
+        });
 
-<!-- ══════ SLIDE 6: END-TO-END FLOW ══════ -->
-<div class="slide" data-i="5">
-  <div class="s-tag">End-to-End Flow</div>
-  <div class="s-title">Research → Thesis → <em>Presentation</em></div>
-
-  <div style="max-width:680px;flex:1">
-    <div class="flow-step">
-      <div class="flow-num" style="background:var(--green)">1</div>
-      <div class="flow-line" style="background:var(--green)"></div>
-      <div class="flow-content">
-        <div class="flow-title">Data Ingestion</div>
-        <div class="flow-desc">Internal documents, analyst exports from Bloomberg/Capital IQ, public filings (EDGAR, CVM), agentic web search for alternative data. Three tiers feeding into a unified context.</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="flow-num" style="background:var(--orange)">2</div>
-      <div class="flow-line" style="background:var(--orange)"></div>
-      <div class="flow-content">
-        <div class="flow-title">AI-Powered Research</div>
-        <div class="flow-desc">Large-context AI synthesises across all sources within a 1M token context window. Builds investment thesis iteratively with the analyst. Proactively surfaces conflicting data and risks.</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="flow-num" style="background:var(--blue)">3</div>
-      <div class="flow-line" style="background:var(--blue)"></div>
-      <div class="flow-content">
-        <div class="flow-title">Narrative Builder</div>
-        <div class="flow-desc">Structured outline with full source traceability. Every claim linked to a DocumentReference (document ID, relevance classification, excerpt). Analyst can drag, reorder, edit, and refine.</div>
-      </div>
-    </div>
-    <div class="flow-step">
-      <div class="flow-num" style="background:var(--purple)">4</div>
-      <div class="flow-content">
-        <div class="flow-title">Presentation Generation</div>
-        <div class="flow-desc">IB-grade PPTX following Itaú BBA design standards. Already proven with Pitchbook POC — 13-slide deck generated in ~15 minutes. SSE streaming shows real-time build progress.</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ SLIDE 7: PROVEN FOUNDATION ══════ -->
-<div class="slide" data-i="6">
-  <div class="s-tag">Proven Foundation</div>
-  <div class="s-title">Already <em>Validated</em> With Itaú</div>
-
-  <div class="grid-4" style="margin-bottom:20px">
-    <div class="stat"><div class="stat-val" style="color:var(--orange)">LLM (1M ctx)</div><div class="stat-lbl">AI Engine</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--green)">1M tokens</div><div class="stat-lbl">Context Window</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--blue)">SSE Streaming</div><div class="stat-lbl">Real-time UX</div></div>
-    <div class="stat"><div class="stat-val" style="color:var(--purple)">AWS / Bedrock</div><div class="stat-lbl">Itaú Cloud-Ready</div></div>
-  </div>
-
-  <div class="grid-2" style="flex:1">
-    <div class="panel">
-      <div class="panel-head"><div class="panel-dot" style="background:var(--green)"></div><div class="panel-title" style="color:var(--green)">Proven in Pitchbook POC</div></div>
-      <div class="panel-body">
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">TypeScript monorepo (Turborepo + pnpm)</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">React 18 / Vite 5 / shadcn/ui frontend</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Express 5 backend with SSE streaming</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">Full PPTX generation via AI</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">AWS CDK / ECS Fargate deployment</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--green)"></div><div><div class="item-desc">DocumentReference traceability system</div></div></div>
-      </div>
-    </div>
-    <div class="panel">
-      <div class="panel-head"><div class="panel-dot" style="background:var(--orange)"></div><div class="panel-title" style="color:var(--orange)">New for Research</div></div>
-      <div class="panel-body">
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Multi-source data ingestion layer</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Conversational research interface (chat-first)</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Agentic web search for alternative data</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Private company thesis construction</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Document analysis & quality review</div></div></div>
-        <div class="item"><div class="item-dot" style="background:var(--orange)"></div><div><div class="item-desc">Research → Pitchbook handoff pipeline</div></div></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══════ SLIDE 8: WHAT WE NEED ══════ -->
-<div class="slide" data-i="7">
-  <div class="s-tag">Next Steps</div>
-  <div class="s-title">What We Need to <em>Scope the MVP</em></div>
-
-  <div style="display:flex;flex-direction:column;gap:10px;flex:1">
-    <div class="q-row"><div class="q-num">1</div><div><div class="q-title">Data Estate Mapping</div><div class="q-desc">Which data providers are used most frequently? Are there internal APIs or aggregation layers? How many independent systems would we need to integrate?</div></div></div>
-    <div class="q-row"><div class="q-num">2</div><div><div class="q-title">Licensing Constraints</div><div class="q-desc">Can Capital IQ or Bloomberg data be exported and re-ingested? Compliance rules for AI processing of licensed data within the bank's perimeter?</div></div></div>
-    <div class="q-row"><div class="q-num">3</div><div><div class="q-title">Priority Workflow</div><div class="q-desc">Which research output first — coverage initiation, earnings update, sector thematic, or private company pitch? Who are the 2–3 pilot analysts?</div></div></div>
-    <div class="q-row"><div class="q-num">4</div><div><div class="q-title">Deployment Environment</div><div class="q-desc">AWS Bedrock enabled? VPC requirements? SSO/SAML integration? Same environment as Pitchbook POC or separate?</div></div></div>
-    <div class="q-row"><div class="q-num">5</div><div><div class="q-title">Internal AI Work</div><div class="q-desc">What has the team built over the past 1.5 years? Can we see it? We want to combine forces, not duplicate effort.</div></div></div>
-  </div>
-
-  <div class="cta-bar">
-    <div class="cta-label">Goal</div>
-    <div class="cta-text">Answer these questions today → scope the MVP this week → first working integration in 4–6 weeks</div>
-  </div>
-</div>
-
-</div><!-- /slide-container -->
-
-<div class="progress"><div class="progress-bar" id="progBar" style="width:12.5%"></div></div>
-
-<script>
-let cur = 0;
-const slides = document.querySelectorAll('.slide');
-const total = slides.length;
-
-function go(n) {
-  if (n < 0 || n >= total) return;
-  slides[cur].classList.remove('active');
-  slides[cur].classList.add(n > cur ? 'prev' : '');
-  cur = n;
-  slides.forEach((s, i) => {
-    s.classList.remove('active', 'prev');
-    if (i === cur) s.classList.add('active');
-    else if (i < cur) s.classList.add('prev');
-  });
-  document.getElementById('counter').textContent = `${cur + 1} / ${total}`;
-  document.getElementById('progBar').style.width = ((cur + 1) / total * 100) + '%';
-}
-function next() { go(cur + 1); }
-function prev() { go(cur - 1); }
-
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); next(); }
-  if (e.key === 'ArrowLeft') { e.preventDefault(); prev(); }
-});
-
-function selectOpt(el) {
-  document.querySelectorAll('.opt-card').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-}
-</script>
+        showSlide(0);
+    </script>
 </body>
 </html>
