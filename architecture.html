@@ -730,16 +730,16 @@
         <span>Itaú BBA Research — Technical Architecture</span>
     </div>
     <div class="nav-sections">
-        <div class="nav-pill active" onclick="scrollTo('constraint')">Constraint</div>
-        <div class="nav-pill" onclick="scrollTo('architecture')">Architecture</div>
-        <div class="nav-pill" onclick="scrollTo('dataflow')">Data Flow</div>
-        <div class="nav-pill" onclick="scrollTo('sources')">Sources</div>
-        <div class="nav-pill" onclick="scrollTo('lake')">Data Lake</div>
-        <div class="nav-pill" onclick="scrollTo('private')">Private Co.</div>
-        <div class="nav-pill" onclick="scrollTo('engine')">AI Engine</div>
-        <div class="nav-pill" onclick="scrollTo('cosan')">Cosan Trace</div>
-        <div class="nav-pill" onclick="scrollTo('enterprise')">Enterprise</div>
-        <div class="nav-pill" onclick="scrollTo('questions')">Questions</div>
+        <div class="nav-pill active" onclick="navTo('constraint',this)">Constraint</div>
+        <div class="nav-pill" onclick="navTo('architecture',this)">Architecture</div>
+        <div class="nav-pill" onclick="navTo('dataflow',this)">Data Flow</div>
+        <div class="nav-pill" onclick="navTo('sources',this)">Sources</div>
+        <div class="nav-pill" onclick="navTo('lake',this)">Data Lake</div>
+        <div class="nav-pill" onclick="navTo('private',this)">Private Co.</div>
+        <div class="nav-pill" onclick="navTo('engine',this)">AI Engine</div>
+        <div class="nav-pill" onclick="navTo('cosan',this)">Cosan Trace</div>
+        <div class="nav-pill" onclick="navTo('enterprise',this)">Enterprise</div>
+        <div class="nav-pill" onclick="navTo('questions',this)">Questions</div>
     </div>
 </nav>
 
@@ -2665,10 +2665,10 @@
         document.getElementById(id).classList.toggle('open');
     }
 
-    function scrollTo(id) {
+    function navTo(id, el) {
         document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
         document.querySelectorAll('.nav-pill').forEach(p => p.classList.remove('active'));
-        event.target.classList.add('active');
+        if (el) el.classList.add('active');
     }
 
     const sections = document.querySelectorAll('section');
@@ -2677,7 +2677,7 @@
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 pills.forEach(p => p.classList.remove('active'));
-                const target = document.querySelector(`.nav-pill[onclick="scrollTo('${entry.target.id}')"]`);
+                const target = document.querySelector(`.nav-pill[onclick="navTo('${entry.target.id}',this)"]`);
                 if (target) target.classList.add('active');
             }
         });
