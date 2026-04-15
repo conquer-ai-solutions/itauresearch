@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Itaú BBA Research — Data Architecture Deep Dive</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06090F;
+            --bg-1: #0B1120;
+            --bg-2: #111827;
+            --bg-3: #1A2332;
+            --bg-4: #243042;
+            --border: #1E2D3D;
+            --border-lt: #2A3A4A;
+            --text: #E8ECF1;
+            --text-2: #A0AAB8;
+            --text-3: #6B7A8D;
+            --orange: #EC7000;
+            --orange-dim: rgba(236,112,0,.08);
+            --orange-glow: rgba(236,112,0,.15);
+            --green: #10B981;
+            --green-dim: rgba(16,185,129,.08);
+            --blue: #3B82F6;
+            --blue-dim: rgba(59,130,246,.08);
+            --red: #EF4444;
+            --red-dim: rgba(239,68,68,.08);
+            --purple: #8B5CF6;
+            --purple-dim: rgba(139,92,246,.08);
+            --cyan: #06B6D4;
+            --mono: 'JetBrains Mono', monospace;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+        html, body { height:100%; overflow:hidden; }
+
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text-2);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ═══ SLIDESHOW FRAMEWORK ═══ */
+        .deck { position: relative; width:100%; height:100%; }
+
+        .slide {
+            position: absolute;
+            top:0; left:0; width:100%; height:100%;
+            display: flex; align-items: center; justify-content: center;
+            padding: 60px 80px;
+            opacity: 0;
+            transform: translateX(60px);
+            transition: opacity 0.45s ease, transform 0.45s ease;
+            pointer-events: none;
+            overflow-y: auto;
+        }
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+            z-index: 2;
+        }
+        .slide.prev {
+            opacity: 0;
+            transform: translateX(-60px);
+        }
+
+        .slide-inner {
+            width: 100%;
+            max-width: 1200px;
+            max-height: 100%;
+        }
+
+        /* ── Slide typography ── */
+        .s-chip {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 5px 14px; border-radius: 16px;
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+            margin-bottom: 16px;
+        }
+        .s-chip .pulse { width:6px; height:6px; border-radius:50%; animation: pulse 2s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:1} }
+
+        .s-title {
+            font-size: 38px; font-weight: 800; color: var(--text);
+            line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 14px;
+        }
+        .s-title span { color: var(--orange); }
+
+        .s-subtitle {
+            font-size: 15px; color: var(--text-3); max-width: 800px; line-height: 1.8; margin-bottom: 32px;
+        }
+
+        .s-label {
+            font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.8px;
+            color: var(--orange); margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .s-label::before { content:''; width:20px; height:1px; background:var(--orange); }
+
+        .s-heading {
+            font-size: 28px; font-weight: 700; color: var(--text);
+            margin-bottom: 10px; letter-spacing: -0.3px;
+        }
+
+        .s-desc {
+            font-size: 14px; color: var(--text-3); max-width: 780px; margin-bottom: 32px; line-height: 1.8;
+        }
+
+        /* ── Bottom bar (nav + slide counter) ── */
+        .bottom-bar {
+            position: fixed; bottom:0; left:0; right:0; z-index:100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 40px; height: 48px;
+            background: rgba(6,9,15,.92);
+            backdrop-filter: blur(20px) saturate(180%);
+            border-top: 1px solid rgba(30,45,61,.5);
+        }
+        .bb-logo {
+            display:flex; align-items:center; gap:8px;
+            font-weight:600; font-size:12px; color:var(--text);
+        }
+        .bb-logo .i-box {
+            background:var(--orange); color:var(--bg);
+            width:22px; height:22px; display:flex; align-items:center; justify-content:center;
+            border-radius:3px; font-weight:800; font-size:11px;
+        }
+        .bb-nav {
+            display:flex; align-items:center; gap:16px;
+        }
+        .bb-counter {
+            font-family:var(--mono); font-size:11px; color:var(--text-3);
+        }
+        .bb-counter .cur { color:var(--orange); font-weight:700; }
+        .bb-btn {
+            width:32px; height:32px; border-radius:6px;
+            border:1px solid var(--border); background:var(--bg-2);
+            color:var(--text-3); cursor:pointer;
+            display:flex; align-items:center; justify-content:center;
+            font-size:14px; transition: all 0.2s;
+        }
+        .bb-btn:hover { border-color:var(--orange); color:var(--orange); background:var(--orange-dim); }
+        .bb-btn:disabled { opacity:.3; cursor:default; }
+        .bb-btn:disabled:hover { border-color:var(--border); color:var(--text-3); background:var(--bg-2); }
+
+        .bb-dots {
+            display:flex; gap:4px; align-items:center;
+        }
+        .bb-dot {
+            width:6px; height:6px; border-radius:50%;
+            background:var(--bg-4); cursor:pointer;
+            transition: all 0.25s;
+        }
+        .bb-dot.active { background:var(--orange); width:20px; border-radius:3px; }
+        .bb-dot:hover { background:var(--text-3); }
+
+        /* ═══ CONSTRAINT BOX ═══ */
+        .constraint-box {
+            background: linear-gradient(135deg, rgba(239,68,68,.04) 0%, rgba(17,24,39,.8) 100%);
+            border: 1px solid rgba(239,68,68,.15);
+            border-left: 3px solid var(--red);
+            border-radius: 10px; padding: 22px 26px;
+        }
+        .constraint-box .label {
+            font-size:10px; font-weight:700; color:var(--red); margin-bottom:8px;
+            text-transform:uppercase; letter-spacing:1.2px;
+        }
+        .constraint-box .text { font-size:13px; color:var(--text-2); line-height:1.8; }
+        .constraint-box strong { color:var(--text); }
+
+        /* ═══ REUSABLE CARDS / GRIDS ═══ */
+        .card-grid { display:grid; gap:14px; }
+        .card-grid.c2 { grid-template-columns: 1fr 1fr; }
+        .card-grid.c3 { grid-template-columns: 1fr 1fr 1fr; }
+        .card-grid.c4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+
+        .info-card {
+            background:var(--bg-1); border:1px solid var(--border); border-radius:8px; padding:16px 18px;
+        }
+        .info-card .ic-title { font-size:13px; font-weight:700; color:var(--text); margin-bottom:6px; }
+        .info-card .ic-text { font-size:11px; color:var(--text-3); line-height:1.7; }
+
+        .metric-card {
+            background:var(--bg-1); border:1px solid var(--border); border-radius:8px;
+            padding:16px; text-align:center;
+        }
+        .metric-card .mc-num {
+            font-family:var(--mono); font-size:28px; font-weight:800; color:var(--orange);
+        }
+        .metric-card .mc-label { font-size:10px; color:var(--text-3); margin-top:4px; }
+
+        .tag { display:inline-block; padding:3px 10px; border-radius:4px; font-size:9px; font-weight:600; }
+
+        /* ═══ ARCHITECTURE DIAGRAM (simplified for slides) ═══ */
+        .arch-flow {
+            display:grid; grid-template-columns: 180px 1fr 4px 1fr 180px;
+            gap:0; min-height:380px; margin:16px 0;
+        }
+        .af-col { padding:14px 10px; display:flex; flex-direction:column; gap:8px; }
+        .af-sources { background:rgba(255,255,255,.015); border:1px solid var(--border); border-radius:8px 0 0 8px; }
+        .af-etl { background:var(--orange-dim); border-top:1px solid rgba(236,112,0,.12); border-bottom:1px solid rgba(236,112,0,.12); }
+        .af-firewall {
+            background:linear-gradient(180deg,var(--red) 0%,rgba(239,68,68,.3) 30%,rgba(239,68,68,.3) 70%,var(--red) 100%);
+            position:relative; z-index:2;
+            box-shadow:0 0 20px rgba(239,68,68,.2);
+        }
+        .af-firewall::before {
+            content:'AI BOUNDARY'; position:absolute; top:50%; left:50%;
+            transform:translate(-50%,-50%) rotate(-90deg);
+            font-size:8px; font-weight:800; letter-spacing:2.5px; color:var(--red);
+            white-space:nowrap; text-shadow:0 0 12px rgba(239,68,68,.5);
+        }
+        .af-lake { background:var(--blue-dim); border-top:1px solid rgba(59,130,246,.12); border-bottom:1px solid rgba(59,130,246,.12); }
+        .af-ai { background:var(--green-dim); border:1px solid rgba(16,185,129,.12); border-radius:0 8px 8px 0; }
+
+        .src-node {
+            display:flex; align-items:center; gap:6px;
+            padding:6px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:5px;
+            font-size:10px; font-weight:600;
+        }
+        .src-icon {
+            width:20px; height:20px; border-radius:3px;
+            display:flex; align-items:center; justify-content:center;
+            font-size:7px; font-weight:800; flex-shrink:0;
+        }
+        .src-label { color:var(--text); font-size:10px; }
+
+        .etl-block {
+            padding:8px 10px; background:rgba(236,112,0,.06); border:1px solid rgba(236,112,0,.12); border-radius:5px;
+        }
+        .etl-block .eb-title { font-size:10px; font-weight:700; color:var(--orange); }
+        .etl-block .eb-sub { font-size:9px; color:var(--text-3); }
+        .etl-block .eb-badge {
+            float:right; font-size:7px; font-weight:700; text-transform:uppercase;
+            padding:2px 5px; border-radius:2px; background:rgba(239,68,68,.1); color:var(--red);
+            border:1px solid rgba(239,68,68,.2); letter-spacing:0.5px;
+        }
+
+        .lake-block {
+            padding:8px 10px; background:rgba(59,130,246,.05); border:1px solid rgba(59,130,246,.12); border-radius:5px;
+        }
+        .lake-block .lb-title { font-size:10px; font-weight:700; color:var(--blue); }
+        .lake-block .lb-fields { font-size:8px; color:var(--text-3); font-family:var(--mono); }
+
+        .ai-block {
+            padding:8px 10px; background:rgba(16,185,129,.05); border:1px solid rgba(16,185,129,.12); border-radius:5px;
+        }
+        .ai-block .ab-title { font-size:10px; font-weight:700; color:var(--green); }
+        .ai-block .ab-sub { font-size:9px; color:var(--text-3); }
+
+        .tier-label {
+            font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:3px 8px; margin-top:2px;
+        }
+
+        /* ═══ TABLES ═══ */
+        .s-table { width:100%; border-collapse:collapse; font-size:11px; }
+        .s-table th {
+            padding:8px 10px; text-align:left; color:var(--text-3); font-size:9px;
+            font-weight:700; text-transform:uppercase; letter-spacing:0.8px;
+            border-bottom:1px solid var(--border);
+        }
+        .s-table td { padding:8px 10px; border-bottom:1px solid rgba(30,45,61,.4); color:var(--text-2); }
+        .s-table .mono { font-family:var(--mono); }
+        .s-table .right { text-align:right; }
+        .s-table .bold { color:var(--text); font-weight:600; }
+
+        /* ═══ PIPELINE STEPS ═══ */
+        .pipe-row {
+            display:grid; grid-template-columns:repeat(6,1fr); gap:0; margin:16px 0;
+        }
+        .pipe-step {
+            padding:14px 10px; text-align:center; border:1px solid var(--border); border-left:none;
+        }
+        .pipe-step:first-child { border-left:1px solid var(--border); border-radius:8px 0 0 8px; }
+        .pipe-step:last-child { border-radius:0 8px 8px 0; }
+        .pipe-step .ps-num { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:4px; }
+        .pipe-step .ps-title { font-size:11px; font-weight:700; color:var(--text); margin-bottom:2px; }
+        .pipe-step .ps-sub { font-size:9px; color:var(--text-3); line-height:1.4; }
+
+        /* ═══ TRACE TIMELINE (compact for slides) ═══ */
+        .trace-row { display:flex; gap:12px; margin-bottom:12px; align-items:flex-start; }
+        .trace-num {
+            width:32px; height:32px; border-radius:50%; flex-shrink:0;
+            display:flex; align-items:center; justify-content:center;
+            font-size:12px; font-weight:800;
+        }
+        .trace-content { flex:1; }
+        .trace-content .tc-head {
+            display:flex; align-items:center; gap:8px; margin-bottom:3px;
+        }
+        .trace-content .tc-phase {
+            font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+            padding:2px 7px; border-radius:3px;
+        }
+        .trace-content .tc-title { font-size:12px; font-weight:600; color:var(--text); }
+        .trace-content .tc-time { font-family:var(--mono); font-size:9px; color:var(--text-3); margin-left:auto; }
+        .trace-content .tc-text { font-size:11px; color:var(--text-3); line-height:1.6; }
+
+        /* ═══ CONFIDENCE PILLS ═══ */
+        .conf-pill {
+            display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:10px; font-size:9px; font-weight:700;
+        }
+        .conf-pill .dot { width:5px; height:5px; border-radius:50%; }
+
+        /* ═══ CALL-TO-ACTION GRID ═══ */
+        .cta-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+        .cta-item {
+            padding:14px 16px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px;
+        }
+        .cta-item .ci-num {
+            font-family:var(--mono); font-size:11px; font-weight:700; color:var(--orange); margin-bottom:4px;
+        }
+        .cta-item .ci-text { font-size:12px; color:var(--text); line-height:1.5; font-weight:500; }
+        .cta-item .ci-why { font-size:10px; color:var(--text-3); margin-top:4px; line-height:1.5; }
+
+        /* ═══ SCHEMA MINI CARDS ═══ */
+        .schema-mini {
+            background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden;
+        }
+        .schema-mini .sm-head {
+            padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border);
+            display:flex; align-items:center; justify-content:space-between;
+        }
+        .schema-mini .sm-name { font-size:12px; font-weight:700; color:var(--text); }
+        .schema-mini .sm-src { font-size:9px; color:var(--orange); font-weight:600; }
+        .schema-mini .sm-vol { font-size:9px; color:var(--text-3); font-family:var(--mono); }
+        .schema-mini .sm-body { padding:10px 14px; }
+        .schema-mini .sm-field { font-size:10px; color:var(--text-3); font-family:var(--mono); padding:2px 0; }
+        .schema-mini .sm-field .fk { color:var(--red); }
+        .schema-mini .sm-field .pk { color:var(--blue); }
+
+        /* ═══ DEPLOY TIER ═══ */
+        .deploy-tier { padding:14px; border-radius:8px; }
+        .deploy-tier .dt-title {
+            font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin-bottom:8px;
+        }
+        .deploy-tier .dt-row {
+            font-size:10px; color:var(--text-3); padding:3px 0; border-bottom:1px solid rgba(255,255,255,.03);
+        }
+        .deploy-tier .dt-row strong { color:var(--text); font-weight:500; }
+
+        /* ═══ PROGRESS DOTS ON CONTEXT SLIDE ═══ */
+        .journey-arrow {
+            display:flex; align-items:center; justify-content:center;
+            font-size:32px; color:var(--orange); padding:0 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 1 — TITLE
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide active" data-slide="0">
+<div class="slide-inner" style="text-align:center; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div class="s-chip" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.2);">
+        <div class="pulse" style="background:var(--orange)"></div> POC Checkpoint · April 2026
+    </div>
+    <div class="s-title" style="font-size:48px; margin-top:8px;">Data Ingestion &<br><span>Research Architecture</span></div>
+    <div style="font-size:16px; color:var(--text-3); max-width:700px; line-height:1.8; margin-top:16px;">
+        We've proven the output layer works. Now we're solving the harder problem: getting live data from 9 sources into the AI engine — compliantly, automatically, and at production scale.
+    </div>
+    <div style="margin-top:40px; display:flex; gap:12px;">
+        <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Block 1 Architecture</div>
+        <div class="tag" style="background:var(--green-dim); color:var(--green); border:1px solid rgba(16,185,129,.15);">9 Data Sources</div>
+        <div class="tag" style="background:var(--blue-dim); color:var(--blue); border:1px solid rgba(59,130,246,.15);">License Compliant</div>
+    </div>
+    <div style="margin-top:48px; font-size:11px; color:var(--text-3);">Use <span style="font-family:var(--mono); color:var(--text); padding:2px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px;">←</span> <span style="font-family:var(--mono); color:var(--text); padding:2px 8px; background:var(--bg-2); border:1px solid var(--border); border-radius:4px;">→</span> arrow keys to navigate</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 2 — WHERE WE ARE (Block 2 → Block 1)
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="1">
+<div class="slide-inner">
+    <div class="s-label">Context</div>
+    <div class="s-heading">Where We Are — Block 2 Done, Block 1 Now</div>
+    <div class="s-desc">Tom has demonstrated end-to-end pitchbook creation. The AI can write research-quality output. Now we need to feed it real, live, multi-source data.</div>
+
+    <div style="display:grid; grid-template-columns:1fr auto 1fr; gap:0; align-items:stretch;">
+        <!-- Block 2 -->
+        <div style="padding:22px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:10px;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:800;">✓</div>
+                <div style="font-size:10px; font-weight:700; color:var(--green); text-transform:uppercase; letter-spacing:1px;">Block 2 — Demonstrated</div>
+            </div>
+            <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">AI-Generated Research Output</div>
+            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">Structured AI reasoning → professionally formatted PPTX and DOCX. The team has seen it work live.</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">Pitchbook Gen</div>
+                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">PPTX Formatting</div>
+                <div class="tag" style="background:rgba(16,185,129,.08); color:var(--green); border:1px solid rgba(16,185,129,.15);">Citation System</div>
+            </div>
+        </div>
+        <div class="journey-arrow">→</div>
+        <!-- Block 1 -->
+        <div style="padding:22px; background:rgba(236,112,0,.04); border:2px solid rgba(236,112,0,.25); border-radius:10px; position:relative;">
+            <div style="position:absolute;top:-9px;right:14px;padding:3px 10px;background:var(--orange);color:var(--bg);font-size:8px;font-weight:800;letter-spacing:1px;border-radius:3px;text-transform:uppercase;">This Presentation</div>
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                <div style="width:22px;height:22px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--bg);font-weight:800;">→</div>
+                <div style="font-size:10px; font-weight:700; color:var(--orange); text-transform:uppercase; letter-spacing:1px;">Block 1 — Solving Now</div>
+            </div>
+            <div style="font-size:15px; font-weight:700; color:var(--text); margin-bottom:6px;">Data Ingestion & Research Architecture</div>
+            <div style="font-size:12px; color:var(--text-3); line-height:1.7; margin-bottom:12px;">Live data from 9 sources, license-compliant, cross-source reconciliation, full provenance audit trail.</div>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">9 Sources</div>
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Compliance</div>
+                <div class="tag" style="background:var(--orange-dim); color:var(--orange); border:1px solid rgba(236,112,0,.15);">Provenance</div>
+            </div>
+        </div>
+    </div>
+    <div style="margin-top:24px; padding:14px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; font-size:12px; color:var(--text-3); line-height:1.7; text-align:center;">
+        <strong style="color:var(--text)">Block 2 proved the AI can write.</strong> Block 1 feeds it real data — so the output is <strong style="color:var(--orange)">grounded in current, cited, reconciled financial data</strong>. Solve Block 1 and the full pipeline is production-ready.
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 3 — THE CORE CONSTRAINT
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="2">
+<div class="slide-inner">
+    <div class="s-label">The Core Constraint</div>
+    <div class="s-heading">Why AI Cannot Touch Data Sources Directly</div>
+    <div class="s-desc">Licensed data providers explicitly block direct AI agent access. This shapes every design decision.</div>
+
+    <div class="constraint-box" style="margin-bottom:20px;">
+        <div class="label">Licensing Reality</div>
+        <div class="text">
+            <strong>Capital IQ (S&P):</strong> Explicitly prohibits AI agents, MCP servers, and automated AI-driven systems from connecting to their APIs. Bearer tokens expire every 60 minutes and cannot be issued to AI processes.<br><br>
+            <strong>Bloomberg:</strong> AI/ML use requires a specific license amendment. Standard terminal or BLPAPI licences do <em>not</em> permit feeding data into AI systems.<br><br>
+            <strong>Economatica:</strong> Commercial license with distribution restrictions. Terms must be reviewed for AI-derived-output use cases.<br><br>
+            <strong style="color:var(--red);">The implication:</strong> Any architecture where an LLM connects directly to these systems is <strong>non-compliant</strong> and puts Itaú at licensing risk.
+        </div>
+    </div>
+
+    <div style="padding:14px 18px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px; text-align:center; font-size:13px; color:var(--text-2); line-height:1.7;">
+        The architecture must enforce a <strong style="color:var(--red)">hard boundary</strong> between data ingestion and AI consumption. Not as policy — as <strong style="color:var(--text)">infrastructure</strong>.
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 4 — ARCHITECTURE DIAGRAM
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="3">
+<div class="slide-inner">
+    <div class="s-label">Solution Architecture</div>
+    <div class="s-heading">Decoupled Two-Layer Design</div>
+
+    <div class="arch-flow">
+        <!-- Sources -->
+        <div class="af-col af-sources">
+            <div class="tier-label" style="color:var(--orange); font-size:7px;">LICENSED</div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(255,165,0,.1);color:#FFA500;border:1px solid rgba(255,165,0,.25)">BBG</div><div class="src-label">Bloomberg</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(0,120,215,.1);color:#0078D7;border:1px solid rgba(0,120,215,.25)">CIQ</div><div class="src-label">Capital IQ</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(16,185,129,.1);color:var(--green);border:1px solid rgba(16,185,129,.25)">ECO</div><div class="src-label">Economatica</div></div>
+            <div class="tier-label" style="color:var(--green); font-size:7px;">PUBLIC</div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.25)">CVM</div><div class="src-label">CVM / B3</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)">IBGE</div><div class="src-label">IBGE SIDRA</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(236,112,0,.1);color:var(--orange);border:1px solid rgba(236,112,0,.25)">CON</div><div class="src-label">CONAB</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(6,182,212,.1);color:var(--cyan);border:1px solid rgba(6,182,212,.25)">ANP</div><div class="src-label">ANP</div></div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(59,130,246,.1);color:var(--blue);border:1px solid rgba(59,130,246,.25)">BCB</div><div class="src-label">Banco Central</div></div>
+            <div class="tier-label" style="color:var(--purple); font-size:7px;">INTERNAL</div>
+            <div class="src-node"><div class="src-icon" style="background:rgba(139,92,246,.1);color:var(--purple);border:1px solid rgba(139,92,246,.25)">SF</div><div class="src-label">Salesforce</div></div>
+        </div>
+        <!-- ETL -->
+        <div class="af-col af-etl">
+            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Middleware API Client</div><div class="eb-sub">REST with OAuth token refresh</div></div>
+            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">SFTP Listener</div><div class="eb-sub">Xpressfeed / Bloomberg DL</div></div>
+            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Analyst Export Ingest</div><div class="eb-sub">Excel/CSV upload portal</div></div>
+            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Public Source Scrapers</div><div class="eb-sub">CVM, IBGE, ANP, CONAB, BCB</div></div>
+            <div class="etl-block"><div class="eb-badge">No AI</div><div class="eb-title">Internal Sync</div><div class="eb-sub">Salesforce REST + doc indexer</div></div>
+        </div>
+        <!-- Firewall -->
+        <div class="af-col af-firewall"></div>
+        <!-- Lake -->
+        <div class="af-col af-lake">
+            <div class="lake-block"><div class="lb-title">Company Financials</div><div class="lb-fields">company_id · source · metric · value</div></div>
+            <div class="lake-block"><div class="lb-title">Market Data</div><div class="lb-fields">company_id · date · close · volume</div></div>
+            <div class="lake-block"><div class="lb-title">Regulatory Filings</div><div class="lb-fields">company_id · filing_type · content</div></div>
+            <div class="lake-block"><div class="lb-title">Macro / Sector</div><div class="lb-fields">series_id · source · metric · value</div></div>
+            <div class="lake-block"><div class="lb-title">Internal Documents</div><div class="lb-fields">doc_id · content · embedding</div></div>
+            <div class="lake-block" style="border-color:rgba(239,68,68,.15)"><div class="lb-title" style="color:var(--red)">Data Provenance</div><div class="lb-fields">source · pull_date · license · hash</div></div>
+        </div>
+        <!-- AI -->
+        <div class="af-col af-ai">
+            <div class="ai-block"><div class="ab-title">Query Planner</div><div class="ab-sub">Determines lake queries</div></div>
+            <div class="ai-block"><div class="ab-title">Lake Query API</div><div class="ab-sub">Read-only. Never touches sources.</div></div>
+            <div class="ai-block"><div class="ab-title">1M Token Context</div><div class="ab-sub">Full financial universe in memory</div></div>
+            <div class="ai-block"><div class="ab-title">Research Synthesis</div><div class="ab-sub">Multi-source reasoning + citations</div></div>
+            <div class="ai-block"><div class="ab-title">Output Engine</div><div class="ab-sub">JSON → PPTX + DOCX (Block 2)</div></div>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:8px;">
+        <div class="metric-card"><div class="mc-num">9</div><div class="mc-label">Data sources · 3 licensed · 5 public · 1 internal</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">6</div><div class="mc-label">Normalized domain tables · provenance-tagged</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--red)">0</div><div class="mc-label">Direct AI → Source connections</div></div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 5 — DATA FLOW METRICS
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="4">
+<div class="slide-inner">
+    <div class="s-label">Data Flow</div>
+    <div class="s-heading">What Actually Flows Through This System</div>
+    <div class="s-desc" style="margin-bottom:20px;">Estimated volumes for a ~200 company Brazilian equities universe. Planning estimates — actual numbers depend on Itaú's access levels.</div>
+
+    <div class="card-grid c4" style="margin-bottom:20px;">
+        <div class="metric-card"><div class="mc-num">~2.4M</div><div class="mc-label">records/day across all pipelines</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--green)">5 of 9</div><div class="mc-label">sources fully automated day one</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--blue)">6</div><div class="mc-label">unified domain tables</div></div>
+        <div class="metric-card"><div class="mc-num" style="color:var(--orange)">&lt;15m</div><div class="mc-label">target source → lake latency</div></div>
+    </div>
+
+    <div style="overflow-x:auto;">
+        <table class="s-table">
+            <thead><tr>
+                <th style="width:160px">Source</th><th>Tier</th><th>Refresh</th><th>Est. Volume</th><th>Latency</th><th>Automation</th>
+            </tr></thead>
+            <tbody>
+                <tr><td class="bold">Bloomberg</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily (DL) / Real-time</td><td class="mono">~800K</td><td>&lt;30 min</td><td>Full (DL) · Semi (Terminal)</td></tr>
+                <tr><td class="bold">Capital IQ</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily bulk / On-demand</td><td class="mono">~500K</td><td>&lt;45 min</td><td>Full (API/SFTP) · Manual (Excel)</td></tr>
+                <tr><td class="bold">Economatica</td><td><span class="tag" style="background:var(--orange-dim);color:var(--orange)">Licensed</span></td><td>Daily</td><td class="mono">~200K</td><td>&lt;15 min</td><td>Full (API) · Manual (Plugin)</td></tr>
+                <tr><td class="bold">CVM / B3</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>On filing</td><td class="mono">~50K/qtr</td><td>&lt;20 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">IBGE SIDRA</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly / Quarterly</td><td class="mono">~15K</td><td>&lt;5 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">CONAB</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly</td><td class="mono">~3K</td><td>~10 min (OCR)</td><td>Full — 5-stage pipeline</td></tr>
+                <tr><td class="bold">ANP</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Monthly / Weekly</td><td class="mono">~25K</td><td>&lt;3 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">BCB</td><td><span class="tag" style="background:var(--green-dim);color:var(--green)">Public</span></td><td>Daily / COPOM</td><td class="mono">~20K</td><td>&lt;5 min</td><td>Full — zero intervention</td></tr>
+                <tr><td class="bold">Salesforce</td><td><span class="tag" style="background:var(--purple-dim);color:var(--purple)">Internal</span></td><td>Daily sync</td><td class="mono">~10K + docs</td><td>&lt;10 min</td><td>Full — API sync</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 6 — DATA LAKE SCHEMA
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="5">
+<div class="slide-inner">
+    <div class="s-label">Unified Data Lake</div>
+    <div class="s-heading">Schema Design & Provenance</div>
+    <div class="s-desc" style="margin-bottom:20px;">Every source maps into a common schema. Bloomberg's revenue and CIQ's revenue sit side by side, tagged by source. The AI reads one schema, not nine.</div>
+
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">company_financials</div><div class="sm-src">BBG · CIQ · Economatica · CVM</div></div><div class="sm-vol">~1.2M rows/yr</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="pk">company_id</span> · source · period</div>
+                <div class="sm-field">statement · metric · value · currency</div>
+                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
+            </div>
+        </div>
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">market_data</div><div class="sm-src">BBG · Economatica</div></div><div class="sm-vol">~800K rows/yr</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="pk">company_id</span> · date · metric</div>
+                <div class="sm-field">value · source · adj_factor</div>
+                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
+            </div>
+        </div>
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">regulatory_filings</div><div class="sm-src">CVM</div></div><div class="sm-vol">~50K rows/qtr</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="pk">company_id</span> · filing_type · period</div>
+                <div class="sm-field">raw_doc_uri · extracted_json</div>
+                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
+            </div>
+        </div>
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">macro_sector</div><div class="sm-src">IBGE · CONAB · ANP · BCB</div></div><div class="sm-vol">~40K rows/yr</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="pk">series_id</span> · source · date</div>
+                <div class="sm-field">metric · value · geography</div>
+                <div class="sm-field"><span class="fk">provenance_id</span> → data_provenance</div>
+            </div>
+        </div>
+        <div class="schema-mini">
+            <div class="sm-head"><div><div class="sm-name">internal_documents</div><div class="sm-src">Salesforce · SharePoint</div></div><div class="sm-vol">~10K docs</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="pk">doc_id</span> · doc_type · content_text</div>
+                <div class="sm-field">companies[] · sectors[] · <span style="color:var(--purple)">embedding</span></div>
+                <div class="sm-field">source_uri</div>
+            </div>
+        </div>
+        <div class="schema-mini" style="border-color:rgba(239,68,68,.15);">
+            <div class="sm-head" style="background:rgba(239,68,68,.04); border-color:rgba(239,68,68,.12);"><div><div class="sm-name" style="color:var(--red)">data_provenance</div><div class="sm-src" style="color:var(--red); opacity:.7;">Every Record · Every Table</div></div><div class="sm-vol" style="color:var(--red)">AUDIT</div></div>
+            <div class="sm-body">
+                <div class="sm-field"><span class="fk">provenance_id</span> · source_system</div>
+                <div class="sm-field">pull_timestamp · license_type</div>
+                <div class="sm-field">freshness_hours · <span class="fk">raw_payload_hash</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Provenance chain -->
+    <div style="display:flex; align-items:center; gap:0; font-size:11px; padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:8px;">
+        <div style="flex:1; padding:8px 12px; background:rgba(16,185,129,.04); border:1px solid rgba(16,185,129,.15); border-radius:6px 0 0 6px; text-align:center;">
+            <div style="font-size:8px; color:var(--green); font-weight:700; text-transform:uppercase; letter-spacing:1px;">AI Output</div>
+            <div style="font-size:10px; color:var(--text-3); margin-top:2px;">"Net revenue R$41.2B"</div>
+        </div>
+        <div style="padding:0 6px; color:var(--orange);">→</div>
+        <div style="flex:1; padding:8px 12px; background:rgba(59,130,246,.04); border:1px solid rgba(59,130,246,.15); text-align:center;">
+            <div style="font-size:8px; color:var(--blue); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Lake Record</div>
+            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">CSAN · cvm · 41,215.9M</div>
+        </div>
+        <div style="padding:0 6px; color:var(--orange);">→</div>
+        <div style="flex:1; padding:8px 12px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.15); text-align:center;">
+            <div style="font-size:8px; color:var(--red); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Provenance</div>
+            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">cvm_scraper · public_free</div>
+        </div>
+        <div style="padding:0 6px; color:var(--orange);">→</div>
+        <div style="flex:1; padding:8px 12px; background:rgba(139,92,246,.04); border:1px solid rgba(139,92,246,.15); border-radius:0 6px 6px 0; text-align:center;">
+            <div style="font-size:8px; color:var(--purple); font-weight:700; text-transform:uppercase; letter-spacing:1px;">Raw Source</div>
+            <div style="font-family:var(--mono); font-size:9px; color:var(--text-3); margin-top:2px;">dados.cvm.gov.br · sha256:a8f2…</div>
+        </div>
+    </div>
+    <div style="text-align:center; margin-top:8px; font-size:11px; color:var(--text-3);">Every claim the AI makes can be traced in <strong style="color:var(--text)">3 hops</strong> back to the original source document.</div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 7 — AI ENGINE
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="6">
+<div class="slide-inner">
+    <div class="s-label">AI Research Engine</div>
+    <div class="s-heading">What Happens Inside the 1M-Token Window</div>
+    <div class="s-desc" style="margin-bottom:16px;">The AI reads exclusively from the data lake. It never touches a source directly. What makes it powerful is holding an entire company's financial universe in memory simultaneously.</div>
+
+    <!-- Pipeline -->
+    <div class="pipe-row">
+        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">Step 1</div><div class="ps-title">Research Brief</div><div class="ps-sub">Analyst defines scope</div></div>
+        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">Step 2</div><div class="ps-title">Query Planning</div><div class="ps-sub">AI determines data needs</div></div>
+        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">Step 3</div><div class="ps-title">Lake Queries</div><div class="ps-sub">Parallel reads from lake</div></div>
+        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">Step 4</div><div class="ps-title">Context Assembly</div><div class="ps-sub">620K tokens packed</div></div>
+        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">Step 5</div><div class="ps-title">Multi-Source Reasoning</div><div class="ps-sub">Cross-validate + synthesize</div></div>
+        <div class="pipe-step" style="background:rgba(236,112,0,.04);"><div class="ps-num" style="color:var(--orange)">Step 6</div><div class="ps-title">Cited Output</div><div class="ps-sub">JSON → Block 2</div></div>
+    </div>
+
+    <!-- Context window breakdown -->
+    <div style="margin-top:16px; margin-bottom:16px;">
+        <div style="font-size:11px; font-weight:600; color:var(--text); margin-bottom:8px;">Context Window Utilization — Cosan Coverage Initiation (~620K / 1M tokens)</div>
+        <div style="display:flex; height:24px; border-radius:5px; overflow:hidden; border:1px solid var(--border);">
+            <div style="flex:22; background:rgba(139,92,246,.2); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--purple);">Financials 22%</div>
+            <div style="flex:18; background:rgba(139,92,246,.12); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--purple);">CVM 18%</div>
+            <div style="flex:15; background:rgba(16,185,129,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--green);">Internal 15%</div>
+            <div style="flex:12; background:rgba(255,165,0,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:#FFA500;">Market 12%</div>
+            <div style="flex:8; background:rgba(6,182,212,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--cyan);">Macro 8%</div>
+            <div style="flex:5; background:rgba(239,68,68,.12); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--red);">Prov</div>
+            <div style="flex:8; background:rgba(107,122,141,.15); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--text-3);">Sys 8%</div>
+            <div style="flex:12; background:rgba(30,45,61,.6); display:flex; align-items:center; justify-content:center; font-size:7px; font-weight:700; color:var(--text-3);">Free 12%</div>
+        </div>
+    </div>
+
+    <!-- Citation example -->
+    <div style="background:var(--bg-1); border:1px solid var(--border); border-radius:8px; overflow:hidden;">
+        <div style="padding:10px 14px; background:var(--bg-2); border-bottom:1px solid var(--border); font-size:10px; color:var(--text-3);">Example output with inline citations — every factual claim attributed</div>
+        <div style="padding:14px 16px; font-size:12px; color:var(--text-2); line-height:2; border-left:3px solid var(--orange); margin:12px; padding-left:16px;">
+            Cosan reported consolidated net revenue of R$41.2B in Q3 2025 <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span>, representing 12% YoY growth driven by the Raízen consolidation <span style="font-size:9px;padding:2px 5px;background:rgba(0,120,215,.1);border:1px solid rgba(0,120,215,.2);border-radius:3px;color:#0078D7;font-family:var(--mono);font-weight:600">[CIQ]</span>. EBITDA reached R$7.9B <span style="font-size:9px;padding:2px 5px;background:rgba(139,92,246,.1);border:1px solid rgba(139,92,246,.2);border-radius:3px;color:var(--purple);font-family:var(--mono);font-weight:600">[CVM]</span> vs. Bloomberg consensus of R$8.3B <span style="font-size:9px;padding:2px 5px;background:rgba(255,165,0,.1);border:1px solid rgba(255,165,0,.2);border-radius:3px;color:#FFA500;font-family:var(--mono);font-weight:600">[BBG]</span>, a 4.8% miss. CONAB's sugarcane forecast projects 685M tonnes <span style="font-size:9px;padding:2px 5px;background:rgba(236,112,0,.1);border:1px solid rgba(236,112,0,.2);border-radius:3px;color:var(--orange);font-family:var(--mono);font-weight:600">[CONAB]</span>, positive for Raízen where ANP ethanol-to-gasoline parity sits at 68% <span style="font-size:9px;padding:2px 5px;background:rgba(6,182,212,.1);border:1px solid rgba(6,182,212,.2);border-radius:3px;color:var(--cyan);font-family:var(--mono);font-weight:600">[ANP]</span>.
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 8 — COSAN WALKTHROUGH (Part 1)
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="7">
+<div class="slide-inner">
+    <div class="s-label">End-to-End Trace</div>
+    <div class="s-heading">"Coverage Initiation on Cosan" — Steps 1–4</div>
+    <div style="margin-bottom:6px; font-size:10px; color:var(--text-3); line-height:1.5;"><strong style="color:var(--orange)">Illustrative example.</strong> Financial figures are representative. Architecture, queries, and data paths are exact. Timings are target estimates.</div>
+
+    <div style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--orange-dim); color:var(--orange); border:2px solid rgba(236,112,0,.3);">1</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--orange-dim); color:var(--orange);">Entity Resolution</div><div class="tc-title">"Cosan" → resolves all identifiers</div><div class="tc-time">~instant</div></div>
+                <div class="tc-text">Analyst says "Cosan" → system resolves to <span style="font-family:var(--mono);color:var(--text)">CSAN</span> (internal), <span style="color:#FFA500">CSAN3 BZ</span> (BBG), <span style="color:#0078D7">IQ24819237</span> (CIQ), <span style="color:var(--purple)">CVM 20010</span>, CNPJ, plus 5 subsidiary entities for SOTP.</div>
+            </div>
+        </div>
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--blue-dim); color:var(--blue); border:2px solid rgba(59,130,246,.3);">2</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Query Planning</div><div class="tc-title">AI generates 23 structured queries against the lake</div><div class="tc-time">~1–2s</div></div>
+                <div class="tc-text">"Coverage initiation with full SOTP" triggers queries for: parent financials (12Q), 5 subsidiary financials, CVM filings, sector macro (sugarcane, ethanol, fuel, rail, gas), market data, peer comparisons, and internal documents.</div>
+            </div>
+        </div>
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--green-dim); color:var(--green); border:2px solid rgba(16,185,129,.3);">3</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--green-dim); color:var(--green);">Lake Execution</div><div class="tc-title">23 queries execute in parallel — 3,799 records returned</div><div class="tc-time">~3–5s</div></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:6px;">
+                    <div class="tag" style="background:rgba(139,92,246,.08);color:var(--purple);border:1px solid rgba(139,92,246,.15)">CVM: 14 filings</div>
+                    <div class="tag" style="background:rgba(255,165,0,.08);color:#FFA500;border:1px solid rgba(255,165,0,.15)">BBG: 847 records</div>
+                    <div class="tag" style="background:rgba(0,120,215,.08);color:#0078D7;border:1px solid rgba(0,120,215,.15)">CIQ: 392 records</div>
+                    <div class="tag" style="background:rgba(236,112,0,.08);color:var(--orange);border:1px solid rgba(236,112,0,.15)">CONAB/ANP: 156</div>
+                    <div class="tag" style="background:rgba(6,182,212,.08);color:var(--cyan);border:1px solid rgba(6,182,212,.15)">IBGE: 43 series</div>
+                    <div class="tag" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.15)">Internal: 7 docs</div>
+                    <div class="tag" style="background:rgba(107,122,141,.08);color:var(--text-3);border:1px solid rgba(107,122,141,.15)">Peers: 2,340</div>
+                </div>
+            </div>
+        </div>
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--red-dim); color:var(--red); border:2px solid rgba(239,68,68,.3);">4</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--red-dim); color:var(--red);">Reconciliation</div><div class="tc-title">Overlapping data from 3+ sources compared</div><div class="tc-time">~5–8s</div></div>
+                <div style="overflow-x:auto; margin-top:6px;">
+                    <table class="s-table" style="font-size:10px;">
+                        <thead><tr><th>Metric</th><th class="right" style="color:var(--purple)">CVM</th><th class="right" style="color:#FFA500">BBG</th><th class="right" style="color:#0078D7">CIQ</th><th style="text-align:center">Δ</th><th style="color:var(--green)">Ground Truth</th></tr></thead>
+                        <tbody>
+                            <tr><td class="bold">Net Revenue Q3-25</td><td class="mono right">R$41,215.9M</td><td class="mono right">R$41,216.0M</td><td class="mono right">R$41,200.0M</td><td style="text-align:center;color:var(--green)">0.04%</td><td style="color:var(--purple);font-weight:600">CVM ✓</td></tr>
+                            <tr><td class="bold">EBITDA Q3-25</td><td class="mono right">R$7,892.1M</td><td class="mono right">R$7,900.0M</td><td class="mono right">R$7,880.0M</td><td style="text-align:center;color:var(--green)">0.25%</td><td style="color:var(--purple);font-weight:600">CVM ✓</td></tr>
+                            <tr><td class="bold">Net Debt Q3-25</td><td class="mono right">R$22,847.3M</td><td class="mono right">R$23,100.0M</td><td class="mono right">R$22,900.0M</td><td style="text-align:center;color:var(--orange)">1.1%</td><td style="color:var(--purple);font-weight:600">CVM ✓ <span style="color:var(--orange);font-size:8px">⚠</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 9 — COSAN WALKTHROUGH (Part 2)
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="8">
+<div class="slide-inner">
+    <div class="s-label">End-to-End Trace</div>
+    <div class="s-heading">"Coverage Initiation on Cosan" — Steps 5–7</div>
+
+    <div style="display:flex; flex-direction:column; gap:14px; margin-top:16px;">
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--blue-dim); color:var(--blue); border:2px solid rgba(59,130,246,.3);">5</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--blue-dim); color:var(--blue);">Context Assembly</div><div class="tc-title">~620K tokens packed into the 1M-token context window</div><div class="tc-time">~8–12s</div></div>
+                <div class="tc-text">All reconciled data serialized into a structured prompt. Each data package prefixed with source metadata and provenance tags. No chunking, no RAG, no information loss.</div>
+                <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:8px;">
+                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;">620K</div><div class="mc-label">tokens used</div></div>
+                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--blue)">3,799</div><div class="mc-label">records included</div></div>
+                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--green)">6</div><div class="mc-label">source systems</div></div>
+                    <div class="metric-card" style="padding:10px;"><div class="mc-num" style="font-size:20px;color:var(--red)">0</div><div class="mc-label">direct source calls</div></div>
+                </div>
+            </div>
+        </div>
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--purple-dim); color:var(--purple); border:2px solid rgba(139,92,246,.3);">6</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--purple-dim); color:var(--purple);">AI Reasoning</div><div class="tc-title">Multi-source synthesis into 13-section coverage initiation</div><div class="tc-time">~10–45s</div></div>
+                <div class="tc-text">Model reasons across all 620K tokens simultaneously — cross-references CVM segments with BBG estimates, overlays CONAB/ANP macro on Raízen projections, pulls Compass margin trends. Builds SOTP no single source could support alone.</div>
+            </div>
+        </div>
+        <div class="trace-row">
+            <div class="trace-num" style="background:var(--green-dim); color:var(--green); border:2px solid rgba(16,185,129,.3);">7</div>
+            <div class="trace-content">
+                <div class="tc-head"><div class="tc-phase" style="background:var(--green-dim); color:var(--green);">Delivery</div><div class="tc-title">Structured JSON → PPTX + DOCX with full citation chain</div><div class="tc-time">~45–60s</div></div>
+                <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-top:8px;">
+                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
+                        <div style="font-size:20px;">📊</div><div style="font-size:11px; font-weight:600; color:var(--text);">PPTX · 13 slides</div>
+                    </div>
+                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
+                        <div style="font-size:20px;">📄</div><div style="font-size:11px; font-weight:600; color:var(--text);">DOCX · 40 pages</div>
+                    </div>
+                    <div style="padding:12px; background:var(--bg-1); border:1px solid var(--border); border-radius:6px; text-align:center;">
+                        <div style="font-size:20px;">🔗</div><div style="font-size:11px; font-weight:600; color:var(--text);">3,799 provenance links</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary -->
+    <div style="margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,rgba(236,112,0,.04),rgba(16,185,129,.04)); border:1px solid var(--border); border-radius:8px;">
+        <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:12px; text-align:center;">
+            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--orange)">&lt;60s</div><div style="font-size:9px;color:var(--text-3)">Target end-to-end</div></div>
+            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--blue)">23</div><div style="font-size:9px;color:var(--text-3)">Parallel lake queries</div></div>
+            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--green)">620K</div><div style="font-size:9px;color:var(--text-3)">Tokens assembled</div></div>
+            <div><div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--red)">0</div><div style="font-size:9px;color:var(--text-3)">Direct source calls</div></div>
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 10 — PRIVATE COMPANY
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="9">
+<div class="slide-inner">
+    <div class="s-label">The Hard Problem</div>
+    <div class="s-heading">Private Company Research — Agentic Mosaic</div>
+    <div class="s-desc" style="margin-bottom:16px;">No Bloomberg tickers, no CVM filings, no pre-staged lake records. The system builds the picture from scratch — in real time.</div>
+
+    <!-- 6-step orchestration -->
+    <div class="pipe-row" style="margin-bottom:20px;">
+        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">1</div><div class="ps-title">Sector ID</div><div class="ps-sub">Identify sector + geography</div></div>
+        <div class="pipe-step" style="background:rgba(59,130,246,.04);"><div class="ps-num" style="color:var(--blue)">2</div><div class="ps-title">Public Comps</div><div class="ps-sub">Lake: peer CVM filings</div></div>
+        <div class="pipe-step" style="background:rgba(16,185,129,.04);"><div class="ps-num" style="color:var(--green)">3</div><div class="ps-title">Sector Macro</div><div class="ps-sub">Lake: IBGE/CONAB/ANP</div></div>
+        <div class="pipe-step" style="background:rgba(236,112,0,.04);"><div class="ps-num" style="color:var(--orange)">4</div><div class="ps-title">Web Search</div><div class="ps-sub">AI = ingestion layer</div></div>
+        <div class="pipe-step" style="background:rgba(6,182,212,.04);"><div class="ps-num" style="color:var(--cyan)">5</div><div class="ps-title">Internal KB</div><div class="ps-sub">Salesforce + prior work</div></div>
+        <div class="pipe-step" style="background:rgba(139,92,246,.04);"><div class="ps-num" style="color:var(--purple)">6</div><div class="ps-title">Assembly</div><div class="ps-sub">Mosaic + confidence tags</div></div>
+    </div>
+
+    <!-- Confidence scoring -->
+    <div style="font-size:12px; font-weight:700; color:var(--text); margin-bottom:10px;">Confidence Scoring — Every Data Point Classified</div>
+    <div style="overflow-x:auto;">
+        <table class="s-table" style="font-size:10px;">
+            <thead><tr><th>Data Point</th><th>Source</th><th style="text-align:center">Confidence</th><th>How It's Shown</th></tr></thead>
+            <tbody>
+                <tr><td class="bold">Crushing capacity: 4.2M tonnes</td><td>CONAB registered mills</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.2)"><span class="dot" style="background:var(--green)"></span>HIGH</span></td><td>"4.2M tonnes [CONAB]"</td></tr>
+                <tr><td class="bold">Revenue: est. R$800M–1.2B</td><td>Public peer benchmarks</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(236,112,0,.08);color:var(--orange);border:1px solid rgba(236,112,0,.2)"><span class="dot" style="background:var(--orange)"></span>MEDIUM</span></td><td>"est. R$800M–1.2B [peer analysis]"</td></tr>
+                <tr><td class="bold">CNPJ: 12.345.678/0001-90</td><td>Receita Federal</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(16,185,129,.08);color:var(--green);border:1px solid rgba(16,185,129,.2)"><span class="dot" style="background:var(--green)"></span>HIGH</span></td><td>Exact CNPJ cited with source</td></tr>
+                <tr><td class="bold">Recent expansion investment</td><td>Local news (Valor)</td><td style="text-align:center"><span class="conf-pill" style="background:rgba(239,68,68,.08);color:var(--red);border:1px solid rgba(239,68,68,.2)"><span class="dot" style="background:var(--red)"></span>LOW</span></td><td>"reportedly investing [Valor, unverified]"</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div style="margin-top:14px; padding:10px 14px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5;">
+        <strong style="color:var(--red)">Key:</strong> Steps 2–3 use the <strong style="color:var(--text)">same pre-staged lake</strong>. Step 4 is the only place AI acts as ingestion — and only for <strong style="color:var(--text)">publicly available web sources</strong>. Licensed data is never accessed directly.
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 11 — ENTERPRISE & COMPLIANCE
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="10">
+<div class="slide-inner">
+    <div class="s-label">Enterprise & Compliance</div>
+    <div class="s-heading">Governance, Security & Regulatory Alignment</div>
+    <div class="s-desc" style="margin-bottom:20px;">Itaú operates under BACEN, CVM, and LGPD frameworks. This architecture satisfies compliance from day one.</div>
+
+    <div class="card-grid c2" style="margin-bottom:16px;">
+        <div class="info-card"><div class="ic-title">Data Provenance & Audit Trail</div><div class="ic-text">Every record: source, timestamp, license, SHA256 hash. AI outputs cite sources inline. Any claim traceable in 3 hops. "Did AI access Bloomberg directly?" → No, with full lineage proof.</div></div>
+        <div class="info-card"><div class="ic-title">Data Residency & Perimeter</div><div class="ic-text">Lake + ETL + AI all deploy within Itaú's AWS VPC (sa-east-1). No data leaves the perimeter. Licensed data stays within existing contract terms. Bedrock invocations stay in-region.</div></div>
+        <div class="info-card"><div class="ic-title">LGPD Compliance</div><div class="ic-text">System processes financial/market data, not personal data — minimal LGPD exposure. Internal docs processed within VPC. No personal data used for model training. Audit logs on every access.</div></div>
+        <div class="info-card"><div class="ic-title">BACEN / CVM Regulatory</div><div class="ic-text">AI outputs marked as AI-assisted, not autonomous. Analyst remains author. Aligns with CVM Instruction 20 (research independence). All outputs include source attribution for regulatory review.</div></div>
+    </div>
+
+    <!-- Deployment topology -->
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:12px;">
+        <div class="deploy-tier" style="background:var(--orange-dim); border:1px solid rgba(236,112,0,.15);">
+            <div class="dt-title" style="color:var(--orange);">ETL Tier (Layer 1)</div>
+            <div class="dt-row"><strong>Compute:</strong> ECS Fargate / Lambda</div>
+            <div class="dt-row"><strong>SFTP:</strong> AWS Transfer Family</div>
+            <div class="dt-row"><strong>Network:</strong> Private subnet, no AI access</div>
+        </div>
+        <div class="deploy-tier" style="background:var(--blue-dim); border:1px solid rgba(59,130,246,.15);">
+            <div class="dt-title" style="color:var(--blue);">Data Lake</div>
+            <div class="dt-row"><strong>Storage:</strong> S3 (raw) + RDS Postgres</div>
+            <div class="dt-row"><strong>Vectors:</strong> pgvector (embeddings)</div>
+            <div class="dt-row"><strong>Region:</strong> sa-east-1 (São Paulo)</div>
+        </div>
+        <div class="deploy-tier" style="background:var(--green-dim); border:1px solid rgba(16,185,129,.15);">
+            <div class="dt-title" style="color:var(--green);">AI Tier (Layer 2)</div>
+            <div class="dt-row"><strong>Model:</strong> Claude via AWS Bedrock</div>
+            <div class="dt-row"><strong>Context:</strong> 1M tokens (streaming)</div>
+            <div class="dt-row"><strong>Network:</strong> Lake access only</div>
+        </div>
+    </div>
+    <div style="padding:10px 14px; background:rgba(239,68,68,.04); border:1px solid rgba(239,68,68,.12); border-radius:6px; font-size:10px; color:var(--text-3); line-height:1.5; text-align:center;">
+        🔒 <strong style="color:var(--red)">Network isolation enforces the AI boundary.</strong> ETL can reach sources but not Bedrock. AI can reach the lake and Bedrock but not sources. License compliance is a <strong style="color:var(--text)">network property</strong>, not a trust-the-code property.
+    </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════
+     SLIDE 12 — PROPOSED DECISIONS
+     ══════════════════════════════════════════════════════════════ -->
+<div class="slide" data-slide="11">
+<div class="slide-inner">
+    <div class="s-label">Next Step</div>
+    <div class="s-heading">Proposed Decisions — Confirm or Redirect</div>
+    <div class="s-desc" style="margin-bottom:20px;">Based on our understanding of Itaú BBA Research's current setup, here's what we propose for MVP.</div>
+
+    <div class="cta-grid">
+        <div class="cta-item"><div class="ci-num">01</div><div class="ci-text">Bloomberg — We assume terminal-only today with DL negotiation as Phase 2. AI/ML amendment status?</div><div class="ci-why">If DL is in place, we automate from day one. If not, we start with analyst export.</div></div>
+        <div class="cta-item"><div class="ci-num">02</div><div class="ci-text">Capital IQ — We propose starting with Xpressfeed (if available) or Excel export. Pro API as upgrade.</div><div class="ci-why">Xpressfeed gives bulk automation without API rate limits.</div></div>
+        <div class="cta-item"><div class="ci-num">03</div><div class="ci-text">Economatica — We assume API access given the institutional license. Confirm?</div><div class="ci-why">If API, fully automated from week 1.</div></div>
+        <div class="cta-item"><div class="ci-num">04</div><div class="ci-text">Internal data — We propose Salesforce first. Where do pitchbooks and prior research live?</div><div class="ci-why">Fastest path to value. Semantic search within sprint 1.</div></div>
+        <div class="cta-item"><div class="ci-num">05</div><div class="ci-text">First output — We recommend coverage initiation (Cosan) as MVP deliverable. Agree?</div><div class="ci-why">Exercises every pipeline, tests SOTP, cross-source reconciliation, full citation chain.</div></div>
+        <div class="cta-item"><div class="ci-num">06</div><div class="ci-text">Deployment — AWS Bedrock in Itaú's VPC, consistent with Pitchbook POC infra. Confirm?</div><div class="ci-why">Data residency in-perimeter, reuses existing approvals, Bedrock = no model hosting overhead.</div></div>
+    </div>
+
+    <div style="text-align:center; margin-top:24px; padding:20px 24px; background:linear-gradient(135deg,var(--bg-2),var(--bg-3)); border:2px solid var(--orange); border-radius:10px;">
+        <div style="font-size:18px; font-weight:700; color:var(--orange); line-height:1.5;">
+            Confirm these today → Lock MVP scope this week → First pipeline live in 4–6 weeks
+        </div>
+    </div>
+</div>
+</div>
+
+</div><!-- end deck -->
+
+<!-- ═══ BOTTOM BAR ═══ -->
+<div class="bottom-bar">
+    <div class="bb-logo"><div class="i-box">í</div><span>Itaú BBA Research · Technical Architecture</span></div>
+    <div class="bb-dots" id="dots"></div>
+    <div class="bb-nav">
+        <div class="bb-counter"><span class="cur" id="curSlide">1</span> / <span id="totalSlides">12</span></div>
+        <button class="bb-btn" id="prevBtn" onclick="go(-1)">←</button>
+        <button class="bb-btn" id="nextBtn" onclick="go(1)">→</button>
+    </div>
+</div>
+
+<script>
+    const slides = document.querySelectorAll('.slide');
+    const total = slides.length;
+    let current = 0;
+
+    // Build dots
+    const dotsEl = document.getElementById('dots');
+    for (let i = 0; i < total; i++) {
+        const d = document.createElement('div');
+        d.className = 'bb-dot' + (i === 0 ? ' active' : '');
+        d.onclick = () => goTo(i);
+        dotsEl.appendChild(d);
+    }
+
+    function goTo(n) {
+        if (n < 0 || n >= total || n === current) return;
+        const dir = n > current ? 1 : -1;
+        slides[current].classList.remove('active');
+        slides[current].classList.add(dir > 0 ? 'prev' : '');
+        slides[current].style.transform = dir > 0 ? 'translateX(-60px)' : 'translateX(60px)';
+        current = n;
+        slides[current].style.transform = dir > 0 ? 'translateX(60px)' : 'translateX(-60px)';
+        // Force reflow
+        void slides[current].offsetWidth;
+        slides[current].classList.add('active');
+        slides[current].classList.remove('prev');
+
+        // Reset non-active slides
+        slides.forEach((s, i) => {
+            if (i !== current) {
+                setTimeout(() => { s.classList.remove('active', 'prev'); s.style.transform = ''; }, 500);
+            }
+        });
+
+        updateUI();
+    }
+
+    function go(dir) { goTo(current + dir); }
+
+    function updateUI() {
+        document.getElementById('curSlide').textContent = current + 1;
+        document.getElementById('prevBtn').disabled = current === 0;
+        document.getElementById('nextBtn').disabled = current === total - 1;
+        document.querySelectorAll('.bb-dot').forEach((d, i) => {
+            d.classList.toggle('active', i === current);
+        });
+    }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); go(1); }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); go(-1); }
+        if (e.key === 'Home') { e.preventDefault(); goTo(0); }
+        if (e.key === 'End') { e.preventDefault(); goTo(total - 1); }
+    });
+
+    updateUI();
+</script>
+</body>
+</html>
